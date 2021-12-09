@@ -142,6 +142,7 @@
     <ClCompile Include="Grammatical Analysis.cpp" />
     <ClCompile Include="Lexical Analysis.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Semantic Analysis.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="head.h" />

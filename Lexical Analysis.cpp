@@ -962,7 +962,7 @@ bool LexicalAnalysis::Char() {
 bool LexicalAnalysis::OutPut() {
 	for (int i = 0; i < wordTable.size(); i++) {
 		if (wordTable[i].property == EnumProperties::TimeToStop) {
-			wordTable.resize(i);
+			wordTable.resize(i + 1);
 			break;
 		}
 		std::cout << wordTable[i].word << "\t\t\t\t\t" << (int)wordTable[i].property <<

@@ -8,14 +8,19 @@
 #include<vector>
 #include<map>
 
-const int MAX_BUFFER = 80000;
-const int MAX_WORD_TABLE = 2500;
+const int MAX_BUFFER = 10000;
+const int MAX_WORD_TABLE = 1000;
+
+class Word;
+class LexicalAnalysis;
+class GrammaticalAnalysis;
 
 class Exception {
 public:
 	std::string str;
-	int line;
-	Exception(std::string e, int l) :str(e), line(l) {}
+	// 异常位置词素
+	Word& word;
+	Exception(std::string e, Word& w) :str(e), word(w) {}
 };
 
 // 词素属性表
@@ -222,8 +227,6 @@ public:
 	bool ParameterDeclaration();
 	bool IdentifierList();
 	bool IdentifierListEliminateLeft();
-	// 这个不打算做
-	bool InitializerList();
 
 	// 语句相关分析器
 	bool Statement();
@@ -248,4 +251,8 @@ public:
 	bool IsTypeName(Word w);
 	bool IsNumberLiteralValue(Word w);
 	bool IsLiteralValue(Word w);
+};
+
+class SemanticAnalysis {
+
 };

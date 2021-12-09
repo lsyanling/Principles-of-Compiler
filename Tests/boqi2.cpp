@@ -4,13 +4,16 @@ int fu4c(int  a) {
 }
 int a, b, c;
 int fu4c(float b) {
-	a = 10;
+	;
+	int a, b, c = 0;
+
+	a += 10;
 	while (1) {
-		-i;
+		-i--;
 		continue;
 	}
 	if (a > 10) {
-		++a;
+		a++;
 	}
 	else {
 		a = a % 10;
@@ -34,8 +37,11 @@ A:a = 10;
 		}
 		a += fu4c(a);
 		a += str;
+		ppcd(3, 4, each);
 	}
+	(a);
 	a = c + d;
 	a >>= 1;
 	goto A;
+
 }
