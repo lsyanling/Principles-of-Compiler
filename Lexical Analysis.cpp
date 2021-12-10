@@ -184,7 +184,7 @@ bool LexicalAnalysis::Number() {
 				char ch = *p;
 				*p = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
-				wordTable[wordTableIndex].property = EnumProperties::TenIntNumber;
+				wordTable[wordTableIndex].property = EnumWordProperties::TenIntNumber;
 				wordTable[wordTableIndex].line = this->line;
 				// 恢复该字符
 				*p = ch;
@@ -213,7 +213,7 @@ bool LexicalAnalysis::Number() {
 				char ch = *p;
 				*p = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
-				wordTable[wordTableIndex].property = EnumProperties::EightIntNumber;
+				wordTable[wordTableIndex].property = EnumWordProperties::EightIntNumber;
 				wordTable[wordTableIndex].line = this->line;
 				// 恢复该字符
 				*p = ch;
@@ -248,7 +248,7 @@ bool LexicalAnalysis::Number() {
 				char ch = *p;
 				*p = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
-				wordTable[wordTableIndex].property = EnumProperties::TenIntNumber;
+				wordTable[wordTableIndex].property = EnumWordProperties::TenIntNumber;
 				wordTable[wordTableIndex].line = this->line;
 				// 恢复该字符
 				*p = ch;
@@ -289,7 +289,7 @@ bool LexicalAnalysis::Number() {
 				char ch = *p;
 				*p = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
-				wordTable[wordTableIndex].property = EnumProperties::SixteenIntNumber;
+				wordTable[wordTableIndex].property = EnumWordProperties::SixteenIntNumber;
 				wordTable[wordTableIndex].line = this->line;
 				// 恢复该字符
 				*p = ch;
@@ -333,7 +333,7 @@ bool LexicalAnalysis::Number() {
 				char ch = *p;
 				*p = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
-				wordTable[wordTableIndex].property = EnumProperties::FloatNumber;
+				wordTable[wordTableIndex].property = EnumWordProperties::FloatNumber;
 				wordTable[wordTableIndex].line = this->line;
 				// 恢复该字符
 				*p = ch;
@@ -389,7 +389,7 @@ bool LexicalAnalysis::Number() {
 				char ch = *p;
 				*p = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
-				wordTable[wordTableIndex].property = EnumProperties::FloatNumber;
+				wordTable[wordTableIndex].property = EnumWordProperties::FloatNumber;
 				wordTable[wordTableIndex].line = this->line;
 				// 恢复该字符
 				*p = ch;
@@ -420,7 +420,7 @@ bool LexicalAnalysis::Semicolon() {
 		char ch = *(p + 1);
 		*(p + 1) = '\0';
 		wordTable[wordTableIndex].word = std::string(q);
-		wordTable[wordTableIndex].property = EnumProperties::Semicolon;
+		wordTable[wordTableIndex].property = EnumWordProperties::Semicolon;
 		wordTable[wordTableIndex].line = this->line;
 		// 恢复下一个字符
 		*(p + 1) = ch;
@@ -442,215 +442,215 @@ bool LexicalAnalysis::Semicolon() {
 bool LexicalAnalysis::Operator() {
 	// 是运算符
 	if (IsOperator(*p)) {
-		EnumProperties e = EnumProperties::Auto;
+		EnumWordProperties e = EnumWordProperties::Auto;
 		int length = 3;
 		// 三个字符长的运算符
 		// 左移赋值
 		if (*p == '<' && *(p + 1) == '<' && *(p + 2) == '=') {
-			e = EnumProperties::OperatorLeftShiftAssign;
+			e = EnumWordProperties::OperatorLeftShiftAssign;
 		}
 		// 右移赋值
 		else if (*p == '>' && *(p + 1) == '>' && *(p + 2) == '=') {
-			e = EnumProperties::OperatorRightShiftAssign;
+			e = EnumWordProperties::OperatorRightShiftAssign;
 		}
 
 		// 两个字符长的运算符
 		// 递增运算符
 		else if (*p == '+' && *(p + 1) == '+') {
-			e = EnumProperties::OperatorAddAdd;
+			e = EnumWordProperties::OperatorAddAdd;
 			length = 2;
 		}
 		// 递减运算符
 		else if (*p == '-' && *(p + 1) == '-') {
-			e = EnumProperties::OperatorSubSubtract;
+			e = EnumWordProperties::OperatorSubSubtract;
 			length = 2;
 		}
 		// 相等运算符
 		else if (*p == '=' && *(p + 1) == '=') {
-			e = EnumProperties::OperatorEqual;
+			e = EnumWordProperties::OperatorEqual;
 			length = 2;
 		}
 		// 大于等于
 		else if (*p == '>' && *(p + 1) == '=') {
-			e = EnumProperties::OperatorGreaterEqual;
+			e = EnumWordProperties::OperatorGreaterEqual;
 			length = 2;
 		}
 		// 小于等于
 		else if (*p == '<' && *(p + 1) == '=') {
-			e = EnumProperties::OperatorSmallerEqual;
+			e = EnumWordProperties::OperatorSmallerEqual;
 			length = 2;
 		}
 		// 不等
 		else if (*p == '!' && *(p + 1) == '=') {
-			e = EnumProperties::OperatorNotEqual;
+			e = EnumWordProperties::OperatorNotEqual;
 			length = 2;
 		}
 		// 左移
 		else if (*p == '<' && *(p + 1) == '<') {
-			e = EnumProperties::OperatorLeftShift;
+			e = EnumWordProperties::OperatorLeftShift;
 			length = 2;
 		}
 		// 右移
 		else if (*p == '>' && *(p + 1) == '>') {
-			e = EnumProperties::OperatorRightShift;
+			e = EnumWordProperties::OperatorRightShift;
 			length = 2;
 		}
 		// 算术赋值
 		else if (*p == '+' && *(p + 1) == '=') {
-			e = EnumProperties::OperatorAddAssign;
+			e = EnumWordProperties::OperatorAddAssign;
 			length = 2;
 		}
 		else if (*p == '-' && *(p + 1) == '=') {
-			e = EnumProperties::OperatorSubAssign;
+			e = EnumWordProperties::OperatorSubAssign;
 			length = 2;
 		}
 		else if (*p == '*' && *(p + 1) == '=') {
-			e = EnumProperties::OperatorMulAssign;
+			e = EnumWordProperties::OperatorMulAssign;
 			length = 2;
 		}
 		else if (*p == '/' && *(p + 1) == '=') {
-			e = EnumProperties::OperatorDivAssign;
+			e = EnumWordProperties::OperatorDivAssign;
 			length = 2;
 		}
 		else if (*p == '%' && *(p + 1) == '=') {
-			e = EnumProperties::OperatorModAssign;
+			e = EnumWordProperties::OperatorModAssign;
 			length = 2;
 		}
 		// 按位与赋值
 		else if (*p == '&' && *(p + 1) == '=') {
-			e = EnumProperties::OperatorAndAssign;
+			e = EnumWordProperties::OperatorAndAssign;
 			length = 2;
 		}
 		// 按位或赋值
 		else if (*p == '|' && *(p + 1) == '=') {
-			e = EnumProperties::OperatorAssign;
+			e = EnumWordProperties::OperatorAssign;
 			length = 2;
 		}
 		// 按位异或赋值
 		else if (*p == '^' && *(p + 1) == '=') {
-			e = EnumProperties::OperatorXOrAssign;
+			e = EnumWordProperties::OperatorXOrAssign;
 			length = 2;
 		}
 		// 逻辑与
 		else if (*p == '&' && *(p + 1) == '&') {
-			e = EnumProperties::OperatorAnd;
+			e = EnumWordProperties::OperatorAnd;
 			length = 2;
 		}
 		// 逻辑或
 		else if (*p == '|' && *(p + 1) == '|') {
-			e = EnumProperties::OperatorOr;
+			e = EnumWordProperties::OperatorOr;
 			length = 2;
 		}
 		// 箭头运算符
 		else if (*p == '-' && *(p + 1) == '>') {
-			e = EnumProperties::OperatorArrow;
+			e = EnumWordProperties::OperatorArrow;
 			length = 2;
 		}
 
 		// 一个字符长的运算符
 		// 算术运算符
 		else if (*p == '+') {
-			e = EnumProperties::OperatorAdd;
+			e = EnumWordProperties::OperatorAdd;
 			length = 1;
 		}
 		else if (*p == '-') {
-			e = EnumProperties::OperatorSubtract;
+			e = EnumWordProperties::OperatorSubtract;
 			length = 1;
 		}
 		else if (*p == '*') {
-			e = EnumProperties::OperatorMultiply;
+			e = EnumWordProperties::OperatorMultiply;
 			length = 1;
 		}
 		else if (*p == '/') {
-			e = EnumProperties::OperatorDivide;
+			e = EnumWordProperties::OperatorDivide;
 			length = 1;
 		}
 		else if (*p == '%') {
-			e = EnumProperties::OperatorModulo;
+			e = EnumWordProperties::OperatorModulo;
 			length = 1;
 		}
 		// 成员运算符
 		else if (*p == '.') {
-			e = EnumProperties::OperatorPoint;
+			e = EnumWordProperties::OperatorPoint;
 			length = 1;
 		}
 		// 括号运算符
 		else if (*p == '(') {
-			e = EnumProperties::OperatorLeftRound;
+			e = EnumWordProperties::OperatorLeftRound;
 			length = 1;
 		}
 		else if (*p == ')') {
-			e = EnumProperties::OperatorRightRound;
+			e = EnumWordProperties::OperatorRightRound;
 			length = 1;
 		}
 		else if (*p == '[') {
-			e = EnumProperties::OperatorLeftSquare;
+			e = EnumWordProperties::OperatorLeftSquare;
 			length = 1;
 		}
 		else if (*p == ']') {
-			e = EnumProperties::OperatorRightSquare;
+			e = EnumWordProperties::OperatorRightSquare;
 			length = 1;
 		}
 		else if (*p == '{') {
-			e = EnumProperties::OperatorLeftBrace;
+			e = EnumWordProperties::OperatorLeftBrace;
 			length = 1;
 		}
 		else if (*p == '}') {
-			e = EnumProperties::OperatorRightBrace;
+			e = EnumWordProperties::OperatorRightBrace;
 			length = 1;
 		}
 		// 条件运算符
 		else if (*p == '?') {
-			e = EnumProperties::OperatorQuestion;
+			e = EnumWordProperties::OperatorQuestion;
 			length = 1;
 		}
 		else if (*p == ':') {
-			e = EnumProperties::OperatorColon;
+			e = EnumWordProperties::OperatorColon;
 			length = 1;
 		}
 		// 逻辑非
 		else if (*p == '!') {
-			e = EnumProperties::OperatorNot;
+			e = EnumWordProperties::OperatorNot;
 			length = 1;
 		}
 		// 逗号
 		else if (*p == ',') {
-			e = EnumProperties::OperatorComma;
+			e = EnumWordProperties::OperatorComma;
 			length = 1;
 		}
 		// 大于
 		else if (*p == '>') {
-			e = EnumProperties::OperatorGreaterThan;
+			e = EnumWordProperties::OperatorGreaterThan;
 			length = 1;
 		}
 		// 小于
 		else if (*p == '<') {
-			e = EnumProperties::OperatorSmallerThan;
+			e = EnumWordProperties::OperatorSmallerThan;
 			length = 1;
 		}
 		// 赋值
 		else if (*p == '=') {
-			e = EnumProperties::OperatorAssign;
+			e = EnumWordProperties::OperatorAssign;
 			length = 1;
 		}
 		// 按位取反
 		else if (*p == '~') {
-			e = EnumProperties::OperatorBitNot;
+			e = EnumWordProperties::OperatorBitNot;
 			length = 1;
 		}
 		// 按位与
 		else if (*p == '&') {
-			e = EnumProperties::OperatorBitAnd;
+			e = EnumWordProperties::OperatorBitAnd;
 			length = 1;
 		}
 		// 按位或
 		else if (*p == '|') {
-			e = EnumProperties::OperatorBitOr;
+			e = EnumWordProperties::OperatorBitOr;
 			length = 1;
 		}
 		// 按位异或
 		else if (*p == '^') {
-			e = EnumProperties::OperatorXOr;
+			e = EnumWordProperties::OperatorXOr;
 			length = 1;
 		}
 
@@ -755,7 +755,7 @@ bool LexicalAnalysis::Identifier() {
 		char ch = *p;
 		*p = '\0';
 		wordTable[wordTableIndex].word = std::string(q);
-		wordTable[wordTableIndex].property = EnumProperties::Identifier;
+		wordTable[wordTableIndex].property = EnumWordProperties::Identifier;
 		wordTable[wordTableIndex].line = this->line;
 		// 恢复该字符
 		*p = ch;
@@ -798,7 +798,7 @@ bool LexicalAnalysis::String() {
 				*(p + 1) = '\0';
 
 				wordTable[wordTableIndex].word = std::string(q);
-				wordTable[wordTableIndex].property = EnumProperties::String;
+				wordTable[wordTableIndex].property = EnumWordProperties::String;
 				wordTable[wordTableIndex].line = this->line;
 
 				// 恢复下一个字符
@@ -820,7 +820,7 @@ bool LexicalAnalysis::String() {
 				char ch = *(p + 1);
 				*(p + 1) = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
-				wordTable[wordTableIndex].property = EnumProperties::String;
+				wordTable[wordTableIndex].property = EnumWordProperties::String;
 				wordTable[wordTableIndex].line = this->line;
 				// 恢复下一个字符
 				*(p + 1) = ch;
@@ -861,7 +861,7 @@ bool LexicalAnalysis::String() {
 				*(p + 1) = '\0';
 
 				wordTable[wordTableIndex].word = std::string(q);
-				wordTable[wordTableIndex].property = EnumProperties::String;
+				wordTable[wordTableIndex].property = EnumWordProperties::String;
 				wordTable[wordTableIndex].line = this->line;
 
 				// 恢复下一个字符
@@ -910,7 +910,7 @@ bool LexicalAnalysis::Char() {
 		*(p + 2) = '\'';
 		*(p + 3) = '\0';
 		wordTable[wordTableIndex].word = std::string(q);
-		wordTable[wordTableIndex].property = EnumProperties::CharNumber;
+		wordTable[wordTableIndex].property = EnumWordProperties::CharNumber;
 		wordTable[wordTableIndex].line = this->line;
 		// 恢复字符
 		*(p + 2) = ch2;
@@ -933,7 +933,7 @@ bool LexicalAnalysis::Char() {
 		*(p + 3) = '\'';
 		*(p + 4) = '\0';
 		wordTable[wordTableIndex].word = std::string(q);
-		wordTable[wordTableIndex].property = EnumProperties::CharNumber;
+		wordTable[wordTableIndex].property = EnumWordProperties::CharNumber;
 		wordTable[wordTableIndex].line = this->line;
 		// 恢复字符
 		*(p + 3) = ch3;
@@ -961,13 +961,15 @@ bool LexicalAnalysis::Char() {
 // return  
 bool LexicalAnalysis::OutPut() {
 	for (int i = 0; i < wordTable.size(); i++) {
-		if (wordTable[i].property == EnumProperties::TimeToStop) {
+		if (wordTable[i].property == EnumWordProperties::TimeToStop) {
 			wordTable.resize(i + 1);
 			break;
 		}
-		std::cout << wordTable[i].word << "\t\t\t\t\t" << (int)wordTable[i].property <<
-			"\t\t\t\t\t" << wordTable[i].line << std::endl;
+		std::cout.setf(std::ios::left);
+		std::cout << "\t" << std::setw(16) << wordTable[i].word << std::setw(12) <<
+			(int)wordTable[i].property << std::setw(12) << wordTable[i].line << std::endl;
 	}
+	std::cout << std::endl;
 	return true;
 }
 
@@ -981,4 +983,19 @@ bool LexicalAnalysis::IsOperator(char ch) {
 		ch == '^' || ch == ',')
 		return true;
 	return false;
+}
+
+bool LexicalAnalysis::ReSetType() {
+	for (auto& i : wordTable) {
+		if (i.property == EnumWordProperties::EightIntNumber ||
+			i.property == EnumWordProperties::SixteenIntNumber ||
+			i.property == EnumWordProperties::TenIntNumber) {
+			i.property = EnumWordProperties::TenIntNumber;
+		}
+		if (i.property == EnumWordProperties::FloatEeNumber ||
+			i.property == EnumWordProperties::FloatNumber) {
+			i.property = EnumWordProperties::FloatNumber;
+		}
+	}
+	return true;
 }

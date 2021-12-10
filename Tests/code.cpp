@@ -1,23 +1,5 @@
 int lengthOfLongestSubstring(int s) {
-
-	char ccc = "\\";
-
-	char ppp = "\n\\\n\
-		2333";
-	int length = s;
-	if (!length)
-		return 0;
-	int i, j, max;
-
-	a[s[0]] = 1;
-	max = 1;
-
-	if (j == length)
-		if (!i)
-			return length;
-		else if (j - i > max)
-			max = j - i;
-	return max;
+	int a;
 }
 
 int main(int k) {

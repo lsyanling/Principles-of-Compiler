@@ -1,12 +1,12 @@
 #include"head.h"
 
 GrammaticalAnalysis::GrammaticalAnalysis(std::vector<Word>& w) :wordTable(w) {
-	try {
-		TranslationUnit();
-	}
-	catch (Exception e) {
-		std::cout << "Grammatical Error in line " << e.word.line << " " << e.str << std::endl;
-	}
+	//try {
+	//	TranslationUnit();
+	//}
+	//catch (Exception e) {
+	//	std::cout << "Grammatical Error in line " << e.word.line << " " << e.str << std::endl;
+	//}
 }
 
 // func    初始表达式识别
@@ -17,26 +17,26 @@ bool GrammaticalAnalysis::PrimaryExpression() {
 	int nowP = p;
 
 	// Identifier
-	if (wordTable[p].property == EnumProperties::Identifier ||
+	if (wordTable[p].property == EnumWordProperties::Identifier ||
 		// 数字字面量
-		wordTable[p].property == EnumProperties::TenIntNumber ||
-		wordTable[p].property == EnumProperties::EightIntNumber ||
-		wordTable[p].property == EnumProperties::SixteenIntNumber ||
-		wordTable[p].property == EnumProperties::FloatNumber ||
-		wordTable[p].property == EnumProperties::FloatEeNumber ||
-		wordTable[p].property == EnumProperties::CharNumber) {
+		wordTable[p].property == EnumWordProperties::TenIntNumber ||
+		wordTable[p].property == EnumWordProperties::EightIntNumber ||
+		wordTable[p].property == EnumWordProperties::SixteenIntNumber ||
+		wordTable[p].property == EnumWordProperties::FloatNumber ||
+		wordTable[p].property == EnumWordProperties::FloatEeNumber ||
+		wordTable[p].property == EnumWordProperties::CharNumber) {
 		p++;
 		return true;
 	}
 	// (Expression)
-	else if (wordTable[p].property == EnumProperties::OperatorLeftRound) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 		p++;
 		if (Expression()) {
-			if (wordTable[p].property == EnumProperties::OperatorRightRound) {
+			if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
 				p++;
 				return true;
 			}
-			throw(Exception("Not a Primary Expression because Expect a )", wordTable[p]));
+			throw(Exception("Not a Primary Expression because Expect a )", wordTable[p], 0));
 		}
 		p = nowP;
 		return false;
@@ -78,71 +78,71 @@ bool GrammaticalAnalysis::PostfixExpressionEliminateLeft() {
 	int nowP = p;
 
 	// [Expression] PostfixExpressionEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorLeftSquare) {
+	if (wordTable[p].property == EnumWordProperties::OperatorLeftSquare) {
 		p++;
 		if (Expression()) {
-			if (wordTable[p].property == EnumProperties::OperatorRightSquare) {
+			if (wordTable[p].property == EnumWordProperties::OperatorRightSquare) {
 				p++;
 				if (PostfixExpressionEliminateLeft()) {
 					return true;
 				}
 			}
-			throw(Exception("Not [] Postfix Expression because Expect a ]", wordTable[p]));
+			throw(Exception("Not [] Postfix Expression because Expect a ]", wordTable[p], 0));
 		}
-		throw(Exception("Not a [] Postfix Expression because Expect a Expression", wordTable[p]));
+		throw(Exception("Not a [] Postfix Expression because Expect a Expression", wordTable[p], 0));
 	}
 	// (ArgumentExpressionList) PostfixExpressionEliminateLeft
-	else if (wordTable[p].property == EnumProperties::OperatorLeftRound) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 		p++;
 		if (ArgumentExpressionList()) {
-			if (wordTable[p].property == EnumProperties::OperatorRightRound) {
+			if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
 				p++;
 				if (PostfixExpressionEliminateLeft()) {
 					return true;
 				}
 			}
-			throw(Exception("Not a Postfix Expression because Expect a )", wordTable[p]));
+			throw(Exception("Not a Postfix Expression because Expect a )", wordTable[p], 0));
 		}
 		p = nowP;
 		return false;
 	}
 	// .Identifier PostfixExpressionEliminateLeft
-	else if (wordTable[p].property == EnumProperties::OperatorPoint) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorPoint) {
 		p++;
-		if (wordTable[p].property == EnumProperties::Identifier) {
+		if (wordTable[p].property == EnumWordProperties::Identifier) {
 			p++;
 			if (PostfixExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a -> Postfix Expression because Expect a Identifier", wordTable[p]));
+		throw(Exception("Not a -> Postfix Expression because Expect a Identifier", wordTable[p], 0));
 	}
 	// ->Identifier PostfixExpressionEliminateLeft
-	else if (wordTable[p].property == EnumProperties::OperatorArrow) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorArrow) {
 		p++;
-		if (wordTable[p].property == EnumProperties::Identifier) {
+		if (wordTable[p].property == EnumWordProperties::Identifier) {
 			p++;
 			if (PostfixExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a -> Postfix Expression because Expect a Identifier", wordTable[p]));
+		throw(Exception("Not a -> Postfix Expression because Expect a Identifier", wordTable[p], 0));
 	}
 	// ++PostfixExpressionEliminateLeft
-	else if (wordTable[p].property == EnumProperties::OperatorAddAdd) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorAddAdd) {
 		p++;
 		if (PostfixExpressionEliminateLeft()) {
 			return true;
 		}
-		throw(Exception("Not a ++ Postfix Expression because Expect a Postfix Expression", wordTable[p]));
+		throw(Exception("Not a ++ Postfix Expression because Expect a Postfix Expression", wordTable[p], 0));
 	}
 	// --PostfixExpressionEliminateLeft
-	else if (wordTable[p].property == EnumProperties::OperatorSubSubtract) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorSubSubtract) {
 		p++;
 		if (PostfixExpressionEliminateLeft()) {
 			return true;
 		}
-		throw(Exception("Not a -- Postfix Expression because Expect a Postfix Expression", wordTable[p]));
+		throw(Exception("Not a -- Postfix Expression because Expect a Postfix Expression", wordTable[p], 0));
 	}
 	// 空
 	else {
@@ -182,14 +182,14 @@ bool GrammaticalAnalysis::ArgumentExpressionListEliminateLeft() {
 	int nowP = p;
 
 	// ,AssignmentExpression ArgumentExpressionListEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorComma) {
+	if (wordTable[p].property == EnumWordProperties::OperatorComma) {
 		p++;
 		if (AssignmentExpression()) {
 			if (ArgumentExpressionListEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a Argument Expression List because Expect a Assignment Expression", wordTable[p]));
+		throw(Exception("Not a Argument Expression List because Expect a Assignment Expression", wordTable[p], 0));
 		p = nowP;
 		return false;
 	}
@@ -212,22 +212,22 @@ bool GrammaticalAnalysis::UnaryExpression() {
 		return true;
 	}
 	// ++UnaryExpression
-	else if (wordTable[p].property == EnumProperties::OperatorAddAdd) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorAddAdd) {
 		p++;
 		if (UnaryExpression()) {
 			return true;
 		}
-		throw(Exception("Not a ++ Unary Expression because Expect a Unary Expression", wordTable[p]));
+		throw(Exception("Not a ++ Unary Expression because Expect a Unary Expression", wordTable[p], 0));
 		p = nowP;
 		return false;
 	}
 	// --UnaryExpression
-	else if (wordTable[p].property == EnumProperties::OperatorSubSubtract) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorSubSubtract) {
 		p++;
 		if (UnaryExpression()) {
 			return true;
 		}
-		throw(Exception("Not a -- Unary Expression because Expect a Unary Expression", wordTable[p]));
+		throw(Exception("Not a -- Unary Expression because Expect a Unary Expression", wordTable[p], 0));
 		p = nowP;
 		return false;
 	}
@@ -240,24 +240,24 @@ bool GrammaticalAnalysis::UnaryExpression() {
 		return false;
 	}
 	// sizeof
-	else if (wordTable[p].property == EnumProperties::OperatorSizeof) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorSizeof) {
 		p++;
 		// sizeof UnaryExpression
 		if (UnaryExpression()) {
 			return true;
 		}
 		// sizeof (TypeName)
-		if (wordTable[p].property == EnumProperties::OperatorLeftRound) {
+		if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 			p++;
 			if (IsTypeName(wordTable[p])) {
 				p++;
-				if (wordTable[p].property == EnumProperties::OperatorRightRound) {
+				if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
 					p++;
 					return true;
 				}
-				throw(Exception("Not a sizeof Expression because Expect a (", wordTable[p]));
+				throw(Exception("Not a sizeof Expression because Expect a (", wordTable[p], 0));
 			}
-			throw(Exception("Not a sizeof Expression because Expect a (", wordTable[p]));
+			throw(Exception("Not a sizeof Expression because Expect a (", wordTable[p], 0));
 		}
 		p = nowP;
 		return false;
@@ -275,12 +275,12 @@ bool GrammaticalAnalysis::UnaryOperator() {
 	// 保存当前指针
 	int nowP = p;
 
-	if (wordTable[p].property == EnumProperties::OperatorMultiply ||
-		wordTable[p].property == EnumProperties::OperatorAdd ||
-		wordTable[p].property == EnumProperties::OperatorSubtract ||
-		wordTable[p].property == EnumProperties::OperatorBitAnd ||
-		wordTable[p].property == EnumProperties::OperatorNot ||
-		wordTable[p].property == EnumProperties::OperatorBitNot) {
+	if (wordTable[p].property == EnumWordProperties::OperatorMultiply ||
+		wordTable[p].property == EnumWordProperties::OperatorAdd ||
+		wordTable[p].property == EnumWordProperties::OperatorSubtract ||
+		wordTable[p].property == EnumWordProperties::OperatorBitAnd ||
+		wordTable[p].property == EnumWordProperties::OperatorNot ||
+		wordTable[p].property == EnumWordProperties::OperatorBitNot) {
 		p++;
 		return true;
 	}
@@ -302,20 +302,20 @@ bool GrammaticalAnalysis::CastExpression() {
 		return true;
 	}
 	// (TypeName)CastExpression
-	else if (wordTable[p].property == EnumProperties::OperatorLeftRound) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 		p++;
 		if (IsTypeName(wordTable[p])) {
 			p++;
-			if (wordTable[p].property == EnumProperties::OperatorRightRound) {
+			if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
 				p++;
 				if (CastExpression()) {
 					return true;
 				}
-				throw(Exception("Not a Cast Expression because Expect a Cast Expression", wordTable[p]));
+				throw(Exception("Not a Cast Expression because Expect a Cast Expression", wordTable[p], 0));
 			}
-			throw(Exception("Not a Cast Expression because Expect a )", wordTable[p]));
+			throw(Exception("Not a Cast Expression because Expect a )", wordTable[p], 0));
 		}
-		throw(Exception("Not a Cast Expression because Expect a Type Name", wordTable[p]));
+		throw(Exception("Not a Cast Expression because Expect a Type Name", wordTable[p], 0));
 	}
 	else {
 		p = nowP;
@@ -352,34 +352,34 @@ bool GrammaticalAnalysis::MultiplicativeExpressionEliminateLeft() {
 	int nowP = p;
 
 	// *CastExpression MultiplicativeExpressionEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorMultiply) {
+	if (wordTable[p].property == EnumWordProperties::OperatorMultiply) {
 		p++;
 		if (CastExpression()) {
 			if (MultiplicativeExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a * Multiplicative Expression because Expect a Cast Expression", wordTable[p]));
+		throw(Exception("Not a * Multiplicative Expression because Expect a Cast Expression", wordTable[p], 0));
 	}
 	// /CastExpression MultiplicativeExpressionEliminateLeft
-	else if (wordTable[p].property == EnumProperties::OperatorDivide) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorDivide) {
 		p++;
 		if (CastExpression()) {
 			if (MultiplicativeExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a / Multiplicative Expression because Expect a Cast Expression", wordTable[p]));
+		throw(Exception("Not a / Multiplicative Expression because Expect a Cast Expression", wordTable[p], 0));
 	}
 	// %CastExpression MultiplicativeExpressionEliminateLeft
-	else if (wordTable[p].property == EnumProperties::OperatorModulo) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorModulo) {
 		p++;
 		if (CastExpression()) {
 			if (MultiplicativeExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a % Multiplicative Expression because Expect a Cast Expression", wordTable[p]));
+		throw(Exception("Not a % Multiplicative Expression because Expect a Cast Expression", wordTable[p], 0));
 	}
 	// 空
 	else {
@@ -417,24 +417,24 @@ bool GrammaticalAnalysis::AdditiveExpressionEliminateLeft() {
 	int nowP = p;
 
 	// +MultiplicativeExpression AdditiveExpressionEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorAdd) {
+	if (wordTable[p].property == EnumWordProperties::OperatorAdd) {
 		p++;
 		if (MultiplicativeExpression()) {
 			if (AdditiveExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a + Additive Expression because Expect a Multiplicative Expression", wordTable[p]));
+		throw(Exception("Not a + Additive Expression because Expect a Multiplicative Expression", wordTable[p], 0));
 	}
 	// -MultiplicativeExpression AdditiveExpressionEliminateLeft
-	else if (wordTable[p].property == EnumProperties::OperatorSubtract) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorSubtract) {
 		p++;
 		if (MultiplicativeExpression()) {
 			if (AdditiveExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a - Additive Expression because Expect a Multiplicative Expression", wordTable[p]));
+		throw(Exception("Not a - Additive Expression because Expect a Multiplicative Expression", wordTable[p], 0));
 	}
 	// 空
 	else {
@@ -472,24 +472,24 @@ bool GrammaticalAnalysis::ShiftExpressionEliminateLeft() {
 	int nowP = p;
 
 	// << AdditiveExpression ShiftExpressionEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorLeftShift) {
+	if (wordTable[p].property == EnumWordProperties::OperatorLeftShift) {
 		p++;
 		if (AdditiveExpression()) {
 			if (ShiftExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a << Expression because Expect a Additive Expression", wordTable[p]));
+		throw(Exception("Not a << Expression because Expect a Additive Expression", wordTable[p], 0));
 	}
 	// >> AdditiveExpression ShiftExpressionEliminateLeft
-	else if (wordTable[p].property == EnumProperties::OperatorRightShift) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorRightShift) {
 		p++;
 		if (AdditiveExpression()) {
 			if (ShiftExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a >> Expression because Expect a Additive Expression", wordTable[p]));
+		throw(Exception("Not a >> Expression because Expect a Additive Expression", wordTable[p], 0));
 	}
 	// 空
 	else {
@@ -527,44 +527,44 @@ bool GrammaticalAnalysis::RelationalExpressionEliminateLeft() {
 	int nowP = p;
 
 	// < ShiftExpression RelationalExpressionEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorSmallerThan) {
+	if (wordTable[p].property == EnumWordProperties::OperatorSmallerThan) {
 		p++;
 		if (ShiftExpression()) {
 			if (RelationalExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a < Relational Expression because Expect a Shift Expression", wordTable[p]));
+		throw(Exception("Not a < Relational Expression because Expect a Shift Expression", wordTable[p], 0));
 	}
 	// > ShiftExpression RelationalExpressionEliminateLeft
-	else if (wordTable[p].property == EnumProperties::OperatorGreaterThan) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorGreaterThan) {
 		p++;
 		if (ShiftExpression()) {
 			if (RelationalExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a > Relational Expression because Expect a Shift Expression", wordTable[p]));
+		throw(Exception("Not a > Relational Expression because Expect a Shift Expression", wordTable[p], 0));
 	}
 	// <= ShiftExpression RelationalExpressionEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorSmallerEqual) {
+	if (wordTable[p].property == EnumWordProperties::OperatorSmallerEqual) {
 		p++;
 		if (ShiftExpression()) {
 			if (RelationalExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a <= Relational Expression because Expect a Shift Expression", wordTable[p]));
+		throw(Exception("Not a <= Relational Expression because Expect a Shift Expression", wordTable[p], 0));
 	}
 	// >= ShiftExpression RelationalExpressionEliminateLeft
-	else if (wordTable[p].property == EnumProperties::OperatorGreaterEqual) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorGreaterEqual) {
 		p++;
 		if (ShiftExpression()) {
 			if (RelationalExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a >= Relational Expression because Expect a Shift Expression", wordTable[p]));
+		throw(Exception("Not a >= Relational Expression because Expect a Shift Expression", wordTable[p], 0));
 	}
 	// 空
 	else {
@@ -602,24 +602,24 @@ bool GrammaticalAnalysis::EqualityExpressionEliminateLeft() {
 	int nowP = p;
 
 	// == RelationalExpression EqualityExpressionEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorEqual) {
+	if (wordTable[p].property == EnumWordProperties::OperatorEqual) {
 		p++;
 		if (RelationalExpression()) {
 			if (EqualityExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a == Equality Expression because Expect a Relational Expression", wordTable[p]));
+		throw(Exception("Not a == Equality Expression because Expect a Relational Expression", wordTable[p], 0));
 	}
 	// != RelationalExpression EqualityExpressionEliminateLeft
-	else if (wordTable[p].property == EnumProperties::OperatorNotEqual) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorNotEqual) {
 		p++;
 		if (RelationalExpression()) {
 			if (EqualityExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a != Equality Expression because Expect a Relational Expression", wordTable[p]));
+		throw(Exception("Not a != Equality Expression because Expect a Relational Expression", wordTable[p], 0));
 	}
 	// 空
 	else {
@@ -657,14 +657,14 @@ bool GrammaticalAnalysis::BitAndExpressionEliminateLeft() {
 	int nowP = p;
 
 	// & EqualityExpression BitAndExpressionEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorBitAnd) {
+	if (wordTable[p].property == EnumWordProperties::OperatorBitAnd) {
 		p++;
 		if (EqualityExpression()) {
 			if (BitAndExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a & Expression because Expect a Equality Expression", wordTable[p]));
+		throw(Exception("Not a & Expression because Expect a Equality Expression", wordTable[p], 0));
 	}
 	// 空
 	else {
@@ -702,14 +702,14 @@ bool GrammaticalAnalysis::BitXOrExpressionEliminateLeft() {
 	int nowP = p;
 
 	// ^ BitAndExpression BitXOrExpressionEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorXOr) {
+	if (wordTable[p].property == EnumWordProperties::OperatorXOr) {
 		p++;
 		if (BitAndExpression()) {
 			if (BitXOrExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a ^ Expression because Expect a & Expression", wordTable[p]));
+		throw(Exception("Not a ^ Expression because Expect a & Expression", wordTable[p], 0));
 	}
 	// 空
 	else {
@@ -747,14 +747,14 @@ bool GrammaticalAnalysis::BitOrExpressionEliminateLeft() {
 	int nowP = p;
 
 	// | BitXOrExpression BitOrExpressionEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorBitOr) {
+	if (wordTable[p].property == EnumWordProperties::OperatorBitOr) {
 		p++;
 		if (BitXOrExpression()) {
 			if (BitOrExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a | Expression because Expect a ^ Expression", wordTable[p]));
+		throw(Exception("Not a | Expression because Expect a ^ Expression", wordTable[p], 0));
 	}
 	// 空
 	else {
@@ -792,14 +792,14 @@ bool GrammaticalAnalysis::AndExpressionEliminateLeft() {
 	int nowP = p;
 
 	// && BitOrExpression AndExpressionEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorAnd) {
+	if (wordTable[p].property == EnumWordProperties::OperatorAnd) {
 		p++;
 		if (BitOrExpression()) {
 			if (AndExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a && Expression because Expect a | Expression", wordTable[p]));
+		throw(Exception("Not a && Expression because Expect a | Expression", wordTable[p], 0));
 	}
 	// 空
 	else {
@@ -837,14 +837,14 @@ bool GrammaticalAnalysis::OrExpressionEliminateLeft() {
 	int nowP = p;
 
 	// || AndExpression OrExpressionEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorOr) {
+	if (wordTable[p].property == EnumWordProperties::OperatorOr) {
 		p++;
 		if (AndExpression()) {
 			if (OrExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a || Expression because Expect a && Expression", wordTable[p]));
+		throw(Exception("Not a || Expression because Expect a && Expression", wordTable[p], 0));
 	}
 	// 空
 	else {
@@ -863,18 +863,18 @@ bool GrammaticalAnalysis::ConditionalExpression() {
 	// OrExpression
 	if (OrExpression()) {
 		// OrExpression ? Expression : ConditionalExpression
-		if (wordTable[p].property == EnumProperties::OperatorQuestion) {
+		if (wordTable[p].property == EnumWordProperties::OperatorQuestion) {
 			p++;
 			if (Expression()) {
-				if (wordTable[p].property == EnumProperties::OperatorColon) {
+				if (wordTable[p].property == EnumWordProperties::OperatorColon) {
 					p++;
 					if (ConditionalExpression()) {
 						return true;
 					}
 				}
-				throw(Exception("Not a ? : Conditional Expression because Expect a :", wordTable[p]));
+				throw(Exception("Not a ? : Conditional Expression because Expect a :", wordTable[p], 0));
 			}
-			throw(Exception("Not a ? : Conditional Expression because Expect a Expression", wordTable[p]));
+			throw(Exception("Not a ? : Conditional Expression because Expect a Expression", wordTable[p], 0));
 		}
 		// OrExpression
 		else {
@@ -899,7 +899,7 @@ bool GrammaticalAnalysis::AssignmentExpression() {
 			if (AssignmentExpression()) {
 				return true;
 			}
-			throw(Exception("Not a Assignment Expression because Expect a Assignment Expression", wordTable[p]));
+			throw(Exception("Not a Assignment Expression because Expect a Assignment Expression", wordTable[p], 0));
 		}
 		p = nowP;
 	}
@@ -919,17 +919,17 @@ bool GrammaticalAnalysis::AssignmentOperator() {
 	// 保存当前指针
 	int nowP = p;
 
-	if (wordTable[p].property == EnumProperties::OperatorAssign ||
-		wordTable[p].property == EnumProperties::OperatorAddAssign ||
-		wordTable[p].property == EnumProperties::OperatorAndAssign ||
-		wordTable[p].property == EnumProperties::OperatorSubAssign ||
-		wordTable[p].property == EnumProperties::OperatorDivAssign ||
-		wordTable[p].property == EnumProperties::OperatorMulAssign ||
-		wordTable[p].property == EnumProperties::OperatorLeftShiftAssign ||
-		wordTable[p].property == EnumProperties::OperatorRightShiftAssign ||
-		wordTable[p].property == EnumProperties::OperatorOrAssign ||
-		wordTable[p].property == EnumProperties::OperatorModAssign ||
-		wordTable[p].property == EnumProperties::OperatorXOrAssign) {
+	if (wordTable[p].property == EnumWordProperties::OperatorAssign ||
+		wordTable[p].property == EnumWordProperties::OperatorAddAssign ||
+		wordTable[p].property == EnumWordProperties::OperatorAndAssign ||
+		wordTable[p].property == EnumWordProperties::OperatorSubAssign ||
+		wordTable[p].property == EnumWordProperties::OperatorDivAssign ||
+		wordTable[p].property == EnumWordProperties::OperatorMulAssign ||
+		wordTable[p].property == EnumWordProperties::OperatorLeftShiftAssign ||
+		wordTable[p].property == EnumWordProperties::OperatorRightShiftAssign ||
+		wordTable[p].property == EnumWordProperties::OperatorOrAssign ||
+		wordTable[p].property == EnumWordProperties::OperatorModAssign ||
+		wordTable[p].property == EnumWordProperties::OperatorXOrAssign) {
 		p++;
 		return true;
 	}
@@ -968,14 +968,14 @@ bool GrammaticalAnalysis::ExpressionEliminateLeft() {
 	int nowP = p;
 
 	// ,AssignmentExpression ExpressionEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorComma) {
+	if (wordTable[p].property == EnumWordProperties::OperatorComma) {
 		p++;
 		if (AssignmentExpression()) {
 			if (ExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a Expression because Expect a Assignment Expression", wordTable[p]));
+		throw(Exception("Not a Expression because Expect a Assignment Expression", wordTable[p], 0));
 	}
 	// 空
 	else {
@@ -995,11 +995,11 @@ bool GrammaticalAnalysis::Declaration() {
 	if (IsTypeName(wordTable[p])) {
 		p++;
 		if (InitDeclaratorList()) {
-			if (wordTable[p].property == EnumProperties::Semicolon) {
+			if (wordTable[p].property == EnumWordProperties::Semicolon) {
 				p++;
 				return true;
 			}
-			throw(Exception("Not a Declaration because Expect a ;", wordTable[p]));
+			throw(Exception("Not a Declaration because Expect a ;", wordTable[p], 0));
 		}
 		p = nowP;
 		return  false;
@@ -1039,7 +1039,7 @@ bool GrammaticalAnalysis::InitDeclaratorListEliminateLeft() {
 	int nowP = p;
 
 	// ,InitDeclarator InitDeclaratorListEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorComma) {
+	if (wordTable[p].property == EnumWordProperties::OperatorComma) {
 		p++;
 		if (InitDeclarator()) {
 			if (InitDeclaratorListEliminateLeft()) {
@@ -1066,7 +1066,7 @@ bool GrammaticalAnalysis::InitDeclarator() {
 	// DirectDeclarator
 	if (DirectDeclarator()) {
 		// DirectDeclarator = AssignmentExpression
-		if (wordTable[p].property == EnumProperties::OperatorAssign) {
+		if (wordTable[p].property == EnumWordProperties::OperatorAssign) {
 			p++;
 			if (AssignmentExpression()) {
 				return true;
@@ -1091,7 +1091,7 @@ bool GrammaticalAnalysis::DirectDeclarator() {
 	int nowP = p;
 
 	// Identifier DirectDeclaratorEliminateLeft
-	if (wordTable[p].property == EnumProperties::Identifier) {
+	if (wordTable[p].property == EnumWordProperties::Identifier) {
 		p++;
 		if (DirectDeclaratorEliminateLeft()) {
 			return true;
@@ -1115,10 +1115,10 @@ bool GrammaticalAnalysis::DirectDeclaratorEliminateLeft() {
 	int nowP = p;
 
 	// (ParameterList) DirectDeclaratorEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorLeftRound) {
+	if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 		p++;
 		if (ParameterList()) {
-			if (wordTable[p].property == EnumProperties::OperatorRightRound) {
+			if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
 				p++;
 				if (DirectDeclaratorEliminateLeft()) {
 					return true;
@@ -1166,7 +1166,7 @@ bool GrammaticalAnalysis::ParameterListEliminateLeft() {
 	int nowP = p;
 
 	// ,ParameterDeclaration ParameterListEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorComma) {
+	if (wordTable[p].property == EnumWordProperties::OperatorComma) {
 		p++;
 		if (ParameterDeclaration()) {
 			if (ParameterListEliminateLeft()) {
@@ -1213,7 +1213,7 @@ bool GrammaticalAnalysis::IdentifierList() {
 	int nowP = p;
 
 	// Identifier IdentifierListEliminateLeft
-	if (wordTable[p].property == EnumProperties::Identifier) {
+	if (wordTable[p].property == EnumWordProperties::Identifier) {
 		p++;
 		if (IdentifierListEliminateLeft()) {
 			return true;
@@ -1237,9 +1237,9 @@ bool GrammaticalAnalysis::IdentifierListEliminateLeft() {
 	int nowP = p;
 
 	// ,Identifier IdentifierListEliminateLeft
-	if (wordTable[p].property == EnumProperties::OperatorComma) {
+	if (wordTable[p].property == EnumWordProperties::OperatorComma) {
 		p++;
-		if (wordTable[p].property == EnumProperties::Identifier) {
+		if (wordTable[p].property == EnumWordProperties::Identifier) {
 			p++;
 			if (IdentifierListEliminateLeft()) {
 				return true;
@@ -1263,31 +1263,31 @@ bool GrammaticalAnalysis::Statement() {
 	int nowP = p;
 
 	// Goto Continue Break Return 是跳转语句
-	if (wordTable[p].property == EnumProperties::Goto ||
-		wordTable[p].property == EnumProperties::Continue ||
-		wordTable[p].property == EnumProperties::Break ||
-		wordTable[p].property == EnumProperties::Return) {
+	if (wordTable[p].property == EnumWordProperties::Goto ||
+		wordTable[p].property == EnumWordProperties::Continue ||
+		wordTable[p].property == EnumWordProperties::Break ||
+		wordTable[p].property == EnumWordProperties::Return) {
 		JumpStatement();
 		return true;
 	}
 	// If 是选择语句
-	else if (wordTable[p].property == EnumProperties::If) {
+	else if (wordTable[p].property == EnumWordProperties::If) {
 		SelectionStatement();
 		return true;
 	}
 	// { 是复合语句
-	else if (wordTable[p].property == EnumProperties::OperatorLeftBrace) {
+	else if (wordTable[p].property == EnumWordProperties::OperatorLeftBrace) {
 		CompoundStatement();
 		return true;
 	}
 	// While Do 是迭代语句
-	else if (wordTable[p].property == EnumProperties::While ||
-		wordTable[p].property == EnumProperties::Do) {
+	else if (wordTable[p].property == EnumWordProperties::While ||
+		wordTable[p].property == EnumWordProperties::Do) {
 		IterationStatement();
 		return true;
 	}
 	// 空语句 是表达式语句
-	else if (wordTable[p].property == EnumProperties::Semicolon) {
+	else if (wordTable[p].property == EnumWordProperties::Semicolon) {
 		ExpressionStatement();
 		return true;
 	}
@@ -1314,14 +1314,14 @@ bool GrammaticalAnalysis::LabeledStatement() {
 	int nowP = p;
 
 	// Identifier : Statement
-	if (wordTable[p].property == EnumProperties::Identifier) {
+	if (wordTable[p].property == EnumWordProperties::Identifier) {
 		p++;
-		if (wordTable[p].property == EnumProperties::OperatorColon) {
+		if (wordTable[p].property == EnumWordProperties::OperatorColon) {
 			p++;
 			if (Statement()) {
 				return true;
 			}
-			throw(Exception("Not a Labeled Statement because Expect a Statement", wordTable[p]));
+			throw(Exception("Not a Labeled Statement because Expect a Statement", wordTable[p], 0));
 		}
 		p = nowP;
 		return false;
@@ -1340,18 +1340,18 @@ bool GrammaticalAnalysis::CompoundStatement() {
 	int nowP = p;
 
 	// { BlockItemList }
-	if (wordTable[p].property == EnumProperties::OperatorLeftBrace) {
+	if (wordTable[p].property == EnumWordProperties::OperatorLeftBrace) {
 		p++;
 		if (BlockItemList()) {
-			if (wordTable[p].property == EnumProperties::OperatorRightBrace) {
+			if (wordTable[p].property == EnumWordProperties::OperatorRightBrace) {
 				p++;
 				return true;
 			}
-			throw(Exception("Not a Compound Statement because Expect a }", wordTable[p]));
+			throw(Exception("Not a Compound Statement because Expect a }", wordTable[p], 0));
 		}
-		throw(Exception("Not a Compound Statement because Expect a Block Item", wordTable[p]));
+		throw(Exception("Not a Compound Statement because Expect a Block Item", wordTable[p], 0));
 	}
-	throw(Exception("Not a Compound Statement because Expect a {", wordTable[p]));
+	throw(Exception("Not a Compound Statement because Expect a {", wordTable[p], 0));
 }
 
 // func    块项目列表识别
@@ -1426,17 +1426,17 @@ bool GrammaticalAnalysis::ExpressionStatement() {
 	int nowP = p;
 
 	// ;
-	if (wordTable[p].property == EnumProperties::Semicolon) {
+	if (wordTable[p].property == EnumWordProperties::Semicolon) {
 		p++;
 		return true;
 	}
 	// Expression;
 	else if (Expression()) {
-		if (wordTable[p].property == EnumProperties::Semicolon) {
+		if (wordTable[p].property == EnumWordProperties::Semicolon) {
 			p++;
 			return true;
 		}
-		throw(Exception("Not a Expression Statement because Exprect a ;", wordTable[p]));
+		throw(Exception("Not a Expression Statement because Exprect a ;", wordTable[p], 0));
 	}
 	else {
 		p = nowP;
@@ -1452,16 +1452,16 @@ bool GrammaticalAnalysis::SelectionStatement() {
 	int nowP = p;
 
 	// If (Expression) Statement
-	if (wordTable[p].property == EnumProperties::If) {
+	if (wordTable[p].property == EnumWordProperties::If) {
 		p++;
-		if (wordTable[p].property == EnumProperties::OperatorLeftRound) {
+		if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 			p++;
 			if (Expression()) {
-				if (wordTable[p].property == EnumProperties::OperatorRightRound) {
+				if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
 					p++;
 					if (Statement()) {
 						// If (Expression) Statement Else Statement
-						if (wordTable[p].property == EnumProperties::Else) {
+						if (wordTable[p].property == EnumWordProperties::Else) {
 							p++;
 							if (Statement()) {
 								return true;
@@ -1472,15 +1472,15 @@ bool GrammaticalAnalysis::SelectionStatement() {
 							return true;
 						}
 					}
-					throw(Exception("Not a if Statement because Exprect a Statement", wordTable[p]));
+					throw(Exception("Not a if Statement because Exprect a Statement", wordTable[p], 0));
 				}
-				throw(Exception("Not a if Statement because Exprect a )", wordTable[p]));
+				throw(Exception("Not a if Statement because Exprect a )", wordTable[p], 0));
 			}
-			throw(Exception("Not a if Statement because Exprect a Expression", wordTable[p]));
+			throw(Exception("Not a if Statement because Exprect a Expression", wordTable[p], 0));
 		}
-		throw(Exception("Not a if Statement because Exprect a (", wordTable[p]));
+		throw(Exception("Not a if Statement because Exprect a (", wordTable[p], 0));
 	}
-	throw(Exception("Not a if Statement", wordTable[p]));
+	throw(Exception("Not a if Statement", wordTable[p], 0));
 }
 
 // func    迭代语句识别
@@ -1491,47 +1491,47 @@ bool GrammaticalAnalysis::IterationStatement() {
 	int nowP = p;
 
 	// While(Expression) Statement
-	if (wordTable[p].property == EnumProperties::While) {
+	if (wordTable[p].property == EnumWordProperties::While) {
 		p++;
-		if (wordTable[p].property == EnumProperties::OperatorLeftRound) {
+		if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 			p++;
 			if (Expression()) {
-				if (wordTable[p].property == EnumProperties::OperatorRightRound) {
+				if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
 					p++;
 					if (Statement()) {
 						return true;
 					}
 				}
-				throw(Exception("Not a while Statement because Exprect a )", wordTable[p]));
+				throw(Exception("Not a while Statement because Exprect a )", wordTable[p], 0));
 			}
-			throw(Exception("Not a while Statement because Exprect a Expression", wordTable[p]));
+			throw(Exception("Not a while Statement because Exprect a Expression", wordTable[p], 0));
 		}
-		throw(Exception("Not a while Statement because Exprect a (", wordTable[p]));
+		throw(Exception("Not a while Statement because Exprect a (", wordTable[p], 0));
 	}
 	// Do Statement While(Expression);
-	if (wordTable[p].property == EnumProperties::Do) {
+	if (wordTable[p].property == EnumWordProperties::Do) {
 		p++;
 		if (Statement()) {
-			if (wordTable[p].property == EnumProperties::While) {
+			if (wordTable[p].property == EnumWordProperties::While) {
 				p++;
-				if (wordTable[p].property == EnumProperties::OperatorLeftRound) {
+				if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 					p++;
 					if (Expression()) {
-						if (wordTable[p].property == EnumProperties::OperatorRightRound) {
+						if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
 							p++;
 							return true;
 						}
-						throw(Exception("Not a do while Statement because Exprect a )", wordTable[p]));
+						throw(Exception("Not a do while Statement because Exprect a )", wordTable[p], 0));
 					}
-					throw(Exception("Not a do while Statement because Exprect a Expression", wordTable[p]));
+					throw(Exception("Not a do while Statement because Exprect a Expression", wordTable[p], 0));
 				}
-				throw(Exception("Not a do while Statement because Exprect a (", wordTable[p]));
+				throw(Exception("Not a do while Statement because Exprect a (", wordTable[p], 0));
 			}
-			throw(Exception("Not a do while Statement because Exprect a while", wordTable[p]));
+			throw(Exception("Not a do while Statement because Exprect a while", wordTable[p], 0));
 		}
-		throw(Exception("Not a do while Statement because Exprect a Statement", wordTable[p]));
+		throw(Exception("Not a do while Statement because Exprect a Statement", wordTable[p], 0));
 	}
-	throw(Exception("Not a IterationStatement Statement", wordTable[p]));
+	throw(Exception("Not a IterationStatement Statement", wordTable[p], 0));
 }
 
 // func    跳转语句识别
@@ -1542,54 +1542,54 @@ bool GrammaticalAnalysis::JumpStatement() {
 	int nowP = p;
 
 	// Goto Identifier;
-	if (wordTable[p].property == EnumProperties::Goto) {
+	if (wordTable[p].property == EnumWordProperties::Goto) {
 		p++;
-		if (wordTable[p].property == EnumProperties::Identifier) {
+		if (wordTable[p].property == EnumWordProperties::Identifier) {
 			p++;
-			if (wordTable[p].property == EnumProperties::Semicolon) {
+			if (wordTable[p].property == EnumWordProperties::Semicolon) {
 				p++;
 				return true;
 			}
-			throw(Exception("Not a goto Statement because Exprect a ;", wordTable[p]));
+			throw(Exception("Not a goto Statement because Exprect a ;", wordTable[p], 0));
 		}
-		throw(Exception("Not a goto Statement because Exprect a Identifier", wordTable[p]));
+		throw(Exception("Not a goto Statement because Exprect a Identifier", wordTable[p], 0));
 	}
 	// Continue;
-	else if (wordTable[p].property == EnumProperties::Continue) {
+	else if (wordTable[p].property == EnumWordProperties::Continue) {
 		p++;
-		if (wordTable[p].property == EnumProperties::Semicolon) {
+		if (wordTable[p].property == EnumWordProperties::Semicolon) {
 			p++;
 			return true;
 		}
-		throw(Exception("Not a continue Statement because Exprect a ;", wordTable[p]));
+		throw(Exception("Not a continue Statement because Exprect a ;", wordTable[p], 0));
 	}
 	// Break;
-	else if (wordTable[p].property == EnumProperties::Break) {
+	else if (wordTable[p].property == EnumWordProperties::Break) {
 		p++;
-		if (wordTable[p].property == EnumProperties::Semicolon) {
+		if (wordTable[p].property == EnumWordProperties::Semicolon) {
 			p++;
 			return true;
 		}
-		throw(Exception("Not a break Statement because Exprect a ;", wordTable[p]));
+		throw(Exception("Not a break Statement because Exprect a ;", wordTable[p], 0));
 	}
 	// Return
-	else if (wordTable[p].property == EnumProperties::Return) {
+	else if (wordTable[p].property == EnumWordProperties::Return) {
 		p++;
 		// Return;
-		if (wordTable[p].property == EnumProperties::Semicolon) {
+		if (wordTable[p].property == EnumWordProperties::Semicolon) {
 			p++;
 			return true;
 		}
 		// Return Expression;
 		else if (Expression()) {
-			if (wordTable[p].property == EnumProperties::Semicolon) {
+			if (wordTable[p].property == EnumWordProperties::Semicolon) {
 				p++;
 				return true;
 			}
 		}
-		throw(Exception("Not a Return Statement", wordTable[p]));
+		throw(Exception("Not a Return Statement", wordTable[p], 0));
 	}
-	throw(Exception("Not a Jump Statement", wordTable[p]));
+	throw(Exception("Not a Jump Statement", wordTable[p], 0));
 }
 
 // func    翻译单元识别
@@ -1606,7 +1606,7 @@ bool GrammaticalAnalysis::TranslationUnit() {
 		}
 	}
 
-	throw(Exception("Not a Translation Unit", wordTable[p]));
+	throw(Exception("Not a Translation Unit", wordTable[p], 0));
 }
 
 // func    翻译单元消除左递归识别
@@ -1640,21 +1640,21 @@ bool GrammaticalAnalysis::ExternalDeclaration() {
 	int firstSemicolon = p;
 	int firstLeftBrace = p;
 	for (int i = p; true; i++) {
-		if (wordTable[i].property == EnumProperties::Semicolon) {
+		if (wordTable[i].property == EnumWordProperties::Semicolon) {
 			firstSemicolon = i;
 			break;
 		}
-		if (wordTable[i].property == EnumProperties::TimeToStop) {
+		if (wordTable[i].property == EnumWordProperties::TimeToStop) {
 			firstSemicolon = -1;
 			break;
 		}
 	}
 	for (int i = p; true; i++) {
-		if (wordTable[i].property == EnumProperties::OperatorLeftBrace) {
+		if (wordTable[i].property == EnumWordProperties::OperatorLeftBrace) {
 			firstLeftBrace = i;
 			break;
 		}
-		if (wordTable[i].property == EnumProperties::TimeToStop) {
+		if (wordTable[i].property == EnumWordProperties::TimeToStop) {
 			firstLeftBrace = -1;
 			break;
 		}
@@ -1685,7 +1685,7 @@ bool GrammaticalAnalysis::ExternalDeclaration() {
 			return true;
 		}
 	}
-	throw(Exception("Not a Function Definition or a Declaration", wordTable[p]));
+	throw(Exception("Not a Function Definition or a Declaration", wordTable[p], 0));
 }
 
 // func    函数定义识别
@@ -1701,7 +1701,7 @@ bool GrammaticalAnalysis::FunctionDefinition() {
 		if (DirectDeclarator()) {
 			// 必然以 { 开头
 			// TypeName DirectDeclarator CompoundStatement
-			if (wordTable[p].property == EnumProperties::OperatorLeftBrace) {
+			if (wordTable[p].property == EnumWordProperties::OperatorLeftBrace) {
 				if (CompoundStatement()) {
 					return true;
 				}
@@ -1713,9 +1713,9 @@ bool GrammaticalAnalysis::FunctionDefinition() {
 				}
 			}
 		}
-		throw(Exception("Not a Direct Declarator", wordTable[p]));
+		throw(Exception("Not a Direct Declarator", wordTable[p], 0));
 	}
-	throw(Exception("Not a Function Definition because Expect a Type Name", wordTable[p]));
+	throw(Exception("Not a Function Definition because Expect a Type Name", wordTable[p], 0));
 }
 
 // func    声明列表识别
@@ -1731,7 +1731,7 @@ bool GrammaticalAnalysis::DeclarationList() {
 			return true;
 		}
 	}
-	throw(Exception("Not a Declaration", wordTable[p]));
+	throw(Exception("Not a Declaration", wordTable[p], 0));
 }
 
 // func    声明列表消除左递归识别
@@ -1764,12 +1764,12 @@ bool GrammaticalAnalysis::DeclarationListEliminateLeft() {
 // param   
 // return  
 bool GrammaticalAnalysis::IsTypeName(Word w) {
-	if (w.property == EnumProperties::Bool ||
-		w.property == EnumProperties::Char ||
-		w.property == EnumProperties::Int ||
-		w.property == EnumProperties::Float ||
-		w.property == EnumProperties::Double ||
-		w.property == EnumProperties::Enum) {
+	if (w.property == EnumWordProperties::Bool ||
+		w.property == EnumWordProperties::Char ||
+		w.property == EnumWordProperties::Int ||
+		w.property == EnumWordProperties::Float ||
+		w.property == EnumWordProperties::Double ||
+		w.property == EnumWordProperties::Enum) {
 		return true;
 	}
 	else {
@@ -1781,12 +1781,12 @@ bool GrammaticalAnalysis::IsTypeName(Word w) {
 // param   
 // return  
 bool GrammaticalAnalysis::IsNumberLiteralValue(Word w) {
-	if (w.property == EnumProperties::TenIntNumber ||
-		w.property == EnumProperties::EightIntNumber ||
-		w.property == EnumProperties::SixteenIntNumber ||
-		w.property == EnumProperties::FloatNumber ||
-		w.property == EnumProperties::FloatEeNumber ||
-		w.property == EnumProperties::CharNumber) {
+	if (w.property == EnumWordProperties::TenIntNumber ||
+		w.property == EnumWordProperties::EightIntNumber ||
+		w.property == EnumWordProperties::SixteenIntNumber ||
+		w.property == EnumWordProperties::FloatNumber ||
+		w.property == EnumWordProperties::FloatEeNumber ||
+		w.property == EnumWordProperties::CharNumber) {
 		return true;
 	}
 	else {
@@ -1799,7 +1799,7 @@ bool GrammaticalAnalysis::IsNumberLiteralValue(Word w) {
 // return  
 bool GrammaticalAnalysis::IsLiteralValue(Word w) {
 	if (IsNumberLiteralValue(w) ||
-		w.property == EnumProperties::String) {
+		w.property == EnumWordProperties::String) {
 		return true;
 	}
 	else {
