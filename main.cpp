@@ -6,7 +6,7 @@ int main(void) {
 	wordTableSource.resize(MAX_WORD_TABLE);
 
 	// 导入源代码文件
-	char source[] = ".\\Tests\\expression.cpp";
+	char source[] = ".\\Tests\\function.cpp";
 	LexicalAnalysis lexical = LexicalAnalysis(source, wordTableSource);
 	//GrammaticalAnalysis grammatical = GrammaticalAnalysis(wordTableSource);
 	SemanticAnalysis semantic = SemanticAnalysis(wordTableSource);

@@ -1769,7 +1769,9 @@ bool GrammaticalAnalysis::IsTypeName(Word w) {
 		w.property == EnumWordProperties::Int ||
 		w.property == EnumWordProperties::Float ||
 		w.property == EnumWordProperties::Double ||
-		w.property == EnumWordProperties::Enum) {
+		w.property == EnumWordProperties::StringType ||
+		w.property == EnumWordProperties::Enum ||
+		w.property == EnumWordProperties::Void) {
 		return true;
 	}
 	else {

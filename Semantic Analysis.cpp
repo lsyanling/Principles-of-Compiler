@@ -83,7 +83,8 @@ bool SemanticAnalysis::PrimaryExpression() {
 		wordTable[p].property == EnumWordProperties::SixteenIntNumber ||
 		wordTable[p].property == EnumWordProperties::FloatNumber ||
 		wordTable[p].property == EnumWordProperties::FloatEeNumber ||
-		wordTable[p].property == EnumWordProperties::CharNumber) {
+		wordTable[p].property == EnumWordProperties::CharNumber ||
+		wordTable[p].property == EnumWordProperties::String) {
 		// 语义动作
 			{
 				// 返回值入求值栈
@@ -165,9 +166,62 @@ bool SemanticAnalysis::PostfixExpressionEliminateLeft() {
 	// (ArgumentExpressionList) PostfixExpressionEliminateLeft
 	else if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 		p++;
+		// 语义动作
+		{
+			bool isFunction = false;
+			// 取栈顶 查看是否是函数
+			auto lastReturnValue = returnValueStack.returnValueStack.top();
+			for (auto& i : functionTable.functionTable) {
+				if (i.value == lastReturnValue->value) {
+					isFunction = true;
+					break;
+				}
+			}
+			if (!isFunction) {
+				// 不是函数
+				throw(Exception("Not a Function", wordTable[p], 1));
+			}
+			// 函数调用表达式 下面是实参 除void类型外每个实参入栈
+		}
 		if (ArgumentExpressionList()) {
 			if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
 				p++;
+				// 语义动作
+				{
+					// 取函数名
+					auto lastReturnValue = returnValueStack.returnValueStack.top();
+					// 函数名出栈
+					returnValueStack.returnValueStack.pop();
+
+					// 取函数返回值类型
+					EnumWordProperties e;
+					for (auto& i : functionTable.functionTable) {
+						if (i.value == lastReturnValue->value) {
+							// 参数计算重置
+							i.currentParameter = 0;
+							e = i.returnType;
+							break;
+						}
+					}
+
+					// 实参入栈完毕 调用函数
+					fourTable.AddFour("push", std::to_string(fourTable.nowFourLine + 2), "", "");
+					fourTable.nowFourLine++;
+					fourTable.AddFour("call", lastReturnValue->value, "", "");
+					fourTable.nowFourLine++;
+					// 取临时变量 生成四元式
+					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
+					tempVariableTablePointer++;
+					// 调用完毕 取返回值
+					fourTable.AddFour("pop", "", "", tempVarName);
+					fourTable.nowFourLine++;
+
+					// 入求值栈 返回值类型即临时变量类型 实际是函数返回值类型
+					returnValueStack.returnValueStack.push(new TempVariable(e, tempVarName));
+					// 设置最后一次返回值类型
+					returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
+					returnValueStack.lastReturnValueType = e;
+				}
 				if (PostfixExpressionEliminateLeft()) {
 					return true;
 				}
@@ -289,7 +343,31 @@ bool SemanticAnalysis::ArgumentExpressionList() {
 
 	// AssignmentExpression ArgumentExpressionListEliminateLeft
 	if (AssignmentExpression()) {
+		// 语义动作
+		{
+			// 取实参值
+			auto lastReturnValue2 = returnValueStack.returnValueStack.top();
+			returnValueStack.returnValueStack.pop();
+			// 取形参类型
+			auto lastReturnValue1 = returnValueStack.returnValueStack.top();
+			EnumWordProperties e;
+			for (auto& i : functionTable.functionTable) {
+				if (i.value == lastReturnValue1->value) {
+					e = i.parameterType[i.currentParameter++];
+					break;
+				}
+			}
+			// 类型转换 不写了
+			//if (returnValueStack.lastReturnValueType != e) {
+			//	throw(Exception("实参的类型转换 暂时不想写了 就当转换了吧", wordTable[p], 0));
+			//}
+
+			// 生成四元式 从左向右压栈
+			fourTable.AddFour("push", lastReturnValue2->value, "", "");
+			fourTable.nowFourLine++;
+		}
 		if (ArgumentExpressionListEliminateLeft()) {
+
 			return true;
 		}
 		else {
@@ -314,6 +392,29 @@ bool SemanticAnalysis::ArgumentExpressionListEliminateLeft() {
 	if (wordTable[p].property == EnumWordProperties::OperatorComma) {
 		p++;
 		if (AssignmentExpression()) {
+			// 语义动作
+			{
+				// 取实参值
+				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
+				returnValueStack.returnValueStack.pop();
+				// 取形参类型
+				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
+				EnumWordProperties e;
+				for (auto& i : functionTable.functionTable) {
+					if (i.value == lastReturnValue1->value) {
+						e = i.parameterType[i.currentParameter++];
+						break;
+					}
+				}
+				// 类型转换 不写了
+				//if (returnValueStack.lastReturnValueType != e) {
+				//	throw(Exception("实参的类型转换 暂时不想写了 就当转换了吧", wordTable[p], 0));
+				//}
+
+				// 生成四元式 从左向右压栈
+				fourTable.AddFour("push", lastReturnValue2->value, "", "");
+				fourTable.nowFourLine++;
+			}
 			if (ArgumentExpressionListEliminateLeft()) {
 				return true;
 			}
@@ -2123,15 +2224,47 @@ bool SemanticAnalysis::AndExpressionEliminateLeft() {
 	// && BitOrExpression AndExpressionEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::OperatorAnd) {
 		p++;
+		// 语义动作
+		{
+			// 栈顶值转 bool 值
+			ToBool();
+			// 取 bool 值
+			auto lastReturnValue = returnValueStack.returnValueStack.top();
+			returnValueStack.returnValueStack.pop();
+
+			// 回填行号入栈
+			andBackFillStack.push(fourTable.nowFourLine);
+
+			// 跳转语句 待回填
+			fourTable.AddFour("jz", lastReturnValue->value, "", "");
+			fourTable.nowFourLine++;
+		}
 		if (BitOrExpression()) {
 			if (AndExpressionEliminateLeft()) {
 				return true;
 			}
 		}
-		throw(Exception("Not a && Expression because Expect a | Expression", wordTable[p], 0));
+		throw(Exception("Not a && Expression because Expect a || Expression", wordTable[p], 0));
 	}
 	// 空
 	else {
+		// 语义动作
+		{
+			// 只有在需要回填的时候才执行 防止不必要的 bool 转换
+			if (andBackFillStack.size()) {
+
+				// 栈顶值转 bool 值 整个逻辑与表达式的值即当前栈顶的 bool 值
+				ToBool();
+
+				// 回填栈中所有行号
+				while (andBackFillStack.size()) {
+					int i = andBackFillStack.top();
+					andBackFillStack.pop();
+					// 指向把 0 给临时变量的行
+					fourTable.table[i].dest = std::to_string(fourTable.nowFourLine - 1);
+				}
+			}
+		}
 		p = nowP;
 		return true;
 	}
@@ -2168,6 +2301,21 @@ bool SemanticAnalysis::OrExpressionEliminateLeft() {
 	// || AndExpression OrExpressionEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::OperatorOr) {
 		p++;
+		// 语义动作
+		{
+			// 栈顶值转 bool 值
+			ToBool();
+			// 取 bool 值
+			auto lastReturnValue = returnValueStack.returnValueStack.top();
+			returnValueStack.returnValueStack.pop();
+
+			// 回填行号入栈
+			orBackFillStack.push(fourTable.nowFourLine);
+
+			// 跳转语句 待回填
+			fourTable.AddFour("jnz", lastReturnValue->value, "", "");
+			fourTable.nowFourLine++;
+		}
 		if (AndExpression()) {
 			if (OrExpressionEliminateLeft()) {
 				return true;
@@ -2177,6 +2325,23 @@ bool SemanticAnalysis::OrExpressionEliminateLeft() {
 	}
 	// 空
 	else {
+		// 语义动作
+		{
+			// 只有在需要回填的时候才执行 防止不必要的 bool 转换
+			if (orBackFillStack.size()) {
+
+				// 栈顶值转 bool 值 整个逻辑与表达式的值即当前栈顶的 bool 值
+				ToBool();
+
+				// 回填栈中所有行号
+				while (orBackFillStack.size()) {
+					int i = orBackFillStack.top();
+					orBackFillStack.pop();
+					// 指向把 1 给临时变量的行
+					fourTable.table[i].dest = std::to_string(fourTable.nowFourLine - 3);
+				}
+			}
+		}
 		p = nowP;
 		return true;
 	}
@@ -2578,13 +2743,17 @@ bool SemanticAnalysis::InitDeclarator() {
 					if ((declarationTypeName == EnumWordProperties::Int &&
 						IsTrueInt(lastReturnValue->getWordProperties())) ||
 						(declarationTypeName == EnumWordProperties::Float &&
-							IsFloat(lastReturnValue->getWordProperties()))) {
+							IsFloat(lastReturnValue->getWordProperties())) ||
+						(declarationTypeName == EnumWordProperties::StringType &&
+							lastReturnValue->getWordProperties() == EnumWordProperties::String) ||
+						(declarationTypeName == EnumWordProperties::Char &&
+							lastReturnValue->getWordProperties() == EnumWordProperties::CharNumber)) {
 						// 初始化四元式
 						fourTable.AddFour("=", lastReturnValue->value, "", declarationIdentifier.value);
 						fourTable.nowFourLine++;
 					}
 					// 类型转换
-					if (!((IsFloat(declarationTypeName) &&
+					else if (!((IsFloat(declarationTypeName) &&
 						IsFloat(lastReturnValue->getWordProperties())) ||
 						(IsTrueInt(declarationTypeName) &&
 							(IsTrueInt(lastReturnValue->getWordProperties())) ||
@@ -2594,7 +2763,7 @@ bool SemanticAnalysis::InitDeclarator() {
 						if (lastReturnValue->getWordProperties() == EnumWordProperties::String ||
 							lastReturnValue->getWordProperties() == EnumWordProperties::Function) {
 							// 语义错误
-							throw(Exception("Can't Cast To Bool", wordTable[p], 1));
+							throw(Exception("Can't Cast", wordTable[p], 1));
 						}
 						// 转为 Bool
 						if (declarationTypeName == EnumWordProperties::Bool) {
@@ -2648,6 +2817,15 @@ bool SemanticAnalysis::InitDeclarator() {
 							// 语义错误
 							throw(Exception("Can't Cast From Float To Char", wordTable[p], 1));
 						}
+						// 其他 转 String 错误
+						else if (declarationTypeName == EnumWordProperties::StringType) {
+							// 语义错误
+							throw(Exception("Can't Cast To String", wordTable[p], 1));
+						}
+
+						// 转换完了 初始化
+						fourTable.AddFour("=", lastReturnValue->value, "", declarationIdentifier.value);
+						fourTable.nowFourLine++;
 					}
 				}
 				return true;
@@ -2676,16 +2854,29 @@ bool SemanticAnalysis::DirectDeclarator() {
 	if (wordTable[p].property == EnumWordProperties::Identifier) {
 		// 语义动作
 		{
+			bool isFunction = false;
+			// 看是不是函数
+			for (auto& i : functionTable.functionTable) {
+				// 是函数
+				if (i.value == wordTable[p].word) {
+					lastFunctionIdentifier = wordTable[p].word;
+					isFunction = true;
+					break;
+				}
+			}
+			
 			// 查找当前表 是否重定义
 			auto [returnBool, id] = SearchIdentifierInCurrentTable(identifierTablePointer, wordTable[p].word);
 			// 重定义
-			if (returnBool) {
+			if (!isFunction&&returnBool) {
 				// 语义错误
 				throw(Exception("Identifier have defined", wordTable[p], 1));
 			}
-			// 标识符入表 暂存该标识符
-			declarationIdentifier = Identifier(declarationTypeName, wordTable[p].word);
-			identifierTablePointer->AddIdentifier(Identifier(declarationTypeName, wordTable[p].word));
+			if (!returnBool) {
+				// 标识符入表 暂存该标识符
+				declarationIdentifier = Identifier(declarationTypeName, wordTable[p].word);
+				identifierTablePointer->AddIdentifier(Identifier(declarationTypeName, wordTable[p].word));
+			}
 		}
 		p++;
 		if (DirectDeclaratorEliminateLeft()) {
@@ -2712,13 +2903,44 @@ bool SemanticAnalysis::DirectDeclaratorEliminateLeft() {
 	// (ParameterList) DirectDeclaratorEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 		p++;
+		// 语义动作
+		// 说明是函数 可以准备送入函数表了
+		{
+			bool isDefined = false;
+			// 重定义
+			for (auto& i : functionTable.functionTable) {
+				if (i.value == identifierTablePointer->table[identifierTablePointer->IdentifierNumber - 1].value) {
+					isDefined = true;
+				}
+			}
+			if (!isDefined) {
+				// 函数符入函数表
+				functionTable.AddFunction(FunctionIdentifier(declarationTypeName,
+					identifierTablePointer->table[identifierTablePointer->IdentifierNumber - 1].value));
+			}
+
+			// 由于接下来是参数列表 参数列表中的每个参数声明由声明类型和直接声明符组成
+			// 直接声明符会查看标识符重定义 因此函数声明需要一个新的作用域
+			// 新的作用域 函数头到函数尾将是一个表
+			identifierTablePointer = new IdentifierTable(identifierTablePointer);
+			// 这张表要交给后面的块
+			functionHeadIdentifierTablePointer = identifierTablePointer;
+		}
+		// 在参数列表中 每个参数被添加到函数表顶的函数里
 		if (ParameterList()) {
 			if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
 				p++;
+				// 语义动作
+				{
+					// 函数头部分结束了 表被收起来 但函数头作用域保留 以便合入
+					identifierTablePointer = identifierTablePointer->fatherTablePointer;
+				}
+				// 这里看不懂 连续的 (ParameterList) ?
 				if (DirectDeclaratorEliminateLeft()) {
 					return true;
 				}
 			}
+			throw(Exception("Not a Function Declaration because Expect a )", wordTable[p], 0));
 		}
 		p = nowP;
 		return false;
@@ -2789,64 +3011,20 @@ bool SemanticAnalysis::ParameterDeclaration() {
 	if (IsTypeName(wordTable[p])) {
 		p++;
 		if (DirectDeclarator()) {
-			return true;
-		}
-		p = nowP;
-		return false;
-	}
-	else {
-		p = nowP;
-		return false;
-	}
-}
-
-// func    标识符列表识别
-// param   
-// return  
-bool SemanticAnalysis::IdentifierList() {
-	// 保存当前指针
-	int nowP = p;
-
-	// Identifier IdentifierListEliminateLeft
-	if (wordTable[p].property == EnumWordProperties::Identifier) {
-		p++;
-		if (IdentifierListEliminateLeft()) {
-			return true;
-		}
-		else {
-			p = nowP;
-			return false;
-		}
-	}
-	else {
-		p = nowP;
-		return false;
-	}
-}
-
-// func    标识符列表消除左递归识别
-// param   
-// return  
-bool SemanticAnalysis::IdentifierListEliminateLeft() {
-	// 保存当前指针
-	int nowP = p;
-
-	// ,Identifier IdentifierListEliminateLeft
-	if (wordTable[p].property == EnumWordProperties::OperatorComma) {
-		p++;
-		if (wordTable[p].property == EnumWordProperties::Identifier) {
-			p++;
-			if (IdentifierListEliminateLeft()) {
-				return true;
+			// 语义动作
+			{
+				// 参数到手 向函数符里添加参数类型
+				functionTable.functionTable[functionTable.FunctionNumber - 1].AddParameter(declarationTypeName);
 			}
+			return true;
 		}
+		throw(Exception("Not a Parameter Declaration because Expect a Identifier", wordTable[p], 0));
 		p = nowP;
 		return false;
 	}
-	// 空
 	else {
 		p = nowP;
-		return true;
+		return false;
 	}
 }
 
@@ -2912,6 +3090,25 @@ bool SemanticAnalysis::LabeledStatement() {
 	if (wordTable[p].property == EnumWordProperties::Identifier) {
 		p++;
 		if (wordTable[p].property == EnumWordProperties::OperatorColon) {
+			// 语义动作
+			{
+				// 这里要把标签放入标签表
+				// 取标签表栈顶
+				auto& labelTable = labelTableStack.top();
+				auto [exist, defined, i] = labelTable.SearchLabelIdentifier(wordTable[p - 1].word);
+				// 重定义
+				if (exist && defined) {
+					throw(Exception("Label have defined", wordTable[p - 1], 1));
+				}
+				if (exist) {
+					labelTable.definedLabel[i] = true;
+					labelTable.backFillLines[i] = fourTable.nowFourLine;
+				}
+				else {
+					// 该已定义标签入表
+					labelTable.AddDefinedLabel(fourTable.nowFourLine, wordTable[p - 1].word);
+				}
+			}
 			p++;
 			if (Statement()) {
 				return true;
@@ -2941,6 +3138,33 @@ bool SemanticAnalysis::CompoundStatement() {
 		{
 			// 新的作用域
 			identifierTablePointer = new IdentifierTable(identifierTablePointer);
+
+			// 是否为函数块
+			if (functionLeftCompound) {
+				// 将表合入
+				for (auto& i : (functionHeadIdentifierTablePointer->table)) {
+					identifierTablePointer->AddIdentifier(i);
+				}
+				// 函数块标志置 false
+				functionLeftCompound = false;
+
+				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
+				tempVariableTablePointer++;
+				// 出栈调用位置
+				fourTable.AddFour("pop", "", "", tempVarName);
+				fourTable.nowFourLine++;
+
+				// 形参出栈
+				for (auto& i : identifierTablePointer->table) {
+					// 四元式
+					fourTable.AddFour("pop", "", "", i.value);
+					fourTable.nowFourLine++;
+				}
+
+				// 入栈调用位置
+				fourTable.AddFour("push", tempVarName, "", "");
+				fourTable.nowFourLine++;
+			}
 		}
 		if (BlockItemList()) {
 			if (wordTable[p].property == EnumWordProperties::OperatorRightBrace) {
@@ -2949,6 +3173,24 @@ bool SemanticAnalysis::CompoundStatement() {
 				{
 					// 离开作用域
 					identifierTablePointer = identifierTablePointer->fatherTablePointer;
+					// 如果是函数作用域
+					if (identifierTablePointer->fatherTablePointer == nullptr) {
+						// 取标签表栈顶
+						auto& labelTable = labelTableStack.top();
+
+						// 遍历标签
+						for (int i = 0; i < labelTable.labelTable.size(); i++) {
+							if (!labelTable.definedLabel[i]) {
+								// 存在目标标签未定义的跳转语句
+								throw(Exception("Label Not defined", wordTable[p], 1));
+							}
+							// 遍历标签的待回填行
+							for (auto j : labelTable.backFillTable[i]) {
+								// 回填标签
+								fourTable.table[j].dest = std::to_string(labelTable.backFillLines[i]);
+							}
+						}
+					}
 				}
 				return true;
 			}
@@ -3110,8 +3352,8 @@ bool SemanticAnalysis::SelectionStatement() {
 						else {
 							// 语义动作
 							{
-								// 跳转语句 待回填
-								fourTable.AddFour("jmp", "", "", "1");
+								// 跳转语句 无else 到下一行
+								fourTable.AddFour("jmp", "", "", std::to_string(fourTable.nowFourLine + 1));
 								fourTable.nowFourLine++;
 							}
 							return true;
@@ -3286,6 +3528,26 @@ bool SemanticAnalysis::JumpStatement() {
 		if (wordTable[p].property == EnumWordProperties::Identifier) {
 			p++;
 			if (wordTable[p].property == EnumWordProperties::Semicolon) {
+				// 语义动作
+				{
+					// 取标签表栈顶
+					auto& labelTable = labelTableStack.top();
+					auto [exist, defined, i] = labelTable.SearchLabelIdentifier(wordTable[p - 1].word);
+					// 已存在
+					if (exist) {
+						// 待回填行数
+						labelTable.AddLabelBackFillLine(fourTable.nowFourLine, wordTable[p - 1].word);
+					}
+					else {
+						// 该标签入表
+						labelTable.AddUndefinedLabel(wordTable[p - 1].word);
+						// 待回填行数
+						labelTable.AddLabelBackFillLine(fourTable.nowFourLine, wordTable[p - 1].word);
+					}
+					// 跳转语句
+					fourTable.AddFour("jmp", "", "", "");
+					fourTable.nowFourLine++;
+				}
 				p++;
 				return true;
 			}
@@ -3342,12 +3604,42 @@ bool SemanticAnalysis::JumpStatement() {
 		p++;
 		// Return;
 		if (wordTable[p].property == EnumWordProperties::Semicolon) {
+			// 语义动作
+			{
+				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
+				tempVariableTablePointer++;
+				// 出栈调用位置
+				fourTable.AddFour("pop", "", "", tempVarName);
+				fourTable.nowFourLine++;
+				fourTable.AddFour("ret", "", "", tempVarName);
+				fourTable.nowFourLine++;
+			}
 			p++;
 			return true;
 		}
 		// Return Expression;
 		else if (Expression()) {
 			if (wordTable[p].property == EnumWordProperties::Semicolon) {
+				// 语义动作
+				{
+					auto lastReturnValue = returnValueStack.returnValueStack.top();
+					returnValueStack.returnValueStack.pop();
+
+					// 临时变量 存返回位置
+					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
+					tempVariableTablePointer++;
+					// 出栈调用位置
+					fourTable.AddFour("pop", "", "", tempVarName);
+					fourTable.nowFourLine++;
+
+					// 类型转换 懒得写了
+					// 入栈返回值
+					fourTable.AddFour("push", lastReturnValue->value, "", "");
+					fourTable.nowFourLine++;
+
+					fourTable.AddFour("ret", "", "", tempVarName);
+					fourTable.nowFourLine++;
+				}
 				p++;
 				return true;
 			}
@@ -3463,10 +3755,33 @@ bool SemanticAnalysis::FunctionDefinition() {
 	// TypeName DirectDeclarator /* DeclarationList */ CompoundStatement
 	if (IsTypeName(wordTable[p])) {
 		p++;
+		// 声明符
 		if (DirectDeclarator()) {
 			// 必然以 { 开头
 			// TypeName DirectDeclarator CompoundStatement
 			if (wordTable[p].property == EnumWordProperties::OperatorLeftBrace) {
+				// 语义动作
+				{
+					// 重定义
+					for (auto& i : functionTable.functionTable) {
+						if (i.value == lastFunctionIdentifier&& i.defined) {
+							throw(Exception("Function have defined", wordTable[p], 1));
+						}
+					}
+
+					// 指示当前为函数头 以便将声明处的表合并入块 应当在进入函数块后马上置 false
+					functionLeftCompound = true;
+					// 创建当前函数的标签表
+					labelTableStack.push(*(new LabelIdentifierTable()));
+
+					// 将函数设为已经定义
+					for (auto& i : functionTable.functionTable) {
+						if (i.value == lastFunctionIdentifier) {
+							i.defined = true;
+							break;
+						}
+					}
+				}
 				if (CompoundStatement()) {
 					return true;
 				}
@@ -3530,7 +3845,6 @@ bool SemanticAnalysis::ToBool() {
 	auto e = lastReturnValue->getWordProperties();
 	// 原来是 Bool
 	if (e == EnumWordProperties::Bool) {
-		returnValueStack.returnValueStack.push(lastReturnValue);
 		return true;
 	}
 

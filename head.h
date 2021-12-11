@@ -25,6 +25,7 @@ enum class EnumWordProperties {
 	TimeToStop,
 	Unknow,
 	Function,
+	Label,
 	// 数字字面量
 	EightIntNumber, TenIntNumber, SixteenIntNumber, FloatNumber, FloatEeNumber, CharNumber,
 	// 标识符
@@ -32,7 +33,7 @@ enum class EnumWordProperties {
 	// 字符串字面量
 	String,
 	// 类型
-	Auto, Bool, Int, Float, Double, Char, Enum, Void,
+	Auto, Bool, Int, Float, Double, Char, Enum, Void, StringType,
 	// 控制关键字
 	If, Else, While, For, Do, Break, Continue, Goto, Return,
 	// 分号
@@ -147,20 +148,99 @@ public:
 	}
 };
 
+// 语义分析 标签表
+class LabelIdentifierTable {
+public:
+	// 标签表
+	std::vector<std::string> labelTable;
+	// 定义表
+	std::vector<bool> definedLabel;
+	// 待回填行号表
+	std::vector<std::vector<int>> backFillTable;
+	// 供回填行号表
+	std::vector<int> backFillLines;
+
+	int AddDefinedLabel(int line, std::string label) {
+		labelTable.push_back(label);
+		definedLabel.push_back(true);
+		backFillTable.push_back(std::vector<int>());
+		backFillLines.push_back(line);
+		return labelTable.size();
+	}
+	int AddUndefinedLabel(std::string label) {
+		labelTable.push_back(label);
+		definedLabel.push_back(false);
+		backFillTable.push_back(std::vector<int>());
+		backFillLines.push_back(-1);
+		return labelTable.size();
+	}
+
+	// func    添加标签回填行号
+	// param   行号 标签名
+	// return  
+	void AddLabelBackFillLine(int line, std::string label) {
+		for (int i = 0; i < labelTable.size(); i++) {
+			if (labelTable[i] == label) {
+				backFillTable[i].push_back(line);
+			}
+		}
+	}
+
+	// func    查找标签
+	// param   标签名
+	// return  标签是否见过 标签是否已定义 标签序号
+	auto SearchLabelIdentifier(std::string label) {
+		for (int i = 0; i < labelTable.size(); i++) {
+			if (labelTable[i] == label) {
+				if (definedLabel[i]) {
+					return std::tuple<bool, bool, int>(true, true, i);
+				}
+				else {
+					return std::tuple<bool, bool, int>(true, false, i);
+				}
+			}
+		}
+		return std::tuple<bool, bool, int>(false, false, labelTable.size());
+	}
+};
+
 // 语义分析 函数符
 class FunctionIdentifier : public Identifier {
 public:
+	// e是返回类型
+	FunctionIdentifier(EnumWordProperties e, std::string n) :returnType(e),
+		Identifier(EnumWordProperties::Function, n) {}
+
+	// 已定义
+	bool defined = false;
+
 	// 参数个数
-	int parameterNumber;
-	// 各参数类型 自右向左
+	int parameterNumber = 0;
+	// 当前参数
+	int currentParameter = 0;
+	// 各参数类型 自左向右
 	std::vector<EnumWordProperties> parameterType;
 	// 返回类型
-	EnumWordProperties returnType = Identifier::wordProperties;
+	EnumWordProperties returnType;
+
+	int AddParameter(EnumWordProperties type) {
+		parameterType.push_back(type);
+		parameterNumber++;
+		return parameterNumber;
+	}
 };
 
 // 语义分析 函数表
 class FunctionIdentifierTable {
 public:
+	std::vector<FunctionIdentifier> functionTable;
+	int FunctionNumber = 0;
+
+	int AddFunction(FunctionIdentifier fid) {
+		functionTable.push_back(fid);
+		FunctionNumber++;
+		return FunctionNumber;
+	}
 };
 
 // 语义分析 求值栈 手动返回值
@@ -242,6 +322,7 @@ public:
 		keyWord["sizeof"] = EnumWordProperties::OperatorSizeof;
 		keyWord["void"] = EnumWordProperties::Void;
 		keyWord["while"] = EnumWordProperties::While;
+		keyWord["string"] = EnumWordProperties::StringType;
 	}
 };
 
@@ -407,6 +488,18 @@ public:
 	// 标识符表
 	IdentifierTable* identifierTablePointer;
 
+	// 函数表
+	FunctionIdentifierTable functionTable;
+	// 函数头作用域
+	IdentifierTable* functionHeadIdentifierTablePointer;
+	// 表明函数块
+	bool functionLeftCompound = false;
+	// 最近一次的函数名
+	std::string lastFunctionIdentifier;
+
+	// 标签表栈
+	std::stack<LabelIdentifierTable> labelTableStack;
+
 	// 当前声明类型
 	EnumWordProperties declarationTypeName;
 
@@ -421,6 +514,10 @@ public:
 
 	// 四元式表
 	FourTable fourTable;
+
+	// 逻辑回填栈
+	std::stack<int> andBackFillStack;
+	std::stack<int> orBackFillStack;
 
 	// 分支回填栈
 	std::stack<int> selectBackFillStack;
@@ -483,8 +580,6 @@ public:
 	bool ParameterList();
 	bool ParameterListEliminateLeft();
 	bool ParameterDeclaration();
-	bool IdentifierList();
-	bool IdentifierListEliminateLeft();
 
 	// 语句相关分析器
 	bool Statement();
