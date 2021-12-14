@@ -11,8 +11,8 @@
 #include<tuple>
 #include<stack>
 
-const int MAX_BUFFER = 10000;
-const int MAX_WORD_TABLE = 1000;
+const int MAX_BUFFER = 100000;
+const int MAX_WORD_TABLE = 10000;
 
 class Word;
 class LexicalAnalysis;
@@ -518,6 +518,9 @@ public:
 	// 逻辑回填栈
 	std::stack<int> andBackFillStack;
 	std::stack<int> orBackFillStack;
+
+	// 条件回填栈
+	std::stack<int> conditionBackFillStack;
 
 	// 分支回填栈
 	std::stack<int> selectBackFillStack;

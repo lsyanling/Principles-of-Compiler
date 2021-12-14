@@ -130,8 +130,8 @@ bool LexicalAnalysis::Analyse() {
 			line;
 			continue;
 		}
-		std::cout << "Lexical Error in line " << line << ": Can't identify the sign." << std::endl;
-
+		std::cout << "Lexical Error in line " << line << ": Can't identify the sign" << std::endl;
+		break;
 	}
 	return true;
 }
@@ -308,6 +308,23 @@ bool LexicalAnalysis::Number() {
 		{
 			if (isdigit(*p)) {
 				state = EnumNumber::FloatNumber;
+			}
+			else if (isspace(*p) || *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '%' ||
+				*p == '&' || *p == '|' || *p == '!' || *p == '<' || *p == '>' || *p == '=' ||
+				*p == ')' || *p == ']' || *p == '?' || *p == ':' || *p == '^' || *p == ',' ||
+				*p == ';') {
+
+				// 奇技淫巧 保存下一个字符
+				char ch = *(p+1);
+				*(p+1) = '\0';
+				wordTable[wordTableIndex].word = std::string(q);
+				wordTable[wordTableIndex].property = EnumWordProperties::SixteenIntNumber;
+				wordTable[wordTableIndex].line = this->line;
+				// 恢复下一个字符
+				*(p+1) = ch;
+				// 下一个词素
+				wordTableIndex++;
+				return true;
 			}
 			else {
 				// 重置指针

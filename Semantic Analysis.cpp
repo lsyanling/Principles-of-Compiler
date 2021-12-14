@@ -2359,10 +2359,42 @@ bool SemanticAnalysis::ConditionalExpression() {
 		// OrExpression ? Expression : ConditionalExpression
 		if (wordTable[p].property == EnumWordProperties::OperatorQuestion) {
 			p++;
+			// 语义动作
+			{
+				// 转bool
+				ToBool();
+				// 取栈顶
+				auto lastReturnValue = returnValueStack.returnValueStack.top();
+				returnValueStack.returnValueStack.pop();
+
+				// 待回填
+				conditionBackFillStack.push(fourTable.nowFourLine);
+				fourTable.AddFour("jz", lastReturnValue->value, "", "");
+				fourTable.nowFourLine++;
+			}
 			if (Expression()) {
 				if (wordTable[p].property == EnumWordProperties::OperatorColon) {
 					p++;
+					// 语义动作
+					{
+						// 回填
+						int line = conditionBackFillStack.top();
+						conditionBackFillStack.pop();
+						fourTable.table[line].dest = std::to_string(fourTable.nowFourLine + 1);
+
+						// 跳转 待回填
+						conditionBackFillStack.push(fourTable.nowFourLine);
+						fourTable.AddFour("jmp", "", "", "");
+						fourTable.nowFourLine++;
+					}
 					if (ConditionalExpression()) {
+						// 语义动作
+						{
+							// 回填
+							int line = conditionBackFillStack.top();
+							conditionBackFillStack.pop();
+							fourTable.table[line].dest = std::to_string(fourTable.nowFourLine);
+						}
 						return true;
 					}
 				}
@@ -2628,6 +2660,11 @@ bool SemanticAnalysis::ExpressionEliminateLeft() {
 	// ,AssignmentExpression ExpressionEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::OperatorComma) {
 		p++;
+		// 语义动作
+		{
+			// 取栈顶
+			returnValueStack.returnValueStack.pop();
+		}
 		if (AssignmentExpression()) {
 			if (ExpressionEliminateLeft()) {
 				return true;
@@ -2907,6 +2944,7 @@ bool SemanticAnalysis::DirectDeclaratorEliminateLeft() {
 		// 说明是函数 可以准备送入函数表了
 		{
 			bool isDefined = false;
+			lastFunctionIdentifier = wordTable[p-2].word;
 			// 重定义
 			for (auto& i : functionTable.functionTable) {
 				if (i.value == identifierTablePointer->table[identifierTablePointer->IdentifierNumber - 1].value) {
@@ -3764,7 +3802,7 @@ bool SemanticAnalysis::FunctionDefinition() {
 				{
 					// 重定义
 					for (auto& i : functionTable.functionTable) {
-						if (i.value == lastFunctionIdentifier&& i.defined) {
+						if (i.value == lastFunctionIdentifier && i.defined) {
 							throw(Exception("Function have defined", wordTable[p], 1));
 						}
 					}
