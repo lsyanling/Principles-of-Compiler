@@ -15,69 +15,69 @@ SemanticAnalysis::SemanticAnalysis(std::vector<Word>& w) : GrammaticalAnalysis(w
 	}
 }
 
-// ²éÕÒ±êÊ¶·û Èç¹û´æÔÚ¾Í·µ»Ø±íÖĞ±êÊ¶·ûµÄÒıÓÃ
+// æŸ¥æ‰¾æ ‡è¯†ç¬¦ å¦‚æœå­˜åœ¨å°±è¿”å›è¡¨ä¸­æ ‡è¯†ç¬¦çš„å¼•ç”¨
 auto SemanticAnalysis::SearchIdentifier(IdentifierTable* idTablePointer, std::string value) {
-	// Ö¸Õë²»¿Õ
+	// æŒ‡é’ˆä¸ç©º
 	while (idTablePointer != nullptr) {
-		// ±éÀúµ±Ç°±í
+		// éå†å½“å‰è¡¨
 		for (auto& id : idTablePointer->table) {
 			if (id.value == value) {
 				return std::tuple<bool, Identifier&>(true, id);
 			}
 		}
-		// ²»ÔÚµ±Ç°±íÖĞ ÏòÉÏ²éÕÒ
+		// ä¸åœ¨å½“å‰è¡¨ä¸­ å‘ä¸ŠæŸ¥æ‰¾
 		idTablePointer = idTablePointer->fatherTablePointer;
 	}
-	// ±êÊ¶·ûÎ´¶¨Òå
+	// æ ‡è¯†ç¬¦æœªå®šä¹‰
 	Identifier id = Identifier(EnumWordProperties::Unknow, "");
 	return std::tuple<bool, Identifier&>(false, id);
 }
 
-// ÔÚµ±Ç°±íÖĞ²éÕÒ±êÊ¶·û Èç¹û´æÔÚ¾Í·µ»Ø±íÖĞ±êÊ¶·ûµÄÒıÓÃ
+// åœ¨å½“å‰è¡¨ä¸­æŸ¥æ‰¾æ ‡è¯†ç¬¦ å¦‚æœå­˜åœ¨å°±è¿”å›è¡¨ä¸­æ ‡è¯†ç¬¦çš„å¼•ç”¨
 auto SemanticAnalysis::SearchIdentifierInCurrentTable(IdentifierTable* idTablePointer, std::string value) {
 
-	// ±éÀúµ±Ç°±í
+	// éå†å½“å‰è¡¨
 	for (auto& id : idTablePointer->table) {
 		if (id.value == value) {
 			return std::tuple<bool, Identifier&>(true, id);
 		}
 	}
-	// ²»ÔÚµ±Ç°±íÖĞ ±êÊ¶·ûÎ´¶¨Òå
+	// ä¸åœ¨å½“å‰è¡¨ä¸­ æ ‡è¯†ç¬¦æœªå®šä¹‰
 	Identifier id = Identifier(EnumWordProperties::Unknow, "");
 	return std::tuple<bool, Identifier&>(false, id);
 }
 
-// func    ³õÊ¼±í´ïÊ½Ê¶±ğ
+// func    åˆå§‹è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::PrimaryExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Identifier
 	if (wordTable[p].property == EnumWordProperties::Identifier) {
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 		{
-			// Ê×ÏÈ²éÕÒ±êÊ¶·û
+			// é¦–å…ˆæŸ¥æ‰¾æ ‡è¯†ç¬¦
 			auto [returnBool, id] = SearchIdentifier(identifierTablePointer, wordTable[p].word);
-			// ÕÒµ½ÁË
+			// æ‰¾åˆ°äº†
 			if (returnBool) {
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(&id);
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::Identifier;
 				returnValueStack.lastReturnValueType = id.wordProperties;
 			}
-			// Î´¶¨Òå
+			// æœªå®šä¹‰
 			else {
-				// ÓïÒå´íÎó
+				// è¯­ä¹‰é”™è¯¯
 				throw(Exception("Identifier Not defined", wordTable[p], 1));
 			}
 		}
 		p++;
 		return true;
 	}
-	// Êı×Ö×ÖÃæÁ¿
+	// æ•°å­—å­—é¢é‡
 	else if (wordTable[p].property == EnumWordProperties::TenIntNumber ||
 		wordTable[p].property == EnumWordProperties::EightIntNumber ||
 		wordTable[p].property == EnumWordProperties::SixteenIntNumber ||
@@ -85,11 +85,11 @@ bool SemanticAnalysis::PrimaryExpression() {
 		wordTable[p].property == EnumWordProperties::FloatEeNumber ||
 		wordTable[p].property == EnumWordProperties::CharNumber ||
 		wordTable[p].property == EnumWordProperties::String) {
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new LiteralValue(wordTable[p].property, wordTable[p].word));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::LiteralValue;
 				returnValueStack.lastReturnValueType = wordTable[p].property;
 			}
@@ -102,9 +102,9 @@ bool SemanticAnalysis::PrimaryExpression() {
 		if (Expression()) {
 			if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
 				p++;
-				// ÓïÒå¶¯×÷
+				// è¯­ä¹‰åŠ¨ä½œ
 				{
-					// ´ÓÕ»¶¥È¡Öµ È»ºóÈëÕ» ÕâÀïÊ¡ÂÔ²½Öè
+					// ä»æ ˆé¡¶å–å€¼ ç„¶åå…¥æ ˆ è¿™é‡Œçœç•¥æ­¥éª¤
 				}
 				return true;
 			}
@@ -119,11 +119,11 @@ bool SemanticAnalysis::PrimaryExpression() {
 	}
 }
 
-// func    ºó×º±í´ïÊ½Ê¶±ğ
+// func    åç¼€è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::PostfixExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// PrimaryExpression PostfixExpressionEliminateLeft
@@ -142,11 +142,11 @@ bool SemanticAnalysis::PostfixExpression() {
 	}
 }
 
-// func    ºó×º±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    åç¼€è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::PostfixExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// [Expression] PostfixExpressionEliminateLeft
@@ -166,10 +166,10 @@ bool SemanticAnalysis::PostfixExpressionEliminateLeft() {
 	// (ArgumentExpressionList) PostfixExpressionEliminateLeft
 	else if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 		p++;
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 		{
 			bool isFunction = false;
-			// È¡Õ»¶¥ ²é¿´ÊÇ·ñÊÇº¯Êı
+			// å–æ ˆé¡¶ æŸ¥çœ‹æ˜¯å¦æ˜¯å‡½æ•°
 			auto lastReturnValue = returnValueStack.returnValueStack.top();
 			for (auto& i : functionTable.functionTable) {
 				if (i.value == lastReturnValue->value) {
@@ -178,47 +178,47 @@ bool SemanticAnalysis::PostfixExpressionEliminateLeft() {
 				}
 			}
 			if (!isFunction) {
-				// ²»ÊÇº¯Êı
+				// ä¸æ˜¯å‡½æ•°
 				throw(Exception("Not a Function", wordTable[p], 1));
 			}
-			// º¯Êıµ÷ÓÃ±í´ïÊ½ ÏÂÃæÊÇÊµ²Î ³ıvoidÀàĞÍÍâÃ¿¸öÊµ²ÎÈëÕ»
+			// å‡½æ•°è°ƒç”¨è¡¨è¾¾å¼ ä¸‹é¢æ˜¯å®å‚ é™¤voidç±»å‹å¤–æ¯ä¸ªå®å‚å…¥æ ˆ
 		}
 		if (ArgumentExpressionList()) {
 			if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
 				p++;
-				// ÓïÒå¶¯×÷
+				// è¯­ä¹‰åŠ¨ä½œ
 				{
-					// È¡º¯ÊıÃû
+					// å–å‡½æ•°å
 					auto lastReturnValue = returnValueStack.returnValueStack.top();
-					// º¯ÊıÃû³öÕ»
+					// å‡½æ•°åå‡ºæ ˆ
 					returnValueStack.returnValueStack.pop();
 
-					// È¡º¯Êı·µ»ØÖµÀàĞÍ
+					// å–å‡½æ•°è¿”å›å€¼ç±»å‹
 					EnumWordProperties e;
 					for (auto& i : functionTable.functionTable) {
 						if (i.value == lastReturnValue->value) {
-							// ²ÎÊı¼ÆËãÖØÖÃ
+							// å‚æ•°è®¡ç®—é‡ç½®
 							i.currentParameter = 0;
 							e = i.returnType;
 							break;
 						}
 					}
 
-					// Êµ²ÎÈëÕ»Íê±Ï µ÷ÓÃº¯Êı
+					// å®å‚å…¥æ ˆå®Œæ¯• è°ƒç”¨å‡½æ•°
 					fourTable.AddFour("push", std::to_string(fourTable.nowFourLine + 2), "", "");
 					fourTable.nowFourLine++;
 					fourTable.AddFour("call", lastReturnValue->value, "", "");
 					fourTable.nowFourLine++;
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
-					// µ÷ÓÃÍê±Ï È¡·µ»ØÖµ
+					// è°ƒç”¨å®Œæ¯• å–è¿”å›å€¼
 					fourTable.AddFour("pop", "", "", tempVarName);
 					fourTable.nowFourLine++;
 
-					// ÈëÇóÖµÕ» ·µ»ØÖµÀàĞÍ¼´ÁÙÊ±±äÁ¿ÀàĞÍ Êµ¼ÊÊÇº¯Êı·µ»ØÖµÀàĞÍ
+					// å…¥æ±‚å€¼æ ˆ è¿”å›å€¼ç±»å‹å³ä¸´æ—¶å˜é‡ç±»å‹ å®é™…æ˜¯å‡½æ•°è¿”å›å€¼ç±»å‹
 					returnValueStack.returnValueStack.push(new TempVariable(e, tempVarName));
-					// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+					// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 					returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 					returnValueStack.lastReturnValueType = e;
 				}
@@ -255,22 +255,22 @@ bool SemanticAnalysis::PostfixExpressionEliminateLeft() {
 	}
 	// ++PostfixExpressionEliminateLeft
 	else if (wordTable[p].property == EnumWordProperties::OperatorAddAdd) {
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 		{
-			// Ê×ÏÈ¿´Õ»¶¥ÊÇ²»ÊÇ±êÊ¶·û
+			// é¦–å…ˆçœ‹æ ˆé¡¶æ˜¯ä¸æ˜¯æ ‡è¯†ç¬¦
 			if (returnValueStack.lastReturnWordType != ReturnValueStack::LastReturnWordType::Identifier) {
-				// ÓïÒå´íÎó ºó×º±í´ïÊ½ÒªÇóÊÇÒ»¸ö×óÖµ µ±Ç°Çé¿öÏÂÖ»ÓĞ±êÊ¶·ûÊÇ×óÖµ
+				// è¯­ä¹‰é”™è¯¯ åç¼€è¡¨è¾¾å¼è¦æ±‚æ˜¯ä¸€ä¸ªå·¦å€¼ å½“å‰æƒ…å†µä¸‹åªæœ‰æ ‡è¯†ç¬¦æ˜¯å·¦å€¼
 				throw(Exception("Should be a Left-Value before ++", wordTable[p], 1));
 			}
-			// Õ»¶¥ÊÇ±êÊ¶·û ³öÕ»
+			// æ ˆé¡¶æ˜¯æ ‡è¯†ç¬¦ å‡ºæ ˆ
 			auto lastReturnValue = returnValueStack.returnValueStack.top();
 			returnValueStack.returnValueStack.pop();
-			// ¿´ÖµÊÇ²»ÊÇ×Ö·û´®»òº¯Êı
+			// çœ‹å€¼æ˜¯ä¸æ˜¯å­—ç¬¦ä¸²æˆ–å‡½æ•°
 			if (lastReturnValue->getWordProperties() == EnumWordProperties::String || lastReturnValue->getWordProperties() == EnumWordProperties::Function) {
-				// ÓïÒå´íÎó ×Ö·û´®ºÍº¯Êı²»ÄÜÖ´ĞĞºó×º++
+				// è¯­ä¹‰é”™è¯¯ å­—ç¬¦ä¸²å’Œå‡½æ•°ä¸èƒ½æ‰§è¡Œåç¼€++
 				throw(Exception("Should be a Number before ++", wordTable[p], 1));
 			}
-			// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+			// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 			std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 			tempVariableTablePointer++;
 			fourTable.AddFour("=", lastReturnValue->value, "", tempVarName);
@@ -278,9 +278,9 @@ bool SemanticAnalysis::PostfixExpressionEliminateLeft() {
 			fourTable.AddFour("+", lastReturnValue->value, "1", lastReturnValue->value);
 			fourTable.nowFourLine++;
 
-			// ·µ»ØÖµÈëÇóÖµÕ» ·µ»ØÖµÀàĞÍ¼´ÁÙÊ±±äÁ¿ÀàĞÍÓë±êÊ¶·ûÀàĞÍÏàÍ¬
+			// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ è¿”å›å€¼ç±»å‹å³ä¸´æ—¶å˜é‡ç±»å‹ä¸æ ‡è¯†ç¬¦ç±»å‹ç›¸åŒ
 			returnValueStack.returnValueStack.push(new TempVariable(lastReturnValue->getWordProperties(), tempVarName));
-			// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+			// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 			returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 			returnValueStack.lastReturnValueType = lastReturnValue->getWordProperties();
 		}
@@ -292,22 +292,22 @@ bool SemanticAnalysis::PostfixExpressionEliminateLeft() {
 	}
 	// --PostfixExpressionEliminateLeft
 	else if (wordTable[p].property == EnumWordProperties::OperatorSubSubtract) {
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 		{
-			// Ê×ÏÈ¿´Õ»¶¥ÊÇ²»ÊÇ±êÊ¶·û
+			// é¦–å…ˆçœ‹æ ˆé¡¶æ˜¯ä¸æ˜¯æ ‡è¯†ç¬¦
 			if (returnValueStack.lastReturnWordType != ReturnValueStack::LastReturnWordType::Identifier) {
-				// ÓïÒå´íÎó ºó×º±í´ïÊ½ÒªÇóÊÇÒ»¸ö×óÖµ µ±Ç°Çé¿öÏÂÖ»ÓĞ±êÊ¶·ûÊÇ×óÖµ
+				// è¯­ä¹‰é”™è¯¯ åç¼€è¡¨è¾¾å¼è¦æ±‚æ˜¯ä¸€ä¸ªå·¦å€¼ å½“å‰æƒ…å†µä¸‹åªæœ‰æ ‡è¯†ç¬¦æ˜¯å·¦å€¼
 				throw(Exception("Should be a Left-Value before --", wordTable[p], 1));
 			}
-			// Õ»¶¥ÊÇ±êÊ¶·û ³öÕ»
+			// æ ˆé¡¶æ˜¯æ ‡è¯†ç¬¦ å‡ºæ ˆ
 			auto lastReturnValue = returnValueStack.returnValueStack.top();
 			returnValueStack.returnValueStack.pop();
-			// ¿´ÖµÊÇ²»ÊÇ×Ö·û´®»òº¯Êı
+			// çœ‹å€¼æ˜¯ä¸æ˜¯å­—ç¬¦ä¸²æˆ–å‡½æ•°
 			if (lastReturnValue->getWordProperties() == EnumWordProperties::String || lastReturnValue->getWordProperties() == EnumWordProperties::Function) {
-				// ÓïÒå´íÎó ×Ö·û´®ºÍº¯Êı²»ÄÜÖ´ĞĞºó×º--
+				// è¯­ä¹‰é”™è¯¯ å­—ç¬¦ä¸²å’Œå‡½æ•°ä¸èƒ½æ‰§è¡Œåç¼€--
 				throw(Exception("Should be a Number before --", wordTable[p], 1));
 			}
-			// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+			// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 			std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 			tempVariableTablePointer++;
 			fourTable.AddFour("=", lastReturnValue->value, "", tempVarName);
@@ -315,9 +315,9 @@ bool SemanticAnalysis::PostfixExpressionEliminateLeft() {
 			fourTable.AddFour("-", lastReturnValue->value, "1", lastReturnValue->value);
 			fourTable.nowFourLine++;
 
-			// ·µ»ØÖµÈëÇóÖµÕ» ·µ»ØÖµÀàĞÍ¼´ÁÙÊ±±äÁ¿ÀàĞÍÓë±êÊ¶·ûÀàĞÍÏàÍ¬
+			// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ è¿”å›å€¼ç±»å‹å³ä¸´æ—¶å˜é‡ç±»å‹ä¸æ ‡è¯†ç¬¦ç±»å‹ç›¸åŒ
 			returnValueStack.returnValueStack.push(new TempVariable(lastReturnValue->getWordProperties(), tempVarName));
-			// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+			// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 			returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 			returnValueStack.lastReturnValueType = lastReturnValue->getWordProperties();
 		}
@@ -327,28 +327,28 @@ bool SemanticAnalysis::PostfixExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a -- Postfix Expression because Expect a Postfix Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ²ÎÊı±í´ïÊ½ÁĞ±íÊ¶±ğ
+// func    å‚æ•°è¡¨è¾¾å¼åˆ—è¡¨è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::ArgumentExpressionList() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// AssignmentExpression ArgumentExpressionListEliminateLeft
 	if (AssignmentExpression()) {
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 		{
-			// È¡Êµ²ÎÖµ
+			// å–å®å‚å€¼
 			auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 			returnValueStack.returnValueStack.pop();
-			// È¡ĞÎ²ÎÀàĞÍ
+			// å–å½¢å‚ç±»å‹
 			auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 			EnumWordProperties e;
 			for (auto& i : functionTable.functionTable) {
@@ -357,12 +357,12 @@ bool SemanticAnalysis::ArgumentExpressionList() {
 					break;
 				}
 			}
-			// ÀàĞÍ×ª»» ²»Ğ´ÁË
+			// ç±»å‹è½¬æ¢ ä¸å†™äº†
 			//if (returnValueStack.lastReturnValueType != e) {
-			//	throw(Exception("Êµ²ÎµÄÀàĞÍ×ª»» ÔİÊ±²»ÏëĞ´ÁË ¾Íµ±×ª»»ÁË°É", wordTable[p], 0));
+			//	throw(Exception("å®å‚çš„ç±»å‹è½¬æ¢ æš‚æ—¶ä¸æƒ³å†™äº† å°±å½“è½¬æ¢äº†å§", wordTable[p], 0));
 			//}
 
-			// Éú³ÉËÄÔªÊ½ ´Ó×óÏòÓÒÑ¹Õ»
+			// ç”Ÿæˆå››å…ƒå¼ ä»å·¦å‘å³å‹æ ˆ
 			fourTable.AddFour("push", lastReturnValue2->value, "", "");
 			fourTable.nowFourLine++;
 		}
@@ -381,23 +381,23 @@ bool SemanticAnalysis::ArgumentExpressionList() {
 	}
 }
 
-// func    ²ÎÊı±í´ïÊ½ÁĞ±íÏû³ı×óµİ¹éÊ¶±ğ
+// func    å‚æ•°è¡¨è¾¾å¼åˆ—è¡¨æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::ArgumentExpressionListEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ,AssignmentExpression ArgumentExpressionListEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::OperatorComma) {
 		p++;
 		if (AssignmentExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// È¡Êµ²ÎÖµ
+				// å–å®å‚å€¼
 				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// È¡ĞÎ²ÎÀàĞÍ
+				// å–å½¢å‚ç±»å‹
 				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 				EnumWordProperties e;
 				for (auto& i : functionTable.functionTable) {
@@ -406,12 +406,12 @@ bool SemanticAnalysis::ArgumentExpressionListEliminateLeft() {
 						break;
 					}
 				}
-				// ÀàĞÍ×ª»» ²»Ğ´ÁË
+				// ç±»å‹è½¬æ¢ ä¸å†™äº†
 				//if (returnValueStack.lastReturnValueType != e) {
-				//	throw(Exception("Êµ²ÎµÄÀàĞÍ×ª»» ÔİÊ±²»ÏëĞ´ÁË ¾Íµ±×ª»»ÁË°É", wordTable[p], 0));
+				//	throw(Exception("å®å‚çš„ç±»å‹è½¬æ¢ æš‚æ—¶ä¸æƒ³å†™äº† å°±å½“è½¬æ¢äº†å§", wordTable[p], 0));
 				//}
 
-				// Éú³ÉËÄÔªÊ½ ´Ó×óÏòÓÒÑ¹Õ»
+				// ç”Ÿæˆå››å…ƒå¼ ä»å·¦å‘å³å‹æ ˆ
 				fourTable.AddFour("push", lastReturnValue2->value, "", "");
 				fourTable.nowFourLine++;
 			}
@@ -423,18 +423,18 @@ bool SemanticAnalysis::ArgumentExpressionListEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    µ¥Ä¿±í´ïÊ½Ê¶±ğ
+// func    å•ç›®è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::UnaryExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// PostfixExpression
@@ -445,28 +445,28 @@ bool SemanticAnalysis::UnaryExpression() {
 	else if (wordTable[p].property == EnumWordProperties::OperatorAddAdd) {
 		p++;
 		if (UnaryExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// Ê×ÏÈ¿´Õ»¶¥ÊÇ²»ÊÇ±êÊ¶·û
+				// é¦–å…ˆçœ‹æ ˆé¡¶æ˜¯ä¸æ˜¯æ ‡è¯†ç¬¦
 				if (returnValueStack.lastReturnWordType != ReturnValueStack::LastReturnWordType::Identifier) {
-					// ÓïÒå´íÎó Ç°×º++±í´ïÊ½ÒªÇóÊÇÒ»¸ö×óÖµ µ±Ç°Çé¿öÏÂÖ»ÓĞ±êÊ¶·ûÊÇ×óÖµ
+					// è¯­ä¹‰é”™è¯¯ å‰ç¼€++è¡¨è¾¾å¼è¦æ±‚æ˜¯ä¸€ä¸ªå·¦å€¼ å½“å‰æƒ…å†µä¸‹åªæœ‰æ ‡è¯†ç¬¦æ˜¯å·¦å€¼
 					throw(Exception("Should be a Left-Value after ++", wordTable[p], 1));
 				}
-				// Õ»¶¥ÊÇ±êÊ¶·û ³öÕ»
+				// æ ˆé¡¶æ˜¯æ ‡è¯†ç¬¦ å‡ºæ ˆ
 				auto lastReturnValue = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ¿´ÖµÊÇ²»ÊÇ×Ö·û´®»òº¯Êı
+				// çœ‹å€¼æ˜¯ä¸æ˜¯å­—ç¬¦ä¸²æˆ–å‡½æ•°
 				if (lastReturnValue->getWordProperties() == EnumWordProperties::String || lastReturnValue->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó ×Ö·û´®ºÍº¯Êı²»ÄÜÖ´ĞĞÇ°×º++
+					// è¯­ä¹‰é”™è¯¯ å­—ç¬¦ä¸²å’Œå‡½æ•°ä¸èƒ½æ‰§è¡Œå‰ç¼€++
 					throw(Exception("Should be a Number after ++", wordTable[p], 1));
 				}
-				// Éú³ÉËÄÔªÊ½
+				// ç”Ÿæˆå››å…ƒå¼
 				fourTable.AddFour("+", lastReturnValue->value, "1", lastReturnValue->value);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ» ·µ»ØÖµ¼´µ±Ç°±êÊ¶·û
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ è¿”å›å€¼å³å½“å‰æ ‡è¯†ç¬¦
 				returnValueStack.returnValueStack.push(new Identifier(lastReturnValue->getWordProperties(), lastReturnValue->value));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::Identifier;
 				returnValueStack.lastReturnValueType = lastReturnValue->getWordProperties();
 			}
@@ -480,28 +480,28 @@ bool SemanticAnalysis::UnaryExpression() {
 	else if (wordTable[p].property == EnumWordProperties::OperatorSubSubtract) {
 		p++;
 		if (UnaryExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// Ê×ÏÈ¿´Õ»¶¥ÊÇ²»ÊÇ±êÊ¶·û
+				// é¦–å…ˆçœ‹æ ˆé¡¶æ˜¯ä¸æ˜¯æ ‡è¯†ç¬¦
 				if (returnValueStack.lastReturnWordType != ReturnValueStack::LastReturnWordType::Identifier) {
-					// ÓïÒå´íÎó Ç°×º--±í´ïÊ½ÒªÇóÊÇÒ»¸ö×óÖµ µ±Ç°Çé¿öÏÂÖ»ÓĞ±êÊ¶·ûÊÇ×óÖµ
+					// è¯­ä¹‰é”™è¯¯ å‰ç¼€--è¡¨è¾¾å¼è¦æ±‚æ˜¯ä¸€ä¸ªå·¦å€¼ å½“å‰æƒ…å†µä¸‹åªæœ‰æ ‡è¯†ç¬¦æ˜¯å·¦å€¼
 					throw(Exception("Should be a Left-Value after --", wordTable[p], 1));
 				}
-				// Õ»¶¥ÊÇ±êÊ¶·û ³öÕ»
+				// æ ˆé¡¶æ˜¯æ ‡è¯†ç¬¦ å‡ºæ ˆ
 				auto lastReturnValue = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ¿´ÖµÊÇ²»ÊÇ×Ö·û´®»òº¯Êı
+				// çœ‹å€¼æ˜¯ä¸æ˜¯å­—ç¬¦ä¸²æˆ–å‡½æ•°
 				if (lastReturnValue->getWordProperties() == EnumWordProperties::String || lastReturnValue->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó ×Ö·û´®ºÍº¯Êı²»ÄÜÖ´ĞĞÇ°×º--
+					// è¯­ä¹‰é”™è¯¯ å­—ç¬¦ä¸²å’Œå‡½æ•°ä¸èƒ½æ‰§è¡Œå‰ç¼€--
 					throw(Exception("Should be a Number after --", wordTable[p], 1));
 				}
-				// Éú³ÉËÄÔªÊ½
+				// ç”Ÿæˆå››å…ƒå¼
 				fourTable.AddFour("-", lastReturnValue->value, "1", lastReturnValue->value);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ» ·µ»ØÖµ¼´µ±Ç°±êÊ¶·û
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ è¿”å›å€¼å³å½“å‰æ ‡è¯†ç¬¦
 				returnValueStack.returnValueStack.push(new Identifier(lastReturnValue->getWordProperties(), lastReturnValue->value));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::Identifier;
 				returnValueStack.lastReturnValueType = lastReturnValue->getWordProperties();
 			}
@@ -515,26 +515,26 @@ bool SemanticAnalysis::UnaryExpression() {
 	else if (wordTable[p].property == EnumWordProperties::OperatorAdd) {
 		p++;
 		if (CastExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// Ê×ÏÈ³öÕ»
+				// é¦–å…ˆå‡ºæ ˆ
 				auto lastReturnValue = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ¿´Õ»¶¥ÊÇ²»ÊÇ ×Ö·û´®»òº¯Êı
+				// çœ‹æ ˆé¡¶æ˜¯ä¸æ˜¯ å­—ç¬¦ä¸²æˆ–å‡½æ•°
 				if (lastReturnValue->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó µ¥Ä¿+±í´ïÊ½ÒªÇóÊÇÒ»¸öÊıÖµ
+					// è¯­ä¹‰é”™è¯¯ å•ç›®+è¡¨è¾¾å¼è¦æ±‚æ˜¯ä¸€ä¸ªæ•°å€¼
 					throw(Exception("Should be a Number after +", wordTable[p], 1));
 				}
-				// ÊÇÊıÖµ ²é¿´ÊıÖµÀàĞÍ È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// æ˜¯æ•°å€¼ æŸ¥çœ‹æ•°å€¼ç±»å‹ å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				fourTable.AddFour("+", lastReturnValue->value, "", tempVarName);
 				fourTable.nowFourLine++;
 				tempVariableTablePointer++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(lastReturnValue->getWordProperties(), tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = lastReturnValue->getWordProperties();
 			}
@@ -547,26 +547,26 @@ bool SemanticAnalysis::UnaryExpression() {
 	else if (wordTable[p].property == EnumWordProperties::OperatorSubtract) {
 		p++;
 		if (CastExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// Ê×ÏÈ³öÕ»
+				// é¦–å…ˆå‡ºæ ˆ
 				auto lastReturnValue = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ¿´Õ»¶¥ÊÇ²»ÊÇ ×Ö·û´®»òº¯Êı
+				// çœ‹æ ˆé¡¶æ˜¯ä¸æ˜¯ å­—ç¬¦ä¸²æˆ–å‡½æ•°
 				if (lastReturnValue->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó µ¥Ä¿+±í´ïÊ½ÒªÇóÊÇÒ»¸öÊıÖµ
+					// è¯­ä¹‰é”™è¯¯ å•ç›®+è¡¨è¾¾å¼è¦æ±‚æ˜¯ä¸€ä¸ªæ•°å€¼
 					throw(Exception("Should be a Number after +", wordTable[p], 1));
 				}
-				// ÊÇÊıÖµ ²é¿´ÊıÖµÀàĞÍ È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// æ˜¯æ•°å€¼ æŸ¥çœ‹æ•°å€¼ç±»å‹ å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				fourTable.AddFour("-", "0", lastReturnValue->value, tempVarName);
 				fourTable.nowFourLine++;
 				tempVariableTablePointer++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(lastReturnValue->getWordProperties(), tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = lastReturnValue->getWordProperties();
 			}
@@ -579,28 +579,28 @@ bool SemanticAnalysis::UnaryExpression() {
 	else if (wordTable[p].property == EnumWordProperties::OperatorNot) {
 		p++;
 		if (CastExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// Ê×ÏÈ³öÕ»
+				// é¦–å…ˆå‡ºæ ˆ
 				auto lastReturnValue = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ¿´Õ»¶¥ÊÇ²»ÊÇ ×Ö·û´®»òº¯Êı
+				// çœ‹æ ˆé¡¶æ˜¯ä¸æ˜¯ å­—ç¬¦ä¸²æˆ–å‡½æ•°
 				if (lastReturnValue->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue->getWordProperties() == EnumWordProperties::Function) {
-					// ×Ö·û´®ºÍº¯ÊıÈ¡·´±ØÎª¼Ù È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å­—ç¬¦ä¸²å’Œå‡½æ•°å–åå¿…ä¸ºå‡ å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("=", "0", "", tempVarName);
 					fourTable.nowFourLine++;
 
-					// ·µ»ØÖµÈëÇóÖµÕ»
+					// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 					returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Bool, tempVarName));
-					// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+					// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 					returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 					returnValueStack.lastReturnValueType = EnumWordProperties::Bool;
 				}
 				else {
-					// ÊÇÊıÖµ È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// æ˜¯æ•°å€¼ å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("jz", lastReturnValue->value, "", std::to_string(fourTable.nowFourLine + 3));
@@ -612,9 +612,9 @@ bool SemanticAnalysis::UnaryExpression() {
 					fourTable.AddFour("=", "1", "", tempVarName);
 					fourTable.nowFourLine++;
 
-					// ·µ»ØÖµÈëÇóÖµÕ»
+					// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 					returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Bool, tempVarName));
-					// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+					// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 					returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 					returnValueStack.lastReturnValueType = EnumWordProperties::Bool;
 				}
@@ -661,11 +661,11 @@ bool SemanticAnalysis::UnaryExpression() {
 	}
 }
 
-// func    µ¥Ä¿ÔËËã·ûÊ¶±ğ
+// func    å•ç›®è¿ç®—ç¬¦è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::UnaryOperator() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	if (wordTable[p].property == EnumWordProperties::OperatorMultiply ||
@@ -680,11 +680,11 @@ bool SemanticAnalysis::UnaryOperator() {
 	}
 }
 
-// func    ÀàĞÍ×ª»»±í´ïÊ½Ê¶±ğ
+// func    ç±»å‹è½¬æ¢è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::CastExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// UnaryExpression
@@ -695,29 +695,29 @@ bool SemanticAnalysis::CastExpression() {
 	else if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 		p++;
 		if (IsTypeName(wordTable[p])) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ±£´æµ±Ç°ÀàĞÍ×ª»»ÀàĞÍ
+				// ä¿å­˜å½“å‰ç±»å‹è½¬æ¢ç±»å‹
 				castTypeName = wordTable[p].property;
 			}
 			p++;
 			if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
 				p++;
 				if (CastExpression()) {
-					// ÓïÒå¶¯×÷
+					// è¯­ä¹‰åŠ¨ä½œ
 					{
-						// Ê×ÏÈ³öÕ»
+						// é¦–å…ˆå‡ºæ ˆ
 						auto lastReturnValue = returnValueStack.returnValueStack.top();
 						returnValueStack.returnValueStack.pop();
-						// È¡ÁÙÊ±±äÁ¿
+						// å–ä¸´æ—¶å˜é‡
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
-						// ÅĞ¶ÏÄ¿±ê×ª»»ÀàĞÍ
+						// åˆ¤æ–­ç›®æ ‡è½¬æ¢ç±»å‹
 						if (castTypeName == EnumWordProperties::Bool) {
-							// ¿´Õ»¶¥ÊÇ²»ÊÇ ×Ö·û´®»òº¯Êı
+							// çœ‹æ ˆé¡¶æ˜¯ä¸æ˜¯ å­—ç¬¦ä¸²æˆ–å‡½æ•°
 							if (lastReturnValue->getWordProperties() == EnumWordProperties::String ||
 								lastReturnValue->getWordProperties() == EnumWordProperties::Function) {
-								// ×Ö·û´®ºÍº¯Êı×ª»»Îª Bool ±ØÎªÕæ È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+								// å­—ç¬¦ä¸²å’Œå‡½æ•°è½¬æ¢ä¸º Bool å¿…ä¸ºçœŸ å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 								fourTable.AddFour("=", "1", "", tempVarName);
 								fourTable.nowFourLine++;
 							}
@@ -731,102 +731,102 @@ bool SemanticAnalysis::CastExpression() {
 								fourTable.AddFour("=", "0", "", tempVarName);
 								fourTable.nowFourLine++;
 							}
-							// ·µ»ØÖµÈëÇóÖµÕ»
+							// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 							returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Bool, tempVarName));
-							// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+							// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 							returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 							returnValueStack.lastReturnValueType = EnumWordProperties::Bool;
 						}
-						// Ä¿±ê×ª»»ÀàĞÍÊÇ Int
+						// ç›®æ ‡è½¬æ¢ç±»å‹æ˜¯ Int
 						else if (castTypeName == EnumWordProperties::Int) {
-							// ×îºóÒ»´Î·µ»ØÀàĞÍÊÇ Bool »ò Char »ò Int
+							// æœ€åä¸€æ¬¡è¿”å›ç±»å‹æ˜¯ Bool æˆ– Char æˆ– Int
 							if (returnValueStack.lastReturnValueType == EnumWordProperties::Bool ||
 								IsInt(returnValueStack.lastReturnValueType)) {
 								fourTable.AddFour("=", lastReturnValue->value, "", tempVarName);
 								fourTable.nowFourLine++;
 							}
-							// ×îºóÒ»´Î·µ»ØÀàĞÍÊÇ Float
+							// æœ€åä¸€æ¬¡è¿”å›ç±»å‹æ˜¯ Float
 							else if (IsFloat(returnValueStack.lastReturnValueType)) {
 								fourTable.AddFour("FloatToInt", lastReturnValue->value, "", tempVarName);
 								fourTable.nowFourLine++;
 							}
-							// ×îºóÒ»´Î·µ»ØÀàĞÍÊÇ String
+							// æœ€åä¸€æ¬¡è¿”å›ç±»å‹æ˜¯ String
 							else if (returnValueStack.lastReturnValueType == EnumWordProperties::String) {
 								fourTable.AddFour("StringToInt", lastReturnValue->value, "", tempVarName);
 								fourTable.nowFourLine++;
 							}
-							// ×îºóÒ»´Î·µ»ØÀàĞÍÊÇ Function
+							// æœ€åä¸€æ¬¡è¿”å›ç±»å‹æ˜¯ Function
 							else if (returnValueStack.lastReturnValueType == EnumWordProperties::Function) {
 								fourTable.AddFour("FunctionToInt", lastReturnValue->value, "", tempVarName);
 								fourTable.nowFourLine++;
 							}
-							// ·µ»ØÖµÈëÇóÖµÕ»
+							// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 							returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Int, tempVarName));
-							// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+							// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 							returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 							returnValueStack.lastReturnValueType = EnumWordProperties::Int;
 						}
-						// Ä¿±ê×ª»»ÀàĞÍÊÇ Float
+						// ç›®æ ‡è½¬æ¢ç±»å‹æ˜¯ Float
 						else if (castTypeName == EnumWordProperties::Float) {
-							// ×îºóÒ»´Î·µ»ØÀàĞÍÊÇ Bool »ò Char »ò Int
+							// æœ€åä¸€æ¬¡è¿”å›ç±»å‹æ˜¯ Bool æˆ– Char æˆ– Int
 							if (returnValueStack.lastReturnValueType == EnumWordProperties::Bool ||
 								IsInt(returnValueStack.lastReturnValueType)) {
 								fourTable.AddFour("IntToFloat", lastReturnValue->value, "", tempVarName);
 								fourTable.nowFourLine++;
 							}
-							// ×îºóÒ»´Î·µ»ØÀàĞÍÊÇ Float
+							// æœ€åä¸€æ¬¡è¿”å›ç±»å‹æ˜¯ Float
 							else if (IsFloat(returnValueStack.lastReturnValueType)) {
 								fourTable.AddFour("=", lastReturnValue->value, "", tempVarName);
 								fourTable.nowFourLine++;
 							}
-							// ×îºóÒ»´Î·µ»ØÀàĞÍÊÇ String
+							// æœ€åä¸€æ¬¡è¿”å›ç±»å‹æ˜¯ String
 							else if (returnValueStack.lastReturnValueType == EnumWordProperties::String) {
-								// ÓïÒå´íÎó String ²»ÄÜ×ª»»³É Float
+								// è¯­ä¹‰é”™è¯¯ String ä¸èƒ½è½¬æ¢æˆ Float
 								throw(Exception("Invalid Cast From String to Float", wordTable[p], 1));
 							}
-							// ×îºóÒ»´Î·µ»ØÀàĞÍÊÇ Function
+							// æœ€åä¸€æ¬¡è¿”å›ç±»å‹æ˜¯ Function
 							else if (returnValueStack.lastReturnValueType == EnumWordProperties::Function) {
-								// ÓïÒå´íÎó Function ²»ÄÜ×ª»»³É Float
+								// è¯­ä¹‰é”™è¯¯ Function ä¸èƒ½è½¬æ¢æˆ Float
 								throw(Exception("Invalid Cast From Function to Float", wordTable[p], 1));
 							}
-							// ·µ»ØÖµÈëÇóÖµÕ»
+							// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 							returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Float, tempVarName));
-							// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+							// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 							returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 							returnValueStack.lastReturnValueType = EnumWordProperties::Float;
 						}
-						// Ä¿±ê×ª»»ÀàĞÍÊÇ Char
+						// ç›®æ ‡è½¬æ¢ç±»å‹æ˜¯ Char
 						else if (castTypeName == EnumWordProperties::Char) {
-							// ×îºóÒ»´Î·µ»ØÀàĞÍÊÇ Bool »ò Char
+							// æœ€åä¸€æ¬¡è¿”å›ç±»å‹æ˜¯ Bool æˆ– Char
 							if (returnValueStack.lastReturnValueType == EnumWordProperties::Bool ||
 								returnValueStack.lastReturnValueType == EnumWordProperties::Char ||
 								returnValueStack.lastReturnValueType == EnumWordProperties::CharNumber) {
 								fourTable.AddFour("=", lastReturnValue->value, "", tempVarName);
 								fourTable.nowFourLine++;
 							}
-							// ×îºóÒ»´Î·µ»ØÀàĞÍÊÇ Int
+							// æœ€åä¸€æ¬¡è¿”å›ç±»å‹æ˜¯ Int
 							if (IsInt(returnValueStack.lastReturnValueType)) {
 								fourTable.AddFour("IntToChar", lastReturnValue->value, "", tempVarName);
 								fourTable.nowFourLine++;
 							}
-							// ×îºóÒ»´Î·µ»ØÀàĞÍÊÇ Float
+							// æœ€åä¸€æ¬¡è¿”å›ç±»å‹æ˜¯ Float
 							else if (IsFloat(returnValueStack.lastReturnValueType)) {
 								fourTable.AddFour("FloatToChar", lastReturnValue->value, "", tempVarName);
 								fourTable.nowFourLine++;
 							}
-							// ×îºóÒ»´Î·µ»ØÀàĞÍÊÇ String
+							// æœ€åä¸€æ¬¡è¿”å›ç±»å‹æ˜¯ String
 							else if (returnValueStack.lastReturnValueType == EnumWordProperties::String) {
 								fourTable.AddFour("StringToChar", lastReturnValue->value, "", tempVarName);
 								fourTable.nowFourLine++;
 							}
-							// ×îºóÒ»´Î·µ»ØÀàĞÍÊÇ Function
+							// æœ€åä¸€æ¬¡è¿”å›ç±»å‹æ˜¯ Function
 							else if (returnValueStack.lastReturnValueType == EnumWordProperties::Function) {
 								fourTable.AddFour("FunctionToChar", lastReturnValue->value, "", tempVarName);
 								fourTable.nowFourLine++;
 							}
-							// ·µ»ØÖµÈëÇóÖµÕ»
+							// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 							returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Char, tempVarName));
-							// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+							// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 							returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 							returnValueStack.lastReturnValueType = EnumWordProperties::Char;
 						}
@@ -845,11 +845,11 @@ bool SemanticAnalysis::CastExpression() {
 	}
 }
 
-// func    ³Ë³ı±í´ïÊ½Ê¶±ğ
+// func    ä¹˜é™¤è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::MultiplicativeExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// CastExpression MultiplicativeExpressionEliminateLeft
@@ -866,43 +866,43 @@ bool SemanticAnalysis::MultiplicativeExpression() {
 	}
 }
 
-// func    ³Ë³ı±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    ä¹˜é™¤è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::MultiplicativeExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// *CastExpression MultiplicativeExpressionEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::OperatorMultiply) {
 		p++;
 		if (CastExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ÒÑ¾­µ÷ÓÃÁËÁ½´Î CastExpression() Õ»ÖĞ´æ×ÅÁ½¸ö·µ»ØÖµ ½«ËüÃÇÏà³Ë
-				// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+				// å·²ç»è°ƒç”¨äº†ä¸¤æ¬¡ CastExpression() æ ˆä¸­å­˜ç€ä¸¤ä¸ªè¿”å›å€¼ å°†å®ƒä»¬ç›¸ä¹˜
+				// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ³öÕ» ²é¿´×ó±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å·¦è¾¹çš„ç±»å‹
 				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// String ºÍ Function ²»ÄÜ²ÎÓëÔËËã
+				// String å’Œ Function ä¸èƒ½å‚ä¸è¿ç®—
 				if (lastReturnValue1->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::Function ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Should be a Number To * Multiply", wordTable[p], 1));
 				}
-				// ÀàĞÍÌáÉı
+				// ç±»å‹æå‡
 				if (IsFloat(lastReturnValue1->getWordProperties()) ||
 					IsFloat(lastReturnValue2->getWordProperties())) {
-					// ²»ĞèÒªÌáÉı
+					// ä¸éœ€è¦æå‡
 					if (IsFloat(lastReturnValue1->getWordProperties()) &&
 						IsFloat(lastReturnValue2->getWordProperties())) {
 					}
 					else if (IsFloat(lastReturnValue1->getWordProperties())) {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue2->value, "", tempVarName);
@@ -910,7 +910,7 @@ bool SemanticAnalysis::MultiplicativeExpressionEliminateLeft() {
 						lastReturnValue2 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 					else {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue1->value, "", tempVarName);
@@ -918,10 +918,10 @@ bool SemanticAnalysis::MultiplicativeExpressionEliminateLeft() {
 						lastReturnValue1 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 				}
-				// Ã»ÓĞ Float Öµ
+				// æ²¡æœ‰ Float å€¼
 				else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue1->value, "", tempVarName);
@@ -930,22 +930,22 @@ bool SemanticAnalysis::MultiplicativeExpressionEliminateLeft() {
 				}
 				if (lastReturnValue2->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue2->value, "", tempVarName);
 					fourTable.nowFourLine++;
 					lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 				}
-				// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
 				fourTable.AddFour("*", lastReturnValue1->value, lastReturnValue2->value, tempVarName);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(lastReturnValue1->getWordProperties(), tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = lastReturnValue1->getWordProperties();
 			}
@@ -959,32 +959,32 @@ bool SemanticAnalysis::MultiplicativeExpressionEliminateLeft() {
 	else if (wordTable[p].property == EnumWordProperties::OperatorDivide) {
 		p++;
 		if (CastExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ÒÑ¾­µ÷ÓÃÁËÁ½´Î CastExpression() Õ»ÖĞ´æ×ÅÁ½¸ö·µ»ØÖµ ½«ËüÃÇÏà³ı
-				// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+				// å·²ç»è°ƒç”¨äº†ä¸¤æ¬¡ CastExpression() æ ˆä¸­å­˜ç€ä¸¤ä¸ªè¿”å›å€¼ å°†å®ƒä»¬ç›¸é™¤
+				// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ³öÕ» ²é¿´×ó±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å·¦è¾¹çš„ç±»å‹
 				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// String ºÍ Function ²»ÄÜ²ÎÓëÔËËã
+				// String å’Œ Function ä¸èƒ½å‚ä¸è¿ç®—
 				if (lastReturnValue1->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::Function ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Should be a Number To / Divide", wordTable[p], 1));
 				}
-				// ÀàĞÍÌáÉı
+				// ç±»å‹æå‡
 				if (IsFloat(lastReturnValue1->getWordProperties()) ||
 					IsFloat(lastReturnValue2->getWordProperties())) {
-					// ²»ĞèÒªÌáÉı
+					// ä¸éœ€è¦æå‡
 					if (IsFloat(lastReturnValue1->getWordProperties()) &&
 						IsFloat(lastReturnValue2->getWordProperties())) {
 					}
 					else if (IsFloat(lastReturnValue1->getWordProperties())) {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue2->value, "", tempVarName);
@@ -992,7 +992,7 @@ bool SemanticAnalysis::MultiplicativeExpressionEliminateLeft() {
 						lastReturnValue2 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 					else {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue1->value, "", tempVarName);
@@ -1000,10 +1000,10 @@ bool SemanticAnalysis::MultiplicativeExpressionEliminateLeft() {
 						lastReturnValue1 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 				}
-				// Ã»ÓĞ Float Öµ
+				// æ²¡æœ‰ Float å€¼
 				else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue1->value, "", tempVarName);
@@ -1012,22 +1012,22 @@ bool SemanticAnalysis::MultiplicativeExpressionEliminateLeft() {
 				}
 				if (lastReturnValue2->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue2->value, "", tempVarName);
 					fourTable.nowFourLine++;
 					lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 				}
-				// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
 				fourTable.AddFour("/", lastReturnValue1->value, lastReturnValue2->value, tempVarName);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(lastReturnValue1->getWordProperties(), tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = lastReturnValue1->getWordProperties();
 			}
@@ -1041,33 +1041,33 @@ bool SemanticAnalysis::MultiplicativeExpressionEliminateLeft() {
 	else if (wordTable[p].property == EnumWordProperties::OperatorModulo) {
 		p++;
 		if (CastExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ÒÑ¾­µ÷ÓÃÁËÁ½´Î CastExpression() Õ»ÖĞ´æ×ÅÁ½¸ö·µ»ØÖµ ½«ËüÃÇÏà³Ë
-				// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+				// å·²ç»è°ƒç”¨äº†ä¸¤æ¬¡ CastExpression() æ ˆä¸­å­˜ç€ä¸¤ä¸ªè¿”å›å€¼ å°†å®ƒä»¬ç›¸ä¹˜
+				// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ³öÕ» ²é¿´×ó±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å·¦è¾¹çš„ç±»å‹
 				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// String ºÍ Function ²»ÄÜ²ÎÓëÔËËã
+				// String å’Œ Function ä¸èƒ½å‚ä¸è¿ç®—
 				if (lastReturnValue1->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::Function ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Should be a Number To % Mod", wordTable[p], 1));
 				}
-				// ÀàĞÍÌáÉı
+				// ç±»å‹æå‡
 				if (IsFloat(lastReturnValue1->getWordProperties()) ||
 					IsFloat(lastReturnValue2->getWordProperties())) {
-					// ÓïÒå´íÎó È¡Ä£²Ù×÷±ØĞëÊÇ Int
+					// è¯­ä¹‰é”™è¯¯ å–æ¨¡æ“ä½œå¿…é¡»æ˜¯ Int
 					throw(Exception("Should be a Int Value To % Mod", wordTable[p], 1));
 				}
-				// Ã»ÓĞ Float Öµ
+				// æ²¡æœ‰ Float å€¼
 				else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue1->value, "", tempVarName);
@@ -1076,22 +1076,22 @@ bool SemanticAnalysis::MultiplicativeExpressionEliminateLeft() {
 				}
 				if (lastReturnValue2->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue2->value, "", tempVarName);
 					fourTable.nowFourLine++;
 					lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 				}
-				// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
 				fourTable.AddFour("%", lastReturnValue1->value, lastReturnValue2->value, tempVarName);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(lastReturnValue1->getWordProperties(), tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = EnumWordProperties::Int;
 			}
@@ -1101,18 +1101,18 @@ bool SemanticAnalysis::MultiplicativeExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a % Multiplicative Expression because Expect a Cast Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ¼Ó¼õ±í´ïÊ½Ê¶±ğ
+// func    åŠ å‡è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::AdditiveExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// MultiplicativeExpression AdditiveExpressionEliminateLeft
@@ -1129,42 +1129,42 @@ bool SemanticAnalysis::AdditiveExpression() {
 	}
 }
 
-// func    ¼Ó¼õ±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    åŠ å‡è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::AdditiveExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// +MultiplicativeExpression AdditiveExpressionEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::OperatorAdd) {
 		p++;
 		if (MultiplicativeExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ³öÕ» ²é¿´×ó±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å·¦è¾¹çš„ç±»å‹
 				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// String ºÍ Function ²»ÄÜ²ÎÓëÔËËã
+				// String å’Œ Function ä¸èƒ½å‚ä¸è¿ç®—
 				if (lastReturnValue1->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::Function ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Should be a Number To + Add", wordTable[p], 1));
 				}
-				// ÀàĞÍÌáÉı
+				// ç±»å‹æå‡
 				if (IsFloat(lastReturnValue1->getWordProperties()) ||
 					IsFloat(lastReturnValue2->getWordProperties())) {
-					// ²»ĞèÒªÌáÉı
+					// ä¸éœ€è¦æå‡
 					if (IsFloat(lastReturnValue1->getWordProperties()) &&
 						IsFloat(lastReturnValue2->getWordProperties())) {
 					}
 					else if (IsFloat(lastReturnValue1->getWordProperties())) {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue2->value, "", tempVarName);
@@ -1172,7 +1172,7 @@ bool SemanticAnalysis::AdditiveExpressionEliminateLeft() {
 						lastReturnValue2 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 					else {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue1->value, "", tempVarName);
@@ -1180,10 +1180,10 @@ bool SemanticAnalysis::AdditiveExpressionEliminateLeft() {
 						lastReturnValue1 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 				}
-				// Ã»ÓĞ Float Öµ
+				// æ²¡æœ‰ Float å€¼
 				else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue1->value, "", tempVarName);
@@ -1192,22 +1192,22 @@ bool SemanticAnalysis::AdditiveExpressionEliminateLeft() {
 				}
 				if (lastReturnValue2->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue2->value, "", tempVarName);
 					fourTable.nowFourLine++;
 					lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 				}
-				// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
 				fourTable.AddFour("+", lastReturnValue1->value, lastReturnValue2->value, tempVarName);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(lastReturnValue1->getWordProperties(), tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = lastReturnValue1->getWordProperties();
 			}
@@ -1221,31 +1221,31 @@ bool SemanticAnalysis::AdditiveExpressionEliminateLeft() {
 	else if (wordTable[p].property == EnumWordProperties::OperatorSubtract) {
 		p++;
 		if (MultiplicativeExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ³öÕ» ²é¿´×ó±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å·¦è¾¹çš„ç±»å‹
 				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// String ºÍ Function ²»ÄÜ²ÎÓëÔËËã
+				// String å’Œ Function ä¸èƒ½å‚ä¸è¿ç®—
 				if (lastReturnValue1->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::Function ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Should be a Number To - Subtract", wordTable[p], 1));
 				}
-				// ÀàĞÍÌáÉı
+				// ç±»å‹æå‡
 				if (IsFloat(lastReturnValue1->getWordProperties()) ||
 					IsFloat(lastReturnValue2->getWordProperties())) {
-					// ²»ĞèÒªÌáÉı
+					// ä¸éœ€è¦æå‡
 					if (IsFloat(lastReturnValue1->getWordProperties()) &&
 						IsFloat(lastReturnValue2->getWordProperties())) {
 					}
 					else if (IsFloat(lastReturnValue1->getWordProperties())) {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue2->value, "", tempVarName);
@@ -1253,7 +1253,7 @@ bool SemanticAnalysis::AdditiveExpressionEliminateLeft() {
 						lastReturnValue2 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 					else {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue1->value, "", tempVarName);
@@ -1261,10 +1261,10 @@ bool SemanticAnalysis::AdditiveExpressionEliminateLeft() {
 						lastReturnValue1 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 				}
-				// Ã»ÓĞ Float Öµ
+				// æ²¡æœ‰ Float å€¼
 				else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue1->value, "", tempVarName);
@@ -1273,22 +1273,22 @@ bool SemanticAnalysis::AdditiveExpressionEliminateLeft() {
 				}
 				if (lastReturnValue2->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue2->value, "", tempVarName);
 					fourTable.nowFourLine++;
 					lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 				}
-				// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
 				fourTable.AddFour("-", lastReturnValue1->value, lastReturnValue2->value, tempVarName);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(lastReturnValue1->getWordProperties(), tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = lastReturnValue1->getWordProperties();
 			}
@@ -1298,18 +1298,18 @@ bool SemanticAnalysis::AdditiveExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a - Additive Expression because Expect a Multiplicative Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ÒÆÎ»±í´ïÊ½Ê¶±ğ
+// func    ç§»ä½è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::ShiftExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// AdditiveExpression ShiftExpressionEliminateLeft
@@ -1326,43 +1326,43 @@ bool SemanticAnalysis::ShiftExpression() {
 	}
 }
 
-// func    ÒÆÎ»±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    ç§»ä½è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::ShiftExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// << AdditiveExpression ShiftExpressionEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::OperatorLeftShift) {
 		p++;
 		if (AdditiveExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ³öÕ» ²é¿´×ó±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å·¦è¾¹çš„ç±»å‹
 				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// String ºÍ Function ²»ÄÜ²ÎÓëÔËËã
+				// String å’Œ Function ä¸èƒ½å‚ä¸è¿ç®—
 				if (lastReturnValue1->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::Function ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Should be a Number To << Shift", wordTable[p], 1));
 				}
-				// ÀàĞÍÌáÉı
+				// ç±»å‹æå‡
 				if (IsFloat(lastReturnValue1->getWordProperties()) ||
 					IsFloat(lastReturnValue2->getWordProperties())) {
-					// ÓïÒå´íÎó È¡Ä£²Ù×÷±ØĞëÊÇ Int
+					// è¯­ä¹‰é”™è¯¯ å–æ¨¡æ“ä½œå¿…é¡»æ˜¯ Int
 					throw(Exception("Should be a Int Value To << Shift", wordTable[p], 1));
 				}
-				// Ã»ÓĞ Float Öµ
+				// æ²¡æœ‰ Float å€¼
 				else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue1->value, "", tempVarName);
@@ -1371,22 +1371,22 @@ bool SemanticAnalysis::ShiftExpressionEliminateLeft() {
 				}
 				if (lastReturnValue2->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue2->value, "", tempVarName);
 					fourTable.nowFourLine++;
 					lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 				}
-				// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
 				fourTable.AddFour("<<", lastReturnValue1->value, lastReturnValue2->value, tempVarName);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Int, tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = EnumWordProperties::Int;
 			}
@@ -1400,32 +1400,32 @@ bool SemanticAnalysis::ShiftExpressionEliminateLeft() {
 	else if (wordTable[p].property == EnumWordProperties::OperatorRightShift) {
 		p++;
 		if (AdditiveExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ³öÕ» ²é¿´×ó±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å·¦è¾¹çš„ç±»å‹
 				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// String ºÍ Function ²»ÄÜ²ÎÓëÔËËã
+				// String å’Œ Function ä¸èƒ½å‚ä¸è¿ç®—
 				if (lastReturnValue1->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::Function ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Should be a Number To >> Shift", wordTable[p], 1));
 				}
-				// ÀàĞÍÌáÉı
+				// ç±»å‹æå‡
 				if (IsFloat(lastReturnValue1->getWordProperties()) ||
 					IsFloat(lastReturnValue2->getWordProperties())) {
-					// ÓïÒå´íÎó È¡Ä£²Ù×÷±ØĞëÊÇ Int
+					// è¯­ä¹‰é”™è¯¯ å–æ¨¡æ“ä½œå¿…é¡»æ˜¯ Int
 					throw(Exception("Should be a Int Value To >> Shift", wordTable[p], 1));
 				}
-				// Ã»ÓĞ Float Öµ
+				// æ²¡æœ‰ Float å€¼
 				else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue1->value, "", tempVarName);
@@ -1434,22 +1434,22 @@ bool SemanticAnalysis::ShiftExpressionEliminateLeft() {
 				}
 				if (lastReturnValue2->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue2->value, "", tempVarName);
 					fourTable.nowFourLine++;
 					lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 				}
-				// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
 				fourTable.AddFour(">>", lastReturnValue1->value, lastReturnValue2->value, tempVarName);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Int, tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = EnumWordProperties::Int;
 			}
@@ -1459,18 +1459,18 @@ bool SemanticAnalysis::ShiftExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a >> Expression because Expect a Additive Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ¹ØÏµ±í´ïÊ½Ê¶±ğ
+// func    å…³ç³»è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::RelationalExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ShiftExpression RelationalExpressionEliminateLeft
@@ -1487,42 +1487,42 @@ bool SemanticAnalysis::RelationalExpression() {
 	}
 }
 
-// func    ¹ØÏµ±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    å…³ç³»è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// < ShiftExpression RelationalExpressionEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::OperatorSmallerThan) {
 		p++;
 		if (ShiftExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ³öÕ» ²é¿´×ó±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å·¦è¾¹çš„ç±»å‹
 				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// String ºÍ Function ²»ÄÜ²ÎÓëÔËËã
+				// String å’Œ Function ä¸èƒ½å‚ä¸è¿ç®—
 				if (lastReturnValue1->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::Function ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Should be a Number To Compare <", wordTable[p], 1));
 				}
-				// ÀàĞÍÌáÉı
+				// ç±»å‹æå‡
 				if (IsFloat(lastReturnValue1->getWordProperties()) ||
 					IsFloat(lastReturnValue2->getWordProperties())) {
-					// ²»ĞèÒªÌáÉı
+					// ä¸éœ€è¦æå‡
 					if (IsFloat(lastReturnValue1->getWordProperties()) &&
 						IsFloat(lastReturnValue2->getWordProperties())) {
 					}
 					else if (IsFloat(lastReturnValue1->getWordProperties())) {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue2->value, "", tempVarName);
@@ -1530,7 +1530,7 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 						lastReturnValue2 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 					else {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue1->value, "", tempVarName);
@@ -1538,10 +1538,10 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 						lastReturnValue1 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 				}
-				// Ã»ÓĞ Float Öµ
+				// æ²¡æœ‰ Float å€¼
 				else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue1->value, "", tempVarName);
@@ -1550,14 +1550,14 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 				}
 				if (lastReturnValue2->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue2->value, "", tempVarName);
 					fourTable.nowFourLine++;
 					lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 				}
-				// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
 				fourTable.AddFour("j<", lastReturnValue1->value, lastReturnValue2->value, std::to_string(fourTable.nowFourLine + 3));
@@ -1569,9 +1569,9 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 				fourTable.AddFour("=", "1", "", tempVarName);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Bool, tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = EnumWordProperties::Bool;
 			}
@@ -1585,31 +1585,31 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 	else if (wordTable[p].property == EnumWordProperties::OperatorGreaterThan) {
 		p++;
 		if (ShiftExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ³öÕ» ²é¿´×ó±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å·¦è¾¹çš„ç±»å‹
 				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// String ºÍ Function ²»ÄÜ²ÎÓëÔËËã
+				// String å’Œ Function ä¸èƒ½å‚ä¸è¿ç®—
 				if (lastReturnValue1->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::Function ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Should be a Number To Compare >", wordTable[p], 1));
 				}
-				// ÀàĞÍÌáÉı
+				// ç±»å‹æå‡
 				if (IsFloat(lastReturnValue1->getWordProperties()) ||
 					IsFloat(lastReturnValue2->getWordProperties())) {
-					// ²»ĞèÒªÌáÉı
+					// ä¸éœ€è¦æå‡
 					if (IsFloat(lastReturnValue1->getWordProperties()) &&
 						IsFloat(lastReturnValue2->getWordProperties())) {
 					}
 					else if (IsFloat(lastReturnValue1->getWordProperties())) {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue2->value, "", tempVarName);
@@ -1617,7 +1617,7 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 						lastReturnValue2 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 					else {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue1->value, "", tempVarName);
@@ -1625,10 +1625,10 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 						lastReturnValue1 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 				}
-				// Ã»ÓĞ Float Öµ
+				// æ²¡æœ‰ Float å€¼
 				else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue1->value, "", tempVarName);
@@ -1637,14 +1637,14 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 				}
 				if (lastReturnValue2->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue2->value, "", tempVarName);
 					fourTable.nowFourLine++;
 					lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 				}
-				// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
 				fourTable.AddFour("j>", lastReturnValue1->value, lastReturnValue2->value, std::to_string(fourTable.nowFourLine + 3));
@@ -1656,9 +1656,9 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 				fourTable.AddFour("=", "1", "", tempVarName);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Bool, tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = EnumWordProperties::Bool;
 			}
@@ -1672,31 +1672,31 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 	if (wordTable[p].property == EnumWordProperties::OperatorSmallerEqual) {
 		p++;
 		if (ShiftExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ³öÕ» ²é¿´×ó±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å·¦è¾¹çš„ç±»å‹
 				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// String ºÍ Function ²»ÄÜ²ÎÓëÔËËã
+				// String å’Œ Function ä¸èƒ½å‚ä¸è¿ç®—
 				if (lastReturnValue1->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::Function ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Should be a Number To Compare <=", wordTable[p], 1));
 				}
-				// ÀàĞÍÌáÉı
+				// ç±»å‹æå‡
 				if (IsFloat(lastReturnValue1->getWordProperties()) ||
 					IsFloat(lastReturnValue2->getWordProperties())) {
-					// ²»ĞèÒªÌáÉı
+					// ä¸éœ€è¦æå‡
 					if (IsFloat(lastReturnValue1->getWordProperties()) &&
 						IsFloat(lastReturnValue2->getWordProperties())) {
 					}
 					else if (IsFloat(lastReturnValue1->getWordProperties())) {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue2->value, "", tempVarName);
@@ -1704,7 +1704,7 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 						lastReturnValue2 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 					else {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue1->value, "", tempVarName);
@@ -1712,10 +1712,10 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 						lastReturnValue1 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 				}
-				// Ã»ÓĞ Float Öµ
+				// æ²¡æœ‰ Float å€¼
 				else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue1->value, "", tempVarName);
@@ -1724,14 +1724,14 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 				}
 				if (lastReturnValue2->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue2->value, "", tempVarName);
 					fourTable.nowFourLine++;
 					lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 				}
-				// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
 				fourTable.AddFour("j<=", lastReturnValue1->value, lastReturnValue2->value, std::to_string(fourTable.nowFourLine + 3));
@@ -1743,9 +1743,9 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 				fourTable.AddFour("=", "1", "", tempVarName);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Bool, tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = EnumWordProperties::Bool;
 			}
@@ -1759,31 +1759,31 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 	else if (wordTable[p].property == EnumWordProperties::OperatorGreaterEqual) {
 		p++;
 		if (ShiftExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ³öÕ» ²é¿´×ó±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å·¦è¾¹çš„ç±»å‹
 				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// String ºÍ Function ²»ÄÜ²ÎÓëÔËËã
+				// String å’Œ Function ä¸èƒ½å‚ä¸è¿ç®—
 				if (lastReturnValue1->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::Function ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Should be a Number To Compare >=", wordTable[p], 1));
 				}
-				// ÀàĞÍÌáÉı
+				// ç±»å‹æå‡
 				if (IsFloat(lastReturnValue1->getWordProperties()) ||
 					IsFloat(lastReturnValue2->getWordProperties())) {
-					// ²»ĞèÒªÌáÉı
+					// ä¸éœ€è¦æå‡
 					if (IsFloat(lastReturnValue1->getWordProperties()) &&
 						IsFloat(lastReturnValue2->getWordProperties())) {
 					}
 					else if (IsFloat(lastReturnValue1->getWordProperties())) {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue2->value, "", tempVarName);
@@ -1791,7 +1791,7 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 						lastReturnValue2 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 					else {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue1->value, "", tempVarName);
@@ -1799,10 +1799,10 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 						lastReturnValue1 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 				}
-				// Ã»ÓĞ Float Öµ
+				// æ²¡æœ‰ Float å€¼
 				else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue1->value, "", tempVarName);
@@ -1811,14 +1811,14 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 				}
 				if (lastReturnValue2->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue2->value, "", tempVarName);
 					fourTable.nowFourLine++;
 					lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 				}
-				// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
 				fourTable.AddFour("j>=", lastReturnValue1->value, lastReturnValue2->value, std::to_string(fourTable.nowFourLine + 3));
@@ -1830,9 +1830,9 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 				fourTable.AddFour("=", "1", "", tempVarName);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Bool, tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = EnumWordProperties::Bool;
 			}
@@ -1842,18 +1842,18 @@ bool SemanticAnalysis::RelationalExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a >= Relational Expression because Expect a Shift Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ÏàµÈ±í´ïÊ½Ê¶±ğ
+// func    ç›¸ç­‰è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::EqualityExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// RelationalExpression EqualityExpressionEliminateLeft
@@ -1870,42 +1870,42 @@ bool SemanticAnalysis::EqualityExpression() {
 	}
 }
 
-// func    ÏàµÈ±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    ç›¸ç­‰è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::EqualityExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// == RelationalExpression EqualityExpressionEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::OperatorEqual) {
 		p++;
 		if (RelationalExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ³öÕ» ²é¿´×ó±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å·¦è¾¹çš„ç±»å‹
 				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// String ºÍ Function ²»ÄÜ²ÎÓëÔËËã
+				// String å’Œ Function ä¸èƒ½å‚ä¸è¿ç®—
 				if (lastReturnValue1->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::Function ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Should be a Number To Compare ==", wordTable[p], 1));
 				}
-				// ÀàĞÍÌáÉı
+				// ç±»å‹æå‡
 				if (IsFloat(lastReturnValue1->getWordProperties()) ||
 					IsFloat(lastReturnValue2->getWordProperties())) {
-					// ²»ĞèÒªÌáÉı
+					// ä¸éœ€è¦æå‡
 					if (IsFloat(lastReturnValue1->getWordProperties()) &&
 						IsFloat(lastReturnValue2->getWordProperties())) {
 					}
 					else if (IsFloat(lastReturnValue1->getWordProperties())) {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue2->value, "", tempVarName);
@@ -1913,7 +1913,7 @@ bool SemanticAnalysis::EqualityExpressionEliminateLeft() {
 						lastReturnValue2 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 					else {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue1->value, "", tempVarName);
@@ -1921,10 +1921,10 @@ bool SemanticAnalysis::EqualityExpressionEliminateLeft() {
 						lastReturnValue1 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 				}
-				// Ã»ÓĞ Float Öµ
+				// æ²¡æœ‰ Float å€¼
 				else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue1->value, "", tempVarName);
@@ -1933,14 +1933,14 @@ bool SemanticAnalysis::EqualityExpressionEliminateLeft() {
 				}
 				if (lastReturnValue2->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue2->value, "", tempVarName);
 					fourTable.nowFourLine++;
 					lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 				}
-				// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
 				fourTable.AddFour("j==", lastReturnValue1->value, lastReturnValue2->value, std::to_string(fourTable.nowFourLine + 3));
@@ -1952,9 +1952,9 @@ bool SemanticAnalysis::EqualityExpressionEliminateLeft() {
 				fourTable.AddFour("=", "1", "", tempVarName);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Bool, tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = EnumWordProperties::Bool;
 			}
@@ -1968,31 +1968,31 @@ bool SemanticAnalysis::EqualityExpressionEliminateLeft() {
 	else if (wordTable[p].property == EnumWordProperties::OperatorNotEqual) {
 		p++;
 		if (RelationalExpression()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 				auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// ³öÕ» ²é¿´×ó±ßµÄÀàĞÍ
+				// å‡ºæ ˆ æŸ¥çœ‹å·¦è¾¹çš„ç±»å‹
 				auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
-				// String ºÍ Function ²»ÄÜ²ÎÓëÔËËã
+				// String å’Œ Function ä¸èƒ½å‚ä¸è¿ç®—
 				if (lastReturnValue1->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::Function ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::String ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::Function) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Should be a Number To Compare !=", wordTable[p], 1));
 				}
-				// ÀàĞÍÌáÉı
+				// ç±»å‹æå‡
 				if (IsFloat(lastReturnValue1->getWordProperties()) ||
 					IsFloat(lastReturnValue2->getWordProperties())) {
-					// ²»ĞèÒªÌáÉı
+					// ä¸éœ€è¦æå‡
 					if (IsFloat(lastReturnValue1->getWordProperties()) &&
 						IsFloat(lastReturnValue2->getWordProperties())) {
 					}
 					else if (IsFloat(lastReturnValue1->getWordProperties())) {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue2->value, "", tempVarName);
@@ -2000,7 +2000,7 @@ bool SemanticAnalysis::EqualityExpressionEliminateLeft() {
 						lastReturnValue2 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 					else {
-						// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+						// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 						std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 						tempVariableTablePointer++;
 						fourTable.AddFour("IntToFloat", lastReturnValue1->value, "", tempVarName);
@@ -2008,10 +2008,10 @@ bool SemanticAnalysis::EqualityExpressionEliminateLeft() {
 						lastReturnValue1 = new TempVariable(EnumWordProperties::Float, tempVarName);
 					}
 				}
-				// Ã»ÓĞ Float Öµ
+				// æ²¡æœ‰ Float å€¼
 				else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue1->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue1->value, "", tempVarName);
@@ -2020,14 +2020,14 @@ bool SemanticAnalysis::EqualityExpressionEliminateLeft() {
 				}
 				if (lastReturnValue2->getWordProperties() == EnumWordProperties::Char ||
 					lastReturnValue2->getWordProperties() == EnumWordProperties::CharNumber) {
-					// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+					// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
 					fourTable.AddFour("CharToInt", lastReturnValue2->value, "", tempVarName);
 					fourTable.nowFourLine++;
 					lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 				}
-				// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+				// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
 				fourTable.AddFour("j!=", lastReturnValue1->value, lastReturnValue2->value, std::to_string(fourTable.nowFourLine + 3));
@@ -2039,9 +2039,9 @@ bool SemanticAnalysis::EqualityExpressionEliminateLeft() {
 				fourTable.AddFour("=", "1", "", tempVarName);
 				fourTable.nowFourLine++;
 
-				// ·µ»ØÖµÈëÇóÖµÕ»
+				// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 				returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Bool, tempVarName));
-				// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+				// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 				returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 				returnValueStack.lastReturnValueType = EnumWordProperties::Bool;
 			}
@@ -2051,18 +2051,18 @@ bool SemanticAnalysis::EqualityExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a != Equality Expression because Expect a Relational Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    °´Î»Óë±í´ïÊ½Ê¶±ğ
+// func    æŒ‰ä½ä¸è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::BitAndExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// EqualityExpression BitAndExpressionEliminateLeft
@@ -2079,11 +2079,11 @@ bool SemanticAnalysis::BitAndExpression() {
 	}
 }
 
-// func    °´Î»Óë±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    æŒ‰ä½ä¸è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::BitAndExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// & EqualityExpression BitAndExpressionEliminateLeft
@@ -2096,18 +2096,18 @@ bool SemanticAnalysis::BitAndExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a & Expression because Expect a Equality Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    °´Î»Òì»ò±í´ïÊ½Ê¶±ğ
+// func    æŒ‰ä½å¼‚æˆ–è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::BitXOrExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// BitAndExpression BitXOrExpressionEliminateLeft
@@ -2124,11 +2124,11 @@ bool SemanticAnalysis::BitXOrExpression() {
 	}
 }
 
-// func    °´Î»Òì»ò±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    æŒ‰ä½å¼‚æˆ–è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::BitXOrExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ^ BitAndExpression BitXOrExpressionEliminateLeft
@@ -2141,18 +2141,18 @@ bool SemanticAnalysis::BitXOrExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a ^ Expression because Expect a & Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    °´Î»»ò±í´ïÊ½Ê¶±ğ
+// func    æŒ‰ä½æˆ–è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::BitOrExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// BitXOrExpression BitOrExpressionEliminateLeft
@@ -2169,11 +2169,11 @@ bool SemanticAnalysis::BitOrExpression() {
 	}
 }
 
-// func    °´Î»»ò±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    æŒ‰ä½æˆ–è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::BitOrExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// | BitXOrExpression BitOrExpressionEliminateLeft
@@ -2186,18 +2186,18 @@ bool SemanticAnalysis::BitOrExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a | Expression because Expect a ^ Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    Âß¼­Óë±í´ïÊ½Ê¶±ğ
+// func    é€»è¾‘ä¸è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::AndExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// BitOrExpression AndExpressionEliminateLeft
@@ -2214,28 +2214,28 @@ bool SemanticAnalysis::AndExpression() {
 	}
 }
 
-// func    Âß¼­Óë±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    é€»è¾‘ä¸è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::AndExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// && BitOrExpression AndExpressionEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::OperatorAnd) {
 		p++;
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 		{
-			// Õ»¶¥Öµ×ª bool Öµ
+			// æ ˆé¡¶å€¼è½¬ bool å€¼
 			ToBool();
-			// È¡ bool Öµ
+			// å– bool å€¼
 			auto lastReturnValue = returnValueStack.returnValueStack.top();
 			returnValueStack.returnValueStack.pop();
 
-			// »ØÌîĞĞºÅÈëÕ»
+			// å›å¡«è¡Œå·å…¥æ ˆ
 			andBackFillStack.push(fourTable.nowFourLine);
 
-			// Ìø×ªÓï¾ä ´ı»ØÌî
+			// è·³è½¬è¯­å¥ å¾…å›å¡«
 			fourTable.AddFour("jz", lastReturnValue->value, "", "");
 			fourTable.nowFourLine++;
 		}
@@ -2246,21 +2246,21 @@ bool SemanticAnalysis::AndExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a && Expression because Expect a || Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 		{
-			// Ö»ÓĞÔÚĞèÒª»ØÌîµÄÊ±ºò²ÅÖ´ĞĞ ·ÀÖ¹²»±ØÒªµÄ bool ×ª»»
+			// åªæœ‰åœ¨éœ€è¦å›å¡«çš„æ—¶å€™æ‰æ‰§è¡Œ é˜²æ­¢ä¸å¿…è¦çš„ bool è½¬æ¢
 			if (andBackFillStack.size()) {
 
-				// Õ»¶¥Öµ×ª bool Öµ Õû¸öÂß¼­Óë±í´ïÊ½µÄÖµ¼´µ±Ç°Õ»¶¥µÄ bool Öµ
+				// æ ˆé¡¶å€¼è½¬ bool å€¼ æ•´ä¸ªé€»è¾‘ä¸è¡¨è¾¾å¼çš„å€¼å³å½“å‰æ ˆé¡¶çš„ bool å€¼
 				ToBool();
 
-				// »ØÌîÕ»ÖĞËùÓĞĞĞºÅ
+				// å›å¡«æ ˆä¸­æ‰€æœ‰è¡Œå·
 				while (andBackFillStack.size()) {
 					int i = andBackFillStack.top();
 					andBackFillStack.pop();
-					// Ö¸Ïò°Ñ 0 ¸øÁÙÊ±±äÁ¿µÄĞĞ
+					// æŒ‡å‘æŠŠ 0 ç»™ä¸´æ—¶å˜é‡çš„è¡Œ
 					fourTable.table[i].dest = std::to_string(fourTable.nowFourLine - 1);
 				}
 			}
@@ -2270,11 +2270,11 @@ bool SemanticAnalysis::AndExpressionEliminateLeft() {
 	}
 }
 
-// func    Âß¼­»ò±í´ïÊ½Ê¶±ğ
+// func    é€»è¾‘æˆ–è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::OrExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// AndExpression OrExpressionEliminateLeft
@@ -2291,28 +2291,28 @@ bool SemanticAnalysis::OrExpression() {
 	}
 }
 
-// func    Âß¼­»ò±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    é€»è¾‘æˆ–è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::OrExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// || AndExpression OrExpressionEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::OperatorOr) {
 		p++;
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 		{
-			// Õ»¶¥Öµ×ª bool Öµ
+			// æ ˆé¡¶å€¼è½¬ bool å€¼
 			ToBool();
-			// È¡ bool Öµ
+			// å– bool å€¼
 			auto lastReturnValue = returnValueStack.returnValueStack.top();
 			returnValueStack.returnValueStack.pop();
 
-			// »ØÌîĞĞºÅÈëÕ»
+			// å›å¡«è¡Œå·å…¥æ ˆ
 			orBackFillStack.push(fourTable.nowFourLine);
 
-			// Ìø×ªÓï¾ä ´ı»ØÌî
+			// è·³è½¬è¯­å¥ å¾…å›å¡«
 			fourTable.AddFour("jnz", lastReturnValue->value, "", "");
 			fourTable.nowFourLine++;
 		}
@@ -2323,21 +2323,21 @@ bool SemanticAnalysis::OrExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a || Expression because Expect a && Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 		{
-			// Ö»ÓĞÔÚĞèÒª»ØÌîµÄÊ±ºò²ÅÖ´ĞĞ ·ÀÖ¹²»±ØÒªµÄ bool ×ª»»
+			// åªæœ‰åœ¨éœ€è¦å›å¡«çš„æ—¶å€™æ‰æ‰§è¡Œ é˜²æ­¢ä¸å¿…è¦çš„ bool è½¬æ¢
 			if (orBackFillStack.size()) {
 
-				// Õ»¶¥Öµ×ª bool Öµ Õû¸öÂß¼­Óë±í´ïÊ½µÄÖµ¼´µ±Ç°Õ»¶¥µÄ bool Öµ
+				// æ ˆé¡¶å€¼è½¬ bool å€¼ æ•´ä¸ªé€»è¾‘ä¸è¡¨è¾¾å¼çš„å€¼å³å½“å‰æ ˆé¡¶çš„ bool å€¼
 				ToBool();
 
-				// »ØÌîÕ»ÖĞËùÓĞĞĞºÅ
+				// å›å¡«æ ˆä¸­æ‰€æœ‰è¡Œå·
 				while (orBackFillStack.size()) {
 					int i = orBackFillStack.top();
 					orBackFillStack.pop();
-					// Ö¸Ïò°Ñ 1 ¸øÁÙÊ±±äÁ¿µÄĞĞ
+					// æŒ‡å‘æŠŠ 1 ç»™ä¸´æ—¶å˜é‡çš„è¡Œ
 					fourTable.table[i].dest = std::to_string(fourTable.nowFourLine - 3);
 				}
 			}
@@ -2347,11 +2347,11 @@ bool SemanticAnalysis::OrExpressionEliminateLeft() {
 	}
 }
 
-// func    Ìõ¼ş±í´ïÊ½Ê¶±ğ
+// func    æ¡ä»¶è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::ConditionalExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// OrExpression
@@ -2359,15 +2359,15 @@ bool SemanticAnalysis::ConditionalExpression() {
 		// OrExpression ? Expression : ConditionalExpression
 		if (wordTable[p].property == EnumWordProperties::OperatorQuestion) {
 			p++;
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ×ªbool
+				// è½¬bool
 				ToBool();
-				// È¡Õ»¶¥
+				// å–æ ˆé¡¶
 				auto lastReturnValue = returnValueStack.returnValueStack.top();
 				returnValueStack.returnValueStack.pop();
 
-				// ´ı»ØÌî
+				// å¾…å›å¡«
 				conditionBackFillStack.push(fourTable.nowFourLine);
 				fourTable.AddFour("jz", lastReturnValue->value, "", "");
 				fourTable.nowFourLine++;
@@ -2375,22 +2375,22 @@ bool SemanticAnalysis::ConditionalExpression() {
 			if (Expression()) {
 				if (wordTable[p].property == EnumWordProperties::OperatorColon) {
 					p++;
-					// ÓïÒå¶¯×÷
+					// è¯­ä¹‰åŠ¨ä½œ
 					{
-						// »ØÌî
+						// å›å¡«
 						int line = conditionBackFillStack.top();
 						conditionBackFillStack.pop();
 						fourTable.table[line].dest = std::to_string(fourTable.nowFourLine + 1);
 
-						// Ìø×ª ´ı»ØÌî
+						// è·³è½¬ å¾…å›å¡«
 						conditionBackFillStack.push(fourTable.nowFourLine);
 						fourTable.AddFour("jmp", "", "", "");
 						fourTable.nowFourLine++;
 					}
 					if (ConditionalExpression()) {
-						// ÓïÒå¶¯×÷
+						// è¯­ä¹‰åŠ¨ä½œ
 						{
-							// »ØÌî
+							// å›å¡«
 							int line = conditionBackFillStack.top();
 							conditionBackFillStack.pop();
 							fourTable.table[line].dest = std::to_string(fourTable.nowFourLine);
@@ -2413,49 +2413,49 @@ bool SemanticAnalysis::ConditionalExpression() {
 	}
 }
 
-// func    ¸³Öµ±í´ïÊ½Ê¶±ğ
+// func    èµ‹å€¼è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::AssignmentExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 	int nowTempVariableTablePointer = tempVariableTablePointer;
-	// ±£´æËÄÔªÊ½±í
+	// ä¿å­˜å››å…ƒå¼è¡¨
 	auto nowFourTable = FourTable(fourTable);
-	// ±£´æÇóÖµÕ»
+	// ä¿å­˜æ±‚å€¼æ ˆ
 	auto nowReturnValueStack = ReturnValueStack(returnValueStack);
 
 	if (UnaryExpression()) {
 		if (AssignmentOperator()) {
-			// ±£´æµ±Ç°¸³ÖµÔËËã·ûÀàĞÍ
+			// ä¿å­˜å½“å‰èµ‹å€¼è¿ç®—ç¬¦ç±»å‹
 			EnumWordProperties e = wordTable[p - 1].property;
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// Ê×ÏÈ¿´Õ»¶¥ÊÇ²»ÊÇ±êÊ¶·û
+				// é¦–å…ˆçœ‹æ ˆé¡¶æ˜¯ä¸æ˜¯æ ‡è¯†ç¬¦
 				if (returnValueStack.lastReturnWordType != ReturnValueStack::LastReturnWordType::Identifier) {
-					// ÓïÒå´íÎó ¸³Öµ±í´ïÊ½ÒªÇóÊÇÒ»¸ö×óÖµ µ±Ç°Çé¿öÏÂÖ»ÓĞ±êÊ¶·ûÊÇ×óÖµ
+					// è¯­ä¹‰é”™è¯¯ èµ‹å€¼è¡¨è¾¾å¼è¦æ±‚æ˜¯ä¸€ä¸ªå·¦å€¼ å½“å‰æƒ…å†µä¸‹åªæœ‰æ ‡è¯†ç¬¦æ˜¯å·¦å€¼
 					throw(Exception("Should be a Left-Value after = Assignment", wordTable[p], 1));
 				}
 			}
 			if (AssignmentExpression()) {
-				// ÓïÒå¶¯×÷
+				// è¯­ä¹‰åŠ¨ä½œ
 				{
-					// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+					// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 					auto lastReturnValue2 = returnValueStack.returnValueStack.top();
 					returnValueStack.returnValueStack.pop();
-					// ³öÕ» ²é¿´×ó±ßµÄÀàĞÍ
+					// å‡ºæ ˆ æŸ¥çœ‹å·¦è¾¹çš„ç±»å‹
 					auto lastReturnValue1 = returnValueStack.returnValueStack.top();
 					returnValueStack.returnValueStack.pop();
 
-					// ²éÕÒ·ûºÅ±í
+					// æŸ¥æ‰¾ç¬¦å·è¡¨
 					auto [returnBool, id] = SearchIdentifier(identifierTablePointer, lastReturnValue1->value);
-					// Î´¶¨Òå
+					// æœªå®šä¹‰
 					if (!returnBool) {
-						// ÓïÒå´íÎó
+						// è¯­ä¹‰é”™è¯¯
 						throw(Exception("Identifier Not defined", wordTable[p], 1));
 					}
 					if (e != EnumWordProperties::OperatorModAssign) {
-						// ÀàĞÍ×ª»»
+						// ç±»å‹è½¬æ¢
 						if (!((IsFloat(lastReturnValue1->getWordProperties()) &&
 							IsFloat(lastReturnValue2->getWordProperties())) ||
 							(IsTrueInt(lastReturnValue1->getWordProperties()) &&
@@ -2463,18 +2463,18 @@ bool SemanticAnalysis::AssignmentExpression() {
 								(IsChar(lastReturnValue1->getWordProperties()) &&
 									(IsChar(lastReturnValue2->getWordProperties()))))
 							)) {
-							// String ºÍ Function ²»ÔÊĞí×Ô¶¯ÀàĞÍ×ª»»
+							// String å’Œ Function ä¸å…è®¸è‡ªåŠ¨ç±»å‹è½¬æ¢
 							if (lastReturnValue2->getWordProperties() == EnumWordProperties::String ||
 								lastReturnValue2->getWordProperties() == EnumWordProperties::Function) {
-								// ÓïÒå´íÎó
+								// è¯­ä¹‰é”™è¯¯
 								throw(Exception("Can't Cast To Bool", wordTable[p], 1));
 							}
-							// ×ªÎª Bool
+							// è½¬ä¸º Bool
 							if (lastReturnValue1->getWordProperties() == EnumWordProperties::Bool) {
-								// È¡ÁÙÊ±±äÁ¿
+								// å–ä¸´æ—¶å˜é‡
 								std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 								tempVariableTablePointer++;
-								// Éú³ÉËÄÔªÊ½
+								// ç”Ÿæˆå››å…ƒå¼
 								fourTable.AddFour("jz", lastReturnValue2->value, "", std::to_string(fourTable.nowFourLine + 3));
 								fourTable.nowFourLine++;
 								fourTable.AddFour("=", "1", "", tempVarName);
@@ -2485,65 +2485,65 @@ bool SemanticAnalysis::AssignmentExpression() {
 								fourTable.nowFourLine++;
 								lastReturnValue2 = new TempVariable(EnumWordProperties::Bool, tempVarName);
 							}
-							// ×ªÎª Float
+							// è½¬ä¸º Float
 							else if (IsFloat(lastReturnValue1->getWordProperties()) &&
 								!IsFloat(lastReturnValue2->getWordProperties())) {
-								// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+								// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 								std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 								tempVariableTablePointer++;
 								fourTable.AddFour("IntToFloat", lastReturnValue2->value, "", tempVarName);
 								fourTable.nowFourLine++;
 								lastReturnValue2 = new TempVariable(EnumWordProperties::Float, tempVarName);
 							}
-							// Float ×ª Int
+							// Float è½¬ Int
 							else if (IsInt(lastReturnValue1->getWordProperties()) &&
 								IsFloat(lastReturnValue2->getWordProperties())) {
-								// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+								// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 								std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 								tempVariableTablePointer++;
 								fourTable.AddFour("FloatToInt", lastReturnValue2->value, "", tempVarName);
 								fourTable.nowFourLine++;
 								lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 							}
-							// Int ×ª Char
+							// Int è½¬ Char
 							else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char &&
 								IsInt(lastReturnValue2->getWordProperties())) {
-								// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+								// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 								std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 								tempVariableTablePointer++;
 								fourTable.AddFour("IntToChar", lastReturnValue2->value, "", tempVarName);
 								fourTable.nowFourLine++;
 								lastReturnValue2 = new TempVariable(EnumWordProperties::Char, tempVarName);
 							}
-							// Float ×ª Char ´íÎó
+							// Float è½¬ Char é”™è¯¯
 							else if (lastReturnValue1->getWordProperties() == EnumWordProperties::Char &&
 								IsFloat(lastReturnValue2->getWordProperties())) {
-								// ÓïÒå´íÎó
+								// è¯­ä¹‰é”™è¯¯
 								throw(Exception("Can't Cast From Float To Char", wordTable[p], 1));
 							}
 						}
 						if (e == EnumWordProperties::OperatorAssign) {
-							// ¸³ÖµËÄÔªÊ½
+							// èµ‹å€¼å››å…ƒå¼
 							fourTable.AddFour("=", lastReturnValue2->value, "", lastReturnValue1->value);
 							fourTable.nowFourLine++;
 						}
 						else if (e == EnumWordProperties::OperatorAddAssign) {
-							// ¸³ÖµËÄÔªÊ½
+							// èµ‹å€¼å››å…ƒå¼
 							fourTable.AddFour("+", lastReturnValue1->value, lastReturnValue2->value, lastReturnValue1->value);
 							fourTable.nowFourLine++;
 						}
 						else if (e == EnumWordProperties::OperatorSubAssign) {
-							// ¸³ÖµËÄÔªÊ½
+							// èµ‹å€¼å››å…ƒå¼
 							fourTable.AddFour("-", lastReturnValue1->value, lastReturnValue2->value, lastReturnValue1->value);
 							fourTable.nowFourLine++;
 						}
 						else if (e == EnumWordProperties::OperatorMulAssign) {
-							// ¸³ÖµËÄÔªÊ½
+							// èµ‹å€¼å››å…ƒå¼
 							fourTable.AddFour("*", lastReturnValue1->value, lastReturnValue2->value, lastReturnValue1->value);
 							fourTable.nowFourLine++;
 						}
 						else if (e == EnumWordProperties::OperatorDivAssign) {
-							// ¸³ÖµËÄÔªÊ½
+							// èµ‹å€¼å››å…ƒå¼
 							fourTable.AddFour("/", lastReturnValue1->value, lastReturnValue2->value, lastReturnValue1->value);
 							fourTable.nowFourLine++;
 						}
@@ -2551,27 +2551,27 @@ bool SemanticAnalysis::AssignmentExpression() {
 					else {
 						if (IsFloat(lastReturnValue1->getWordProperties()) ||
 							IsFloat(lastReturnValue2->getWordProperties())) {
-							// ÓïÒå´íÎó È¡Ä£²Ù×÷±ØĞëÊÇ Int
+							// è¯­ä¹‰é”™è¯¯ å–æ¨¡æ“ä½œå¿…é¡»æ˜¯ Int
 							throw(Exception("Should be a Int Value To % Mod", wordTable[p], 1));
 						}
-						// Ã»ÓĞ Float Öµ
+						// æ²¡æœ‰ Float å€¼
 						else if (lastReturnValue2->getWordProperties() == EnumWordProperties::Char ||
 							lastReturnValue2->getWordProperties() == EnumWordProperties::CharNumber) {
-							// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+							// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 							std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 							tempVariableTablePointer++;
 							fourTable.AddFour("CharToInt", lastReturnValue2->value, "", tempVarName);
 							fourTable.nowFourLine++;
 							lastReturnValue2 = new TempVariable(EnumWordProperties::Int, tempVarName);
 						}
-						// ¸³ÖµËÄÔªÊ½
+						// èµ‹å€¼å››å…ƒå¼
 						fourTable.AddFour("%", lastReturnValue1->value, lastReturnValue2->value, lastReturnValue1->value);
 						fourTable.nowFourLine++;
 					}
 
-					// ·µ»ØÖµÈëÇóÖµÕ»
+					// è¿”å›å€¼å…¥æ±‚å€¼æ ˆ
 					returnValueStack.returnValueStack.push(lastReturnValue1);
-					// ÉèÖÃ×îºóÒ»´Î·µ»ØÖµÀàĞÍ
+					// è®¾ç½®æœ€åä¸€æ¬¡è¿”å›å€¼ç±»å‹
 					returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::Identifier;
 					returnValueStack.lastReturnValueType = lastReturnValue1->getWordProperties();
 				}
@@ -2579,17 +2579,17 @@ bool SemanticAnalysis::AssignmentExpression() {
 			}
 			throw(Exception("Not a Assignment Expression because Expect a Assignment Expression", wordTable[p], 0));
 		}
-		// »ØËİ
+		// å›æº¯
 		{
 			p = nowP;
 			tempVariableTablePointer = nowTempVariableTablePointer;
-			// Îö¹¹µ±Ç°ÇóÖµÕ»
+			// ææ„å½“å‰æ±‚å€¼æ ˆ
 			returnValueStack.~ReturnValueStack();
-			// »Ö¸´ÇóÖµÕ»
+			// æ¢å¤æ±‚å€¼æ ˆ
 			returnValueStack = ReturnValueStack(nowReturnValueStack);
-			// Îö¹¹µ±Ç°ËÄÔªÊ½±í
+			// ææ„å½“å‰å››å…ƒå¼è¡¨
 			fourTable.~FourTable();
-			// »Ö¸´ËÄÔªÊ½±í
+			// æ¢å¤å››å…ƒå¼è¡¨
 			fourTable = FourTable(nowFourTable);
 		}
 	}
@@ -2602,11 +2602,11 @@ bool SemanticAnalysis::AssignmentExpression() {
 	}
 }
 
-// func    ¸³ÖµÔËËã·ûÊ¶±ğ
+// func    èµ‹å€¼è¿ç®—ç¬¦è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::AssignmentOperator() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	if (wordTable[p].property == EnumWordProperties::OperatorAssign ||
@@ -2629,11 +2629,11 @@ bool SemanticAnalysis::AssignmentOperator() {
 	}
 }
 
-// func    ±í´ïÊ½Ê¶±ğ
+// func    è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::Expression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// AssignmentExpression ExpressionEliminateLeft
@@ -2650,19 +2650,19 @@ bool SemanticAnalysis::Expression() {
 	}
 }
 
-// func    ±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::ExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ,AssignmentExpression ExpressionEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::OperatorComma) {
 		p++;
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 		{
-			// È¡Õ»¶¥
+			// å–æ ˆé¡¶
 			returnValueStack.returnValueStack.pop();
 		}
 		if (AssignmentExpression()) {
@@ -2672,25 +2672,25 @@ bool SemanticAnalysis::ExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a Expression because Expect a Assignment Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ÉùÃ÷Ê¶±ğ
+// func    å£°æ˜è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::Declaration() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// TypeName InitDeclaratorList;
 	if (IsTypeName(wordTable[p])) {
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 		{
-			// ±£´æµ±Ç°ÉùÃ÷ÀàĞÍ
+			// ä¿å­˜å½“å‰å£°æ˜ç±»å‹
 			declarationTypeName = wordTable[p].property;
 		}
 		p++;
@@ -2710,11 +2710,11 @@ bool SemanticAnalysis::Declaration() {
 	}
 }
 
-// func    ³õÊ¼»¯ÉùÃ÷ÁĞ±íÊ¶±ğ
+// func    åˆå§‹åŒ–å£°æ˜åˆ—è¡¨è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::InitDeclaratorList() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// InitDeclarator InitDeclaratorListEliminateLeft
@@ -2731,11 +2731,11 @@ bool SemanticAnalysis::InitDeclaratorList() {
 	}
 }
 
-// func    ³õÊ¼»¯ÉùÃ÷ÁĞ±íÏû³ı×óµİ¹éÊ¶±ğ
+// func    åˆå§‹åŒ–å£°æ˜åˆ—è¡¨æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::InitDeclaratorListEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ,InitDeclarator InitDeclaratorListEliminateLeft
@@ -2749,18 +2749,18 @@ bool SemanticAnalysis::InitDeclaratorListEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ³õÊ¼»¯ÉùÃ÷·ûÊ¶±ğ
+// func    åˆå§‹åŒ–å£°æ˜ç¬¦è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::InitDeclarator() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// DirectDeclarator
@@ -2769,14 +2769,14 @@ bool SemanticAnalysis::InitDeclarator() {
 		if (wordTable[p].property == EnumWordProperties::OperatorAssign) {
 			p++;
 			if (AssignmentExpression()) {
-				// ÓïÒå¶¯×÷
+				// è¯­ä¹‰åŠ¨ä½œ
 				{
-					// ÓÃ¸Ã±í´ïÊ½³õÊ¼»¯±êÊ¶·û
-					// ³öÕ» ²é¿´ÓÒ±ßµÄÀàĞÍ
+					// ç”¨è¯¥è¡¨è¾¾å¼åˆå§‹åŒ–æ ‡è¯†ç¬¦
+					// å‡ºæ ˆ æŸ¥çœ‹å³è¾¹çš„ç±»å‹
 					auto lastReturnValue = returnValueStack.returnValueStack.top();
 					returnValueStack.returnValueStack.pop();
 
-					// Ö±½Ó³õÊ¼»¯
+					// ç›´æ¥åˆå§‹åŒ–
 					if ((declarationTypeName == EnumWordProperties::Int &&
 						IsTrueInt(lastReturnValue->getWordProperties())) ||
 						(declarationTypeName == EnumWordProperties::Float &&
@@ -2785,29 +2785,29 @@ bool SemanticAnalysis::InitDeclarator() {
 							lastReturnValue->getWordProperties() == EnumWordProperties::String) ||
 						(declarationTypeName == EnumWordProperties::Char &&
 							lastReturnValue->getWordProperties() == EnumWordProperties::CharNumber)) {
-						// ³õÊ¼»¯ËÄÔªÊ½
+						// åˆå§‹åŒ–å››å…ƒå¼
 						fourTable.AddFour("=", lastReturnValue->value, "", declarationIdentifier.value);
 						fourTable.nowFourLine++;
 					}
-					// ÀàĞÍ×ª»»
+					// ç±»å‹è½¬æ¢
 					else if (!((IsFloat(declarationTypeName) &&
 						IsFloat(lastReturnValue->getWordProperties())) ||
 						(IsTrueInt(declarationTypeName) &&
 							(IsTrueInt(lastReturnValue->getWordProperties())) ||
 							(IsChar(declarationTypeName) &&
 								(IsChar(lastReturnValue->getWordProperties())))))) {
-						// String ºÍ Function ²»ÔÊĞí×Ô¶¯ÀàĞÍ×ª»»
+						// String å’Œ Function ä¸å…è®¸è‡ªåŠ¨ç±»å‹è½¬æ¢
 						if (lastReturnValue->getWordProperties() == EnumWordProperties::String ||
 							lastReturnValue->getWordProperties() == EnumWordProperties::Function) {
-							// ÓïÒå´íÎó
+							// è¯­ä¹‰é”™è¯¯
 							throw(Exception("Can't Cast", wordTable[p], 1));
 						}
-						// ×ªÎª Bool
+						// è½¬ä¸º Bool
 						if (declarationTypeName == EnumWordProperties::Bool) {
-							// È¡ÁÙÊ±±äÁ¿
+							// å–ä¸´æ—¶å˜é‡
 							std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 							tempVariableTablePointer++;
-							// Éú³ÉËÄÔªÊ½
+							// ç”Ÿæˆå››å…ƒå¼
 							fourTable.AddFour("jz", lastReturnValue->value, "", std::to_string(fourTable.nowFourLine + 3));
 							fourTable.nowFourLine++;
 							fourTable.AddFour("=", "1", "", tempVarName);
@@ -2818,49 +2818,49 @@ bool SemanticAnalysis::InitDeclarator() {
 							fourTable.nowFourLine++;
 							lastReturnValue = new TempVariable(EnumWordProperties::Bool, tempVarName);
 						}
-						// ×ªÎª Float
+						// è½¬ä¸º Float
 						else if (IsFloat(declarationTypeName) &&
 							!IsFloat(lastReturnValue->getWordProperties())) {
-							// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+							// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 							std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 							tempVariableTablePointer++;
 							fourTable.AddFour("IntToFloat", lastReturnValue->value, "", tempVarName);
 							fourTable.nowFourLine++;
 							lastReturnValue = new TempVariable(EnumWordProperties::Float, tempVarName);
 						}
-						// Float ×ª Int
+						// Float è½¬ Int
 						else if (IsInt(declarationTypeName) &&
 							IsFloat(lastReturnValue->getWordProperties())) {
-							// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+							// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 							std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 							tempVariableTablePointer++;
 							fourTable.AddFour("FloatToInt", lastReturnValue->value, "", tempVarName);
 							fourTable.nowFourLine++;
 							lastReturnValue = new TempVariable(EnumWordProperties::Int, tempVarName);
 						}
-						// Int ×ª Char
+						// Int è½¬ Char
 						else if (declarationTypeName == EnumWordProperties::Char &&
 							IsInt(lastReturnValue->getWordProperties())) {
-							// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+							// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 							std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 							tempVariableTablePointer++;
 							fourTable.AddFour("IntToChar", lastReturnValue->value, "", tempVarName);
 							fourTable.nowFourLine++;
 							lastReturnValue = new TempVariable(EnumWordProperties::Char, tempVarName);
 						}
-						// Float ×ª Char ´íÎó
+						// Float è½¬ Char é”™è¯¯
 						else if (declarationTypeName == EnumWordProperties::Char &&
 							IsFloat(lastReturnValue->getWordProperties())) {
-							// ÓïÒå´íÎó
+							// è¯­ä¹‰é”™è¯¯
 							throw(Exception("Can't Cast From Float To Char", wordTable[p], 1));
 						}
-						// ÆäËû ×ª String ´íÎó
+						// å…¶ä»– è½¬ String é”™è¯¯
 						else if (declarationTypeName == EnumWordProperties::StringType) {
-							// ÓïÒå´íÎó
+							// è¯­ä¹‰é”™è¯¯
 							throw(Exception("Can't Cast To String", wordTable[p], 1));
 						}
 
-						// ×ª»»ÍêÁË ³õÊ¼»¯
+						// è½¬æ¢å®Œäº† åˆå§‹åŒ–
 						fourTable.AddFour("=", lastReturnValue->value, "", declarationIdentifier.value);
 						fourTable.nowFourLine++;
 					}
@@ -2880,21 +2880,21 @@ bool SemanticAnalysis::InitDeclarator() {
 	}
 }
 
-// func    Ö±½ÓÉùÃ÷·ûÊ¶±ğ
+// func    ç›´æ¥å£°æ˜ç¬¦è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::DirectDeclarator() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Identifier DirectDeclaratorEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::Identifier) {
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 		{
 			bool isFunction = false;
-			// ¿´ÊÇ²»ÊÇº¯Êı
+			// çœ‹æ˜¯ä¸æ˜¯å‡½æ•°
 			for (auto& i : functionTable.functionTable) {
-				// ÊÇº¯Êı
+				// æ˜¯å‡½æ•°
 				if (i.value == wordTable[p].word) {
 					lastFunctionIdentifier = wordTable[p].word;
 					isFunction = true;
@@ -2902,15 +2902,15 @@ bool SemanticAnalysis::DirectDeclarator() {
 				}
 			}
 			
-			// ²éÕÒµ±Ç°±í ÊÇ·ñÖØ¶¨Òå
+			// æŸ¥æ‰¾å½“å‰è¡¨ æ˜¯å¦é‡å®šä¹‰
 			auto [returnBool, id] = SearchIdentifierInCurrentTable(identifierTablePointer, wordTable[p].word);
-			// ÖØ¶¨Òå
+			// é‡å®šä¹‰
 			if (!isFunction&&returnBool) {
-				// ÓïÒå´íÎó
+				// è¯­ä¹‰é”™è¯¯
 				throw(Exception("Identifier have defined", wordTable[p], 1));
 			}
 			if (!returnBool) {
-				// ±êÊ¶·ûÈë±í Ôİ´æ¸Ã±êÊ¶·û
+				// æ ‡è¯†ç¬¦å…¥è¡¨ æš‚å­˜è¯¥æ ‡è¯†ç¬¦
 				declarationIdentifier = Identifier(declarationTypeName, wordTable[p].word);
 				identifierTablePointer->AddIdentifier(Identifier(declarationTypeName, wordTable[p].word));
 			}
@@ -2930,50 +2930,50 @@ bool SemanticAnalysis::DirectDeclarator() {
 	}
 }
 
-// func    Ö±½ÓÉùÃ÷·ûÏû³ı×óµİ¹éÊ¶±ğ
+// func    ç›´æ¥å£°æ˜ç¬¦æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::DirectDeclaratorEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// (ParameterList) DirectDeclaratorEliminateLeft
 	if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 		p++;
-		// ÓïÒå¶¯×÷
-		// ËµÃ÷ÊÇº¯Êı ¿ÉÒÔ×¼±¸ËÍÈëº¯Êı±íÁË
+		// è¯­ä¹‰åŠ¨ä½œ
+		// è¯´æ˜æ˜¯å‡½æ•° å¯ä»¥å‡†å¤‡é€å…¥å‡½æ•°è¡¨äº†
 		{
 			bool isDefined = false;
 			lastFunctionIdentifier = wordTable[p-2].word;
-			// ÖØ¶¨Òå
+			// é‡å®šä¹‰
 			for (auto& i : functionTable.functionTable) {
 				if (i.value == identifierTablePointer->table[identifierTablePointer->IdentifierNumber - 1].value) {
 					isDefined = true;
 				}
 			}
 			if (!isDefined) {
-				// º¯Êı·ûÈëº¯Êı±í
+				// å‡½æ•°ç¬¦å…¥å‡½æ•°è¡¨
 				functionTable.AddFunction(FunctionIdentifier(declarationTypeName,
 					identifierTablePointer->table[identifierTablePointer->IdentifierNumber - 1].value));
 			}
 
-			// ÓÉÓÚ½ÓÏÂÀ´ÊÇ²ÎÊıÁĞ±í ²ÎÊıÁĞ±íÖĞµÄÃ¿¸ö²ÎÊıÉùÃ÷ÓÉÉùÃ÷ÀàĞÍºÍÖ±½ÓÉùÃ÷·û×é³É
-			// Ö±½ÓÉùÃ÷·û»á²é¿´±êÊ¶·ûÖØ¶¨Òå Òò´Ëº¯ÊıÉùÃ÷ĞèÒªÒ»¸öĞÂµÄ×÷ÓÃÓò
-			// ĞÂµÄ×÷ÓÃÓò º¯ÊıÍ·µ½º¯ÊıÎ²½«ÊÇÒ»¸ö±í
+			// ç”±äºæ¥ä¸‹æ¥æ˜¯å‚æ•°åˆ—è¡¨ å‚æ•°åˆ—è¡¨ä¸­çš„æ¯ä¸ªå‚æ•°å£°æ˜ç”±å£°æ˜ç±»å‹å’Œç›´æ¥å£°æ˜ç¬¦ç»„æˆ
+			// ç›´æ¥å£°æ˜ç¬¦ä¼šæŸ¥çœ‹æ ‡è¯†ç¬¦é‡å®šä¹‰ å› æ­¤å‡½æ•°å£°æ˜éœ€è¦ä¸€ä¸ªæ–°çš„ä½œç”¨åŸŸ
+			// æ–°çš„ä½œç”¨åŸŸ å‡½æ•°å¤´åˆ°å‡½æ•°å°¾å°†æ˜¯ä¸€ä¸ªè¡¨
 			identifierTablePointer = new IdentifierTable(identifierTablePointer);
-			// ÕâÕÅ±íÒª½»¸øºóÃæµÄ¿é
+			// è¿™å¼ è¡¨è¦äº¤ç»™åé¢çš„å—
 			functionHeadIdentifierTablePointer = identifierTablePointer;
 		}
-		// ÔÚ²ÎÊıÁĞ±íÖĞ Ã¿¸ö²ÎÊı±»Ìí¼Óµ½º¯Êı±í¶¥µÄº¯ÊıÀï
+		// åœ¨å‚æ•°åˆ—è¡¨ä¸­ æ¯ä¸ªå‚æ•°è¢«æ·»åŠ åˆ°å‡½æ•°è¡¨é¡¶çš„å‡½æ•°é‡Œ
 		if (ParameterList()) {
 			if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
 				p++;
-				// ÓïÒå¶¯×÷
+				// è¯­ä¹‰åŠ¨ä½œ
 				{
-					// º¯ÊıÍ·²¿·Ö½áÊøÁË ±í±»ÊÕÆğÀ´ µ«º¯ÊıÍ·×÷ÓÃÓò±£Áô ÒÔ±ãºÏÈë
+					// å‡½æ•°å¤´éƒ¨åˆ†ç»“æŸäº† è¡¨è¢«æ”¶èµ·æ¥ ä½†å‡½æ•°å¤´ä½œç”¨åŸŸä¿ç•™ ä»¥ä¾¿åˆå…¥
 					identifierTablePointer = identifierTablePointer->fatherTablePointer;
 				}
-				// ÕâÀï¿´²»¶® Á¬ĞøµÄ (ParameterList) ?
+				// è¿™é‡Œçœ‹ä¸æ‡‚ è¿ç»­çš„ (ParameterList) ?
 				if (DirectDeclaratorEliminateLeft()) {
 					return true;
 				}
@@ -2983,18 +2983,18 @@ bool SemanticAnalysis::DirectDeclaratorEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ²ÎÊıÁĞ±íÊ¶±ğ
+// func    å‚æ•°åˆ—è¡¨è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::ParameterList() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ParameterDeclaration ParameterListEliminateLeft
@@ -3013,11 +3013,11 @@ bool SemanticAnalysis::ParameterList() {
 	}
 }
 
-// func    ²ÎÊıÁĞ±íÏû³ı×óµİ¹éÊ¶±ğ
+// func    å‚æ•°åˆ—è¡¨æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::ParameterListEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ,ParameterDeclaration ParameterListEliminateLeft
@@ -3031,27 +3031,27 @@ bool SemanticAnalysis::ParameterListEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ²ÎÊıÉùÃ÷Ê¶±ğ
+// func    å‚æ•°å£°æ˜è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::ParameterDeclaration() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// TypeName DirectDeclarator
 	if (IsTypeName(wordTable[p])) {
 		p++;
 		if (DirectDeclarator()) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ²ÎÊıµ½ÊÖ Ïòº¯Êı·ûÀïÌí¼Ó²ÎÊıÀàĞÍ
+				// å‚æ•°åˆ°æ‰‹ å‘å‡½æ•°ç¬¦é‡Œæ·»åŠ å‚æ•°ç±»å‹
 				functionTable.functionTable[functionTable.FunctionNumber - 1].AddParameter(declarationTypeName);
 			}
 			return true;
@@ -3066,14 +3066,14 @@ bool SemanticAnalysis::ParameterDeclaration() {
 	}
 }
 
-// func    Óï¾äÊ¶±ğ
+// func    è¯­å¥è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::Statement() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
-	// Goto Continue Break Return ÊÇÌø×ªÓï¾ä
+	// Goto Continue Break Return æ˜¯è·³è½¬è¯­å¥
 	if (wordTable[p].property == EnumWordProperties::Goto ||
 		wordTable[p].property == EnumWordProperties::Continue ||
 		wordTable[p].property == EnumWordProperties::Break ||
@@ -3081,60 +3081,60 @@ bool SemanticAnalysis::Statement() {
 		JumpStatement();
 		return true;
 	}
-	// If ÊÇÑ¡ÔñÓï¾ä
+	// If æ˜¯é€‰æ‹©è¯­å¥
 	else if (wordTable[p].property == EnumWordProperties::If) {
 		SelectionStatement();
 		return true;
 	}
-	// { ÊÇ¸´ºÏÓï¾ä
+	// { æ˜¯å¤åˆè¯­å¥
 	else if (wordTable[p].property == EnumWordProperties::OperatorLeftBrace) {
 		CompoundStatement();
 		return true;
 	}
-	// While Do ÊÇµü´úÓï¾ä
+	// While Do æ˜¯è¿­ä»£è¯­å¥
 	else if (wordTable[p].property == EnumWordProperties::While ||
 		wordTable[p].property == EnumWordProperties::Do) {
 		IterationStatement();
 		return true;
 	}
-	// ¿ÕÓï¾ä ÊÇ±í´ïÊ½Óï¾ä
+	// ç©ºè¯­å¥ æ˜¯è¡¨è¾¾å¼è¯­å¥
 	else if (wordTable[p].property == EnumWordProperties::Semicolon) {
 		ExpressionStatement();
 		return true;
 	}
-	// ±êÇ©Óï¾äºÍ±í´ïÊ½Óï¾äĞèÒª»ØËİ
-	// Òò´Ë±êÇ©Óï¾äµÄÈë¿Ú´¦²»ÄÜthrow
+	// æ ‡ç­¾è¯­å¥å’Œè¡¨è¾¾å¼è¯­å¥éœ€è¦å›æº¯
+	// å› æ­¤æ ‡ç­¾è¯­å¥çš„å…¥å£å¤„ä¸èƒ½throw
 	if (LabeledStatement()) {
 		return true;
 	}
 	if (ExpressionStatement()) {
 		return true;
 	}
-	// ¶¼²»ÊÇ ²»ÊÇÓï¾ä
+	// éƒ½ä¸æ˜¯ ä¸æ˜¯è¯­å¥
 	else {
 		p = nowP;
 		return false;
 	}
 }
 
-// func    ±êÇ©Óï¾äÊ¶±ğ
+// func    æ ‡ç­¾è¯­å¥è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::LabeledStatement() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Identifier : Statement
 	if (wordTable[p].property == EnumWordProperties::Identifier) {
 		p++;
 		if (wordTable[p].property == EnumWordProperties::OperatorColon) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ÕâÀïÒª°Ñ±êÇ©·ÅÈë±êÇ©±í
-				// È¡±êÇ©±íÕ»¶¥
+				// è¿™é‡Œè¦æŠŠæ ‡ç­¾æ”¾å…¥æ ‡ç­¾è¡¨
+				// å–æ ‡ç­¾è¡¨æ ˆé¡¶
 				auto& labelTable = labelTableStack.top();
 				auto [exist, defined, i] = labelTable.SearchLabelIdentifier(wordTable[p - 1].word);
-				// ÖØ¶¨Òå
+				// é‡å®šä¹‰
 				if (exist && defined) {
 					throw(Exception("Label have defined", wordTable[p - 1], 1));
 				}
@@ -3143,7 +3143,7 @@ bool SemanticAnalysis::LabeledStatement() {
 					labelTable.backFillLines[i] = fourTable.nowFourLine;
 				}
 				else {
-					// ¸ÃÒÑ¶¨Òå±êÇ©Èë±í
+					// è¯¥å·²å®šä¹‰æ ‡ç­¾å…¥è¡¨
 					labelTable.AddDefinedLabel(fourTable.nowFourLine, wordTable[p - 1].word);
 				}
 			}
@@ -3162,44 +3162,44 @@ bool SemanticAnalysis::LabeledStatement() {
 	}
 }
 
-// func    ¸´ºÏÓï¾äÊ¶±ğ
+// func    å¤åˆè¯­å¥è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::CompoundStatement() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// { BlockItemList }
 	if (wordTable[p].property == EnumWordProperties::OperatorLeftBrace) {
 		p++;
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 		{
-			// ĞÂµÄ×÷ÓÃÓò
+			// æ–°çš„ä½œç”¨åŸŸ
 			identifierTablePointer = new IdentifierTable(identifierTablePointer);
 
-			// ÊÇ·ñÎªº¯Êı¿é
+			// æ˜¯å¦ä¸ºå‡½æ•°å—
 			if (functionLeftCompound) {
-				// ½«±íºÏÈë
+				// å°†è¡¨åˆå…¥
 				for (auto& i : (functionHeadIdentifierTablePointer->table)) {
 					identifierTablePointer->AddIdentifier(i);
 				}
-				// º¯Êı¿é±êÖ¾ÖÃ false
+				// å‡½æ•°å—æ ‡å¿—ç½® false
 				functionLeftCompound = false;
 
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
-				// ³öÕ»µ÷ÓÃÎ»ÖÃ
+				// å‡ºæ ˆè°ƒç”¨ä½ç½®
 				fourTable.AddFour("pop", "", "", tempVarName);
 				fourTable.nowFourLine++;
 
-				// ĞÎ²Î³öÕ»
+				// å½¢å‚å‡ºæ ˆ
 				for (auto& i : identifierTablePointer->table) {
-					// ËÄÔªÊ½
+					// å››å…ƒå¼
 					fourTable.AddFour("pop", "", "", i.value);
 					fourTable.nowFourLine++;
 				}
 
-				// ÈëÕ»µ÷ÓÃÎ»ÖÃ
+				// å…¥æ ˆè°ƒç”¨ä½ç½®
 				fourTable.AddFour("push", tempVarName, "", "");
 				fourTable.nowFourLine++;
 			}
@@ -3207,24 +3207,24 @@ bool SemanticAnalysis::CompoundStatement() {
 		if (BlockItemList()) {
 			if (wordTable[p].property == EnumWordProperties::OperatorRightBrace) {
 				p++;
-				// ÓïÒå¶¯×÷
+				// è¯­ä¹‰åŠ¨ä½œ
 				{
-					// Àë¿ª×÷ÓÃÓò
+					// ç¦»å¼€ä½œç”¨åŸŸ
 					identifierTablePointer = identifierTablePointer->fatherTablePointer;
-					// Èç¹ûÊÇº¯Êı×÷ÓÃÓò
+					// å¦‚æœæ˜¯å‡½æ•°ä½œç”¨åŸŸ
 					if (identifierTablePointer->fatherTablePointer == nullptr) {
-						// È¡±êÇ©±íÕ»¶¥
+						// å–æ ‡ç­¾è¡¨æ ˆé¡¶
 						auto& labelTable = labelTableStack.top();
 
-						// ±éÀú±êÇ©
+						// éå†æ ‡ç­¾
 						for (int i = 0; i < labelTable.labelTable.size(); i++) {
 							if (!labelTable.definedLabel[i]) {
-								// ´æÔÚÄ¿±ê±êÇ©Î´¶¨ÒåµÄÌø×ªÓï¾ä
+								// å­˜åœ¨ç›®æ ‡æ ‡ç­¾æœªå®šä¹‰çš„è·³è½¬è¯­å¥
 								throw(Exception("Label Not defined", wordTable[p], 1));
 							}
-							// ±éÀú±êÇ©µÄ´ı»ØÌîĞĞ
+							// éå†æ ‡ç­¾çš„å¾…å›å¡«è¡Œ
 							for (auto j : labelTable.backFillTable[i]) {
-								// »ØÌî±êÇ©
+								// å›å¡«æ ‡ç­¾
 								fourTable.table[j].dest = std::to_string(labelTable.backFillLines[i]);
 							}
 						}
@@ -3239,11 +3239,11 @@ bool SemanticAnalysis::CompoundStatement() {
 	throw(Exception("Not a Compound Statement because Expect a {", wordTable[p], 0));
 }
 
-// func    ¿éÏîÄ¿ÁĞ±íÊ¶±ğ
+// func    å—é¡¹ç›®åˆ—è¡¨è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::BlockItemList() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// BlockItem BlockItemListEliminateLeft
@@ -3262,11 +3262,11 @@ bool SemanticAnalysis::BlockItemList() {
 	}
 }
 
-// func    ¿éÏîÄ¿ÁĞ±íÏû³ı×óµİ¹éÊ¶±ğ
+// func    å—é¡¹ç›®åˆ—è¡¨æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::BlockItemListEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// BlockItem BlockItemListEliminateLeft
@@ -3277,18 +3277,18 @@ bool SemanticAnalysis::BlockItemListEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ¿éÏîÄ¿Ê¶±ğ
+// func    å—é¡¹ç›®è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::BlockItem() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Declaration
@@ -3303,11 +3303,11 @@ bool SemanticAnalysis::BlockItem() {
 	return false;
 }
 
-// func    ±í´ïÊ½Óï¾äÊ¶±ğ
+// func    è¡¨è¾¾å¼è¯­å¥è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::ExpressionStatement() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ;
@@ -3329,11 +3329,11 @@ bool SemanticAnalysis::ExpressionStatement() {
 	}
 }
 
-// func    Ñ¡ÔñÓï¾äÊ¶±ğ
+// func    é€‰æ‹©è¯­å¥è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::SelectionStatement() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// If (Expression) Statement
@@ -3343,23 +3343,23 @@ bool SemanticAnalysis::SelectionStatement() {
 			p++;
 			if (Expression()) {
 				if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
-					// ÓïÒå¶¯×÷
+					// è¯­ä¹‰åŠ¨ä½œ
 					{
-						// ÏÈ×ª Bool Öµ
+						// å…ˆè½¬ Bool å€¼
 						ToBool();
 						auto lastReturnValue = returnValueStack.returnValueStack.top();
 						returnValueStack.returnValueStack.pop();
-						// »ØÌîĞĞºÅÈëÕ»
+						// å›å¡«è¡Œå·å…¥æ ˆ
 						selectBackFillStack.push(fourTable.nowFourLine);
-						// Ìø×ªÓï¾ä ´ı»ØÌî
+						// è·³è½¬è¯­å¥ å¾…å›å¡«
 						fourTable.AddFour("jz", lastReturnValue->value, "", "");
 						fourTable.nowFourLine++;
 					}
 					p++;
 					if (Statement()) {
-						// ÓïÒå¶¯×÷
+						// è¯­ä¹‰åŠ¨ä½œ
 						{
-							// »ØÌî
+							// å›å¡«
 							int backFillLine = selectBackFillStack.top();
 							selectBackFillStack.pop();
 							fourTable.table[backFillLine].dest = std::to_string(fourTable.nowFourLine + 1);
@@ -3367,18 +3367,18 @@ bool SemanticAnalysis::SelectionStatement() {
 						// If (Expression) Statement Else Statement
 						if (wordTable[p].property == EnumWordProperties::Else) {
 							p++;
-							// ÓïÒå¶¯×÷
+							// è¯­ä¹‰åŠ¨ä½œ
 							{
-								// »ØÌîĞĞºÅÈëÕ»
+								// å›å¡«è¡Œå·å…¥æ ˆ
 								selectBackFillStack.push(fourTable.nowFourLine);
-								// Ìø×ªÓï¾ä ´ı»ØÌî
+								// è·³è½¬è¯­å¥ å¾…å›å¡«
 								fourTable.AddFour("jmp", "", "", "");
 								fourTable.nowFourLine++;
 							}
 							if (Statement()) {
-								// ÓïÒå¶¯×÷
+								// è¯­ä¹‰åŠ¨ä½œ
 								{
-									// »ØÌî
+									// å›å¡«
 									int backFillLine = selectBackFillStack.top();
 									selectBackFillStack.pop();
 									fourTable.table[backFillLine].dest = std::to_string(fourTable.nowFourLine);
@@ -3388,9 +3388,9 @@ bool SemanticAnalysis::SelectionStatement() {
 						}
 						// If (Expression) Statement
 						else {
-							// ÓïÒå¶¯×÷
+							// è¯­ä¹‰åŠ¨ä½œ
 							{
-								// Ìø×ªÓï¾ä ÎŞelse µ½ÏÂÒ»ĞĞ
+								// è·³è½¬è¯­å¥ æ— else åˆ°ä¸‹ä¸€è¡Œ
 								fourTable.AddFour("jmp", "", "", std::to_string(fourTable.nowFourLine + 1));
 								fourTable.nowFourLine++;
 							}
@@ -3408,11 +3408,11 @@ bool SemanticAnalysis::SelectionStatement() {
 	throw(Exception("Not a if Statement", wordTable[p], 0));
 }
 
-// func    µü´úÓï¾äÊ¶±ğ
+// func    è¿­ä»£è¯­å¥è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::IterationStatement() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// While(Expression) Statement
@@ -3420,55 +3420,55 @@ bool SemanticAnalysis::IterationStatement() {
 		p++;
 		if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 			p++;
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// »ØÌî²Î¿¼ĞĞºÅ¼¯ÈëÕ»
+				// å›å¡«å‚è€ƒè¡Œå·é›†å…¥æ ˆ
 				iterateBackFillStack.push(fourTable.nowFourLine);
-				// ĞÂµÄµü´ú²ã
+				// æ–°çš„è¿­ä»£å±‚
 				iterateBreakLayerStack.push(new std::vector<int>);
 				iterateContinueLayerStack.push(new std::vector<int>);
 			}
 			if (Expression()) {
 				if (wordTable[p].property == EnumWordProperties::OperatorRightRound) {
-					// ÓïÒå¶¯×÷
+					// è¯­ä¹‰åŠ¨ä½œ
 					{
-						// ÏÈ×ª Bool Öµ
+						// å…ˆè½¬ Bool å€¼
 						ToBool();
 						auto lastReturnValue = returnValueStack.returnValueStack.top();
 						returnValueStack.returnValueStack.pop();
-						// »ØÌîĞĞºÅÈëÕ»
+						// å›å¡«è¡Œå·å…¥æ ˆ
 						iterateBackFillStack.push(fourTable.nowFourLine);
-						// Ìø×ªÓï¾ä ´ı»ØÌî
+						// è·³è½¬è¯­å¥ å¾…å›å¡«
 						fourTable.AddFour("jz", lastReturnValue->value, "", "");
 						fourTable.nowFourLine++;
 					}
 					p++;
 					if (Statement()) {
-						// ÓïÒå¶¯×÷
+						// è¯­ä¹‰åŠ¨ä½œ
 						{
-							// »ØÌî
+							// å›å¡«
 							int backFillLine = iterateBackFillStack.top();
 							iterateBackFillStack.pop();
 							fourTable.table[backFillLine].dest = std::to_string(fourTable.nowFourLine + 1);
-							// È¡²Î¿¼ĞĞºÅ
+							// å–å‚è€ƒè¡Œå·
 							backFillLine = iterateBackFillStack.top();
 							iterateBackFillStack.pop();
-							// µ±Ç°µü´ú²ã³öÕ»
+							// å½“å‰è¿­ä»£å±‚å‡ºæ ˆ
 							auto currentBreakLayer = iterateBreakLayerStack.top();
 							iterateBreakLayerStack.pop();
 							auto currentContinueLayer = iterateContinueLayerStack.top();
 							iterateContinueLayerStack.pop();
-							// »ØÌîµ±Ç°µü´ú²ãµÄ break continue
+							// å›å¡«å½“å‰è¿­ä»£å±‚çš„ break continue
 							for (auto i : *currentBreakLayer) {
 								fourTable.table[i].dest = std::to_string(fourTable.nowFourLine + 1);
 							}
 							for (auto i : *currentContinueLayer) {
 								fourTable.table[i].dest = std::to_string(backFillLine);
 							}
-							// Îö¹¹µ±Ç°µü´ú²ã
+							// ææ„å½“å‰è¿­ä»£å±‚
 							currentBreakLayer->~vector();
 							currentContinueLayer->~vector();
-							// Ìø×ªÓï¾ä
+							// è·³è½¬è¯­å¥
 							fourTable.AddFour("jmp", "", "", std::to_string(backFillLine));
 							fourTable.nowFourLine++;
 						}
@@ -3484,11 +3484,11 @@ bool SemanticAnalysis::IterationStatement() {
 	// Do Statement While(Expression);
 	if (wordTable[p].property == EnumWordProperties::Do) {
 		p++;
-		// ÓïÒå¶¯×÷
+		// è¯­ä¹‰åŠ¨ä½œ
 		{
-			// »ØÌî²Î¿¼ĞĞºÅ¼¯ÈëÕ»
+			// å›å¡«å‚è€ƒè¡Œå·é›†å…¥æ ˆ
 			iterateBackFillStack.push(fourTable.nowFourLine);
-			// ĞÂµÄµü´ú²ã
+			// æ–°çš„è¿­ä»£å±‚
 			iterateBreakLayerStack.push(new std::vector<int>);
 			iterateContinueLayerStack.push(new std::vector<int>);
 		}
@@ -3497,16 +3497,16 @@ bool SemanticAnalysis::IterationStatement() {
 				p++;
 				if (wordTable[p].property == EnumWordProperties::OperatorLeftRound) {
 					p++;
-					// ÓïÒå¶¯×÷
+					// è¯­ä¹‰åŠ¨ä½œ
 					{
-						// µ±Ç°µü´ú²ã³öÕ»
+						// å½“å‰è¿­ä»£å±‚å‡ºæ ˆ
 						auto currentContinueLayer = iterateContinueLayerStack.top();
 						iterateContinueLayerStack.pop();
-						// »ØÌîµ±Ç°µü´ú²ãµÄ continue
+						// å›å¡«å½“å‰è¿­ä»£å±‚çš„ continue
 						for (auto i : *currentContinueLayer) {
 							fourTable.table[i].dest = std::to_string(fourTable.nowFourLine);
 						}
-						// Îö¹¹µ±Ç°µü´ú²ã
+						// ææ„å½“å‰è¿­ä»£å±‚
 						currentContinueLayer->~vector();
 					}
 					if (Expression()) {
@@ -3514,26 +3514,26 @@ bool SemanticAnalysis::IterationStatement() {
 							p++;
 							if (wordTable[p].property == EnumWordProperties::Semicolon) {
 								p++;
-								// ÓïÒå¶¯×÷
+								// è¯­ä¹‰åŠ¨ä½œ
 								{
-									// ÏÈ×ª Bool Öµ
+									// å…ˆè½¬ Bool å€¼
 									ToBool();
 									auto lastReturnValue = returnValueStack.returnValueStack.top();
 									returnValueStack.returnValueStack.pop();
-									// È¡²Î¿¼ĞĞºÅ
+									// å–å‚è€ƒè¡Œå·
 									int backFillLine = iterateBackFillStack.top();
 									iterateBackFillStack.pop();
-									// Ìø×ªÓï¾ä
+									// è·³è½¬è¯­å¥
 									fourTable.AddFour("jnz", lastReturnValue->value, "", std::to_string(backFillLine));
 									fourTable.nowFourLine++;
-									// µ±Ç°µü´ú²ã³öÕ»
+									// å½“å‰è¿­ä»£å±‚å‡ºæ ˆ
 									auto currentBreakLayer = iterateBreakLayerStack.top();
 									iterateBreakLayerStack.pop();
-									// »ØÌîµ±Ç°µü´ú²ãµÄ break
+									// å›å¡«å½“å‰è¿­ä»£å±‚çš„ break
 									for (auto i : *currentBreakLayer) {
 										fourTable.table[i].dest = std::to_string(fourTable.nowFourLine);
 									}
-									// Îö¹¹µ±Ç°µü´ú²ã
+									// ææ„å½“å‰è¿­ä»£å±‚
 									currentBreakLayer->~vector();
 								}
 								return true;
@@ -3553,11 +3553,11 @@ bool SemanticAnalysis::IterationStatement() {
 	throw(Exception("Not a IterationStatement Statement", wordTable[p], 0));
 }
 
-// func    Ìø×ªÓï¾äÊ¶±ğ
+// func    è·³è½¬è¯­å¥è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::JumpStatement() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Goto Identifier;
@@ -3566,23 +3566,23 @@ bool SemanticAnalysis::JumpStatement() {
 		if (wordTable[p].property == EnumWordProperties::Identifier) {
 			p++;
 			if (wordTable[p].property == EnumWordProperties::Semicolon) {
-				// ÓïÒå¶¯×÷
+				// è¯­ä¹‰åŠ¨ä½œ
 				{
-					// È¡±êÇ©±íÕ»¶¥
+					// å–æ ‡ç­¾è¡¨æ ˆé¡¶
 					auto& labelTable = labelTableStack.top();
 					auto [exist, defined, i] = labelTable.SearchLabelIdentifier(wordTable[p - 1].word);
-					// ÒÑ´æÔÚ
+					// å·²å­˜åœ¨
 					if (exist) {
-						// ´ı»ØÌîĞĞÊı
+						// å¾…å›å¡«è¡Œæ•°
 						labelTable.AddLabelBackFillLine(fourTable.nowFourLine, wordTable[p - 1].word);
 					}
 					else {
-						// ¸Ã±êÇ©Èë±í
+						// è¯¥æ ‡ç­¾å…¥è¡¨
 						labelTable.AddUndefinedLabel(wordTable[p - 1].word);
-						// ´ı»ØÌîĞĞÊı
+						// å¾…å›å¡«è¡Œæ•°
 						labelTable.AddLabelBackFillLine(fourTable.nowFourLine, wordTable[p - 1].word);
 					}
-					// Ìø×ªÓï¾ä
+					// è·³è½¬è¯­å¥
 					fourTable.AddFour("jmp", "", "", "");
 					fourTable.nowFourLine++;
 				}
@@ -3598,16 +3598,16 @@ bool SemanticAnalysis::JumpStatement() {
 		p++;
 		if (wordTable[p].property == EnumWordProperties::Semicolon) {
 			p++;
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ¿ÕĞüµÄ continue
+				// ç©ºæ‚¬çš„ continue
 				if (iterateContinueLayerStack.empty()) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Not Find Iteration Statement But a continue Statement", wordTable[p], 1));
 				}
-				// »ØÌî²Î¿¼ĞĞºÅÈëÕ»
+				// å›å¡«å‚è€ƒè¡Œå·å…¥æ ˆ
 				iterateContinueLayerStack.top()->push_back(fourTable.nowFourLine);
-				// Ìø×ªÓï¾ä
+				// è·³è½¬è¯­å¥
 				fourTable.AddFour("jmp", "", "", "");
 				fourTable.nowFourLine++;
 			}
@@ -3620,16 +3620,16 @@ bool SemanticAnalysis::JumpStatement() {
 		p++;
 		if (wordTable[p].property == EnumWordProperties::Semicolon) {
 			p++;
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
-				// ¿ÕĞüµÄ break
+				// ç©ºæ‚¬çš„ break
 				if (iterateBreakLayerStack.empty()) {
-					// ÓïÒå´íÎó
+					// è¯­ä¹‰é”™è¯¯
 					throw(Exception("Not Find Iteration Statement But a break Statement", wordTable[p], 1));
 				}
-				// »ØÌî²Î¿¼ĞĞºÅÈëÕ»
+				// å›å¡«å‚è€ƒè¡Œå·å…¥æ ˆ
 				iterateBreakLayerStack.top()->push_back(fourTable.nowFourLine);
-				// Ìø×ªÓï¾ä
+				// è·³è½¬è¯­å¥
 				fourTable.AddFour("jmp", "", "", "");
 				fourTable.nowFourLine++;
 			}
@@ -3642,11 +3642,11 @@ bool SemanticAnalysis::JumpStatement() {
 		p++;
 		// Return;
 		if (wordTable[p].property == EnumWordProperties::Semicolon) {
-			// ÓïÒå¶¯×÷
+			// è¯­ä¹‰åŠ¨ä½œ
 			{
 				std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 				tempVariableTablePointer++;
-				// ³öÕ»µ÷ÓÃÎ»ÖÃ
+				// å‡ºæ ˆè°ƒç”¨ä½ç½®
 				fourTable.AddFour("pop", "", "", tempVarName);
 				fourTable.nowFourLine++;
 				fourTable.AddFour("ret", "", "", tempVarName);
@@ -3658,20 +3658,20 @@ bool SemanticAnalysis::JumpStatement() {
 		// Return Expression;
 		else if (Expression()) {
 			if (wordTable[p].property == EnumWordProperties::Semicolon) {
-				// ÓïÒå¶¯×÷
+				// è¯­ä¹‰åŠ¨ä½œ
 				{
 					auto lastReturnValue = returnValueStack.returnValueStack.top();
 					returnValueStack.returnValueStack.pop();
 
-					// ÁÙÊ±±äÁ¿ ´æ·µ»ØÎ»ÖÃ
+					// ä¸´æ—¶å˜é‡ å­˜è¿”å›ä½ç½®
 					std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 					tempVariableTablePointer++;
-					// ³öÕ»µ÷ÓÃÎ»ÖÃ
+					// å‡ºæ ˆè°ƒç”¨ä½ç½®
 					fourTable.AddFour("pop", "", "", tempVarName);
 					fourTable.nowFourLine++;
 
-					// ÀàĞÍ×ª»» ÀÁµÃĞ´ÁË
-					// ÈëÕ»·µ»ØÖµ
+					// ç±»å‹è½¬æ¢ æ‡’å¾—å†™äº†
+					// å…¥æ ˆè¿”å›å€¼
 					fourTable.AddFour("push", lastReturnValue->value, "", "");
 					fourTable.nowFourLine++;
 
@@ -3687,11 +3687,11 @@ bool SemanticAnalysis::JumpStatement() {
 	throw(Exception("Not a Jump Statement", wordTable[p], 0));
 }
 
-// func    ·­Òëµ¥ÔªÊ¶±ğ
+// func    ç¿»è¯‘å•å…ƒè¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::TranslationUnit() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ExternalDeclaration TranslationUnitEliminateLeft
@@ -3704,11 +3704,11 @@ bool SemanticAnalysis::TranslationUnit() {
 	throw(Exception("Not a Translation Unit", wordTable[p], 0));
 }
 
-// func    ·­Òëµ¥ÔªÏû³ı×óµİ¹éÊ¶±ğ
+// func    ç¿»è¯‘å•å…ƒæ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::TranslationUnitEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ExternalDeclaration TranslationUnitEliminateLeft
@@ -3719,18 +3719,18 @@ bool SemanticAnalysis::TranslationUnitEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    Íâ²¿ÉùÃ÷Ê¶±ğ
+// func    å¤–éƒ¨å£°æ˜è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::ExternalDeclaration() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 	int firstSemicolon = p;
 	int firstLeftBrace = p;
@@ -3758,22 +3758,22 @@ bool SemanticAnalysis::ExternalDeclaration() {
 		p = nowP;
 		return false;
 	}
-	// º¯Êı¶¨ÒåÊÇ TypeName DirectDeclarator /* DeclarationList */ CompoundStatement
-	// DeclarationList ÒÔ TypeName ¿ªÍ·
-	// CompoundStatement ÒÔ { ¿ªÍ·
-	// DirectDeclarator ÒÔ Identifier ¿ªÍ· ºó½Ó (ParameterList) DirectDeclaratorEliminateLeft
-	// Òò´Ë º¯Êı¶¨Òå±ØÈ»ÊÇ TypeName Identifier ( ¿ªÍ·
-	// ÇÒº¯Êı¶¨Òå±ØÈ»ÓĞ { ÔÚ ; µÄÇ°Ãæ
+	// å‡½æ•°å®šä¹‰æ˜¯ TypeName DirectDeclarator /* DeclarationList */ CompoundStatement
+	// DeclarationList ä»¥ TypeName å¼€å¤´
+	// CompoundStatement ä»¥ { å¼€å¤´
+	// DirectDeclarator ä»¥ Identifier å¼€å¤´ åæ¥ (ParameterList) DirectDeclaratorEliminateLeft
+	// å› æ­¤ å‡½æ•°å®šä¹‰å¿…ç„¶æ˜¯ TypeName Identifier ( å¼€å¤´
+	// ä¸”å‡½æ•°å®šä¹‰å¿…ç„¶æœ‰ { åœ¨ ; çš„å‰é¢
 	// FunctionDefinition
 	if (firstSemicolon < 0 || firstLeftBrace < firstSemicolon) {
 		if (FunctionDefinition()) {
 			return true;
 		}
 	}
-	// ÉùÃ÷ÊÇ TypeName InitDeclaratorList;
-	// InitDeclaratorList ÒÔ InitDeclarator ¿ªÍ·
-	// InitDeclarator ÒÔ Identifier ¿ªÍ·
-	// Òò´Ë ÉùÃ÷±ØÈ»ÓĞ ; ÔÚ { µÄÇ°Ãæ
+	// å£°æ˜æ˜¯ TypeName InitDeclaratorList;
+	// InitDeclaratorList ä»¥ InitDeclarator å¼€å¤´
+	// InitDeclarator ä»¥ Identifier å¼€å¤´
+	// å› æ­¤ å£°æ˜å¿…ç„¶æœ‰ ; åœ¨ { çš„å‰é¢
 	// Declaration
 	else if (firstLeftBrace < 0 || firstSemicolon < firstLeftBrace) {
 		if (Declaration()) {
@@ -3783,36 +3783,36 @@ bool SemanticAnalysis::ExternalDeclaration() {
 	throw(Exception("Not a Function Definition or a Declaration", wordTable[p], 0));
 }
 
-// func    º¯Êı¶¨ÒåÊ¶±ğ
+// func    å‡½æ•°å®šä¹‰è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::FunctionDefinition() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// TypeName DirectDeclarator /* DeclarationList */ CompoundStatement
 	if (IsTypeName(wordTable[p])) {
 		p++;
-		// ÉùÃ÷·û
+		// å£°æ˜ç¬¦
 		if (DirectDeclarator()) {
-			// ±ØÈ»ÒÔ { ¿ªÍ·
+			// å¿…ç„¶ä»¥ { å¼€å¤´
 			// TypeName DirectDeclarator CompoundStatement
 			if (wordTable[p].property == EnumWordProperties::OperatorLeftBrace) {
-				// ÓïÒå¶¯×÷
+				// è¯­ä¹‰åŠ¨ä½œ
 				{
-					// ÖØ¶¨Òå
+					// é‡å®šä¹‰
 					for (auto& i : functionTable.functionTable) {
 						if (i.value == lastFunctionIdentifier && i.defined) {
 							throw(Exception("Function have defined", wordTable[p], 1));
 						}
 					}
 
-					// Ö¸Ê¾µ±Ç°Îªº¯ÊıÍ· ÒÔ±ã½«ÉùÃ÷´¦µÄ±íºÏ²¢Èë¿é Ó¦µ±ÔÚ½øÈëº¯Êı¿éºóÂíÉÏÖÃ false
+					// æŒ‡ç¤ºå½“å‰ä¸ºå‡½æ•°å¤´ ä»¥ä¾¿å°†å£°æ˜å¤„çš„è¡¨åˆå¹¶å…¥å— åº”å½“åœ¨è¿›å…¥å‡½æ•°å—åé©¬ä¸Šç½® false
 					functionLeftCompound = true;
-					// ´´½¨µ±Ç°º¯ÊıµÄ±êÇ©±í
+					// åˆ›å»ºå½“å‰å‡½æ•°çš„æ ‡ç­¾è¡¨
 					labelTableStack.push(*(new LabelIdentifierTable()));
 
-					// ½«º¯ÊıÉèÎªÒÑ¾­¶¨Òå
+					// å°†å‡½æ•°è®¾ä¸ºå·²ç»å®šä¹‰
 					for (auto& i : functionTable.functionTable) {
 						if (i.value == lastFunctionIdentifier) {
 							i.defined = true;
@@ -3836,11 +3836,11 @@ bool SemanticAnalysis::FunctionDefinition() {
 	throw(Exception("Not a Function Definition because Expect a Type Name", wordTable[p], 0));
 }
 
-// func    ÉùÃ÷ÁĞ±íÊ¶±ğ
+// func    å£°æ˜åˆ—è¡¨è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::DeclarationList() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Declaration DeclarationListEliminateLeft
@@ -3852,11 +3852,11 @@ bool SemanticAnalysis::DeclarationList() {
 	throw(Exception("Not a Declaration", wordTable[p], 0));
 }
 
-// func    ÉùÃ÷ÁĞ±íÏû³ı×óµİ¹éÊ¶±ğ
+// func    å£°æ˜åˆ—è¡¨æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool SemanticAnalysis::DeclarationListEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Declaration DeclarationListEliminateLeft
@@ -3867,44 +3867,44 @@ bool SemanticAnalysis::DeclarationListEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ÀàĞÍ×ª»» ÒªÇóÇóÖµÕ»ÖĞÓĞÒ»¸öÖµ ×ª»»ºóµÄÖµ»á½øÈëÇóÖµÕ»
+// func    ç±»å‹è½¬æ¢ è¦æ±‚æ±‚å€¼æ ˆä¸­æœ‰ä¸€ä¸ªå€¼ è½¬æ¢åçš„å€¼ä¼šè¿›å…¥æ±‚å€¼æ ˆ
 // param   
 // return  
 bool SemanticAnalysis::ToBool() {
-	// ²é¿´ÀàĞÍ
+	// æŸ¥çœ‹ç±»å‹
 	auto lastReturnValue = returnValueStack.returnValueStack.top();
 	auto e = lastReturnValue->getWordProperties();
-	// Ô­À´ÊÇ Bool
+	// åŸæ¥æ˜¯ Bool
 	if (e == EnumWordProperties::Bool) {
 		return true;
 	}
 
-	// ²»ÊÇ Bool ³öÕ»
+	// ä¸æ˜¯ Bool å‡ºæ ˆ
 	returnValueStack.returnValueStack.pop();
-	// Ö±½Ó±ä
+	// ç›´æ¥å˜
 	if (returnValueStack.lastReturnValueType == EnumWordProperties::String ||
 		returnValueStack.lastReturnValueType == EnumWordProperties::Function) {
-		// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+		// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 		std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 		tempVariableTablePointer++;
 		fourTable.AddFour("=", "1", "", tempVarName);
 		fourTable.nowFourLine++;
 
-		// ÈëÇóÖµÕ»
+		// å…¥æ±‚å€¼æ ˆ
 		returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Bool, tempVarName));
 		returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 		returnValueStack.lastReturnValueType = EnumWordProperties::Bool;
 	}
-	// ÆäËûÀàĞÍ
+	// å…¶ä»–ç±»å‹
 	else {
-		// È¡ÁÙÊ±±äÁ¿ Éú³ÉËÄÔªÊ½
+		// å–ä¸´æ—¶å˜é‡ ç”Ÿæˆå››å…ƒå¼
 		std::string tempVarName = "T" + std::to_string(tempVariableTablePointer);
 		tempVariableTablePointer++;
 		fourTable.AddFour("jz", lastReturnValue->value, "", std::to_string(fourTable.nowFourLine + 3));
@@ -3916,7 +3916,7 @@ bool SemanticAnalysis::ToBool() {
 		fourTable.AddFour("=", "0", "", tempVarName);
 		fourTable.nowFourLine++;
 
-		// ÈëÇóÖµÕ»
+		// å…¥æ±‚å€¼æ ˆ
 		returnValueStack.returnValueStack.push(new TempVariable(EnumWordProperties::Bool, tempVarName));
 		returnValueStack.lastReturnWordType = ReturnValueStack::LastReturnWordType::TempVariable;
 		returnValueStack.lastReturnValueType = EnumWordProperties::Bool;

@@ -3,7 +3,7 @@ int func1(int a, int b);
 int main(void v);
 
 int main(void v) {
-	int a = 2, b = 3.5;
+	int a = 2, b = 3.5e-2;
 	int c = func1(a, b);
 	char ch = 'a';
 	char chn = 'abc';

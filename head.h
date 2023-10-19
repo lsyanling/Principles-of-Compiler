@@ -19,60 +19,60 @@ class LexicalAnalysis;
 class GrammaticalAnalysis;
 class SemanticAnalysis;
 
-// ´ÊËØÊôĞÔ±í
+// è¯ç´ å±æ€§è¡¨
 enum class EnumWordProperties {
-	// ±êÊ¶½áÊøµÄÁ¿ ÎŞÒâÒå
+	// æ ‡è¯†ç»“æŸçš„é‡ æ— æ„ä¹‰
 	TimeToStop,
 	Unknow,
 	Function,
 	Label,
-	// Êı×Ö×ÖÃæÁ¿
+	// æ•°å­—å­—é¢é‡
 	EightIntNumber, TenIntNumber, SixteenIntNumber, FloatNumber, FloatEeNumber, CharNumber,
-	// ±êÊ¶·û
+	// æ ‡è¯†ç¬¦
 	Identifier,
-	// ×Ö·û´®×ÖÃæÁ¿
+	// å­—ç¬¦ä¸²å­—é¢é‡
 	String,
-	// ÀàĞÍ
+	// ç±»å‹
 	Auto, Bool, Int, Float, Double, Char, Enum, Void, StringType,
-	// ¿ØÖÆ¹Ø¼ü×Ö
+	// æ§åˆ¶å…³é”®å­—
 	If, Else, While, For, Do, Break, Continue, Goto, Return,
-	// ·ÖºÅ
+	// åˆ†å·
 	Semicolon,
-	// ËãÊõÔËËã·û
+	// ç®—æœ¯è¿ç®—ç¬¦
 	OperatorAdd, OperatorSubtract, OperatorMultiply, OperatorDivide, OperatorModulo,
-	// µİ±äÔËËã·û
+	// é€’å˜è¿ç®—ç¬¦
 	OperatorAddAdd, OperatorSubSubtract,
-	// ¸³ÖµÔËËã·û
+	// èµ‹å€¼è¿ç®—ç¬¦
 	OperatorAssign, OperatorAddAssign, OperatorSubAssign, OperatorMulAssign, OperatorDivAssign,
 	OperatorModAssign, OperatorLeftShiftAssign, OperatorRightShiftAssign,
 	OperatorAndAssign, OperatorOrAssign, OperatorXOrAssign,
-	// À¨ºÅÔËËã·û
+	// æ‹¬å·è¿ç®—ç¬¦
 	OperatorLeftRound, OperatorRightRound,
 	OperatorLeftSquare, OperatorRightSquare,
 	OperatorLeftBrace, OperatorRightBrace,
-	// ¶ººÅÔËËã·û
+	// é€—å·è¿ç®—ç¬¦
 	OperatorComma,
-	// Âß¼­ÔËËã·û
+	// é€»è¾‘è¿ç®—ç¬¦
 	OperatorAnd, OperatorOr, OperatorNot,
-	// Ìõ¼şÔËËã·û
+	// æ¡ä»¶è¿ç®—ç¬¦
 	OperatorQuestion, OperatorColon,
-	// Î»ÔËËã·û
+	// ä½è¿ç®—ç¬¦
 	OperatorLeftShift, OperatorRightShift, OperatorBitAnd, OperatorBitOr, OperatorBitNot, OperatorXOr,
-	// ¹ØÏµÔËËã·û
+	// å…³ç³»è¿ç®—ç¬¦
 	OperatorGreaterThan, OperatorSmallerThan, OperatorGreaterEqual, OperatorSmallerEqual, OperatorEqual,
 	OperatorNotEqual,
-	// ³ÉÔ±ÔËËã·û
+	// æˆå‘˜è¿ç®—ç¬¦
 	OperatorPoint, OperatorArrow,
-	// sizeofÔËËã·û
+	// sizeofè¿ç®—ç¬¦
 	OperatorSizeof
 };
 
 class Exception {
 public:
 	std::string str;
-	// Òì³£Î»ÖÃ´ÊËØ
+	// å¼‚å¸¸ä½ç½®è¯ç´ 
 	Word& word;
-	// Òì³£ÀàĞÍ 0ÎªÓï·¨´íÎó 1ÎªÓïÒå´íÎó
+	// å¼‚å¸¸ç±»å‹ 0ä¸ºè¯­æ³•é”™è¯¯ 1ä¸ºè¯­ä¹‰é”™è¯¯
 	int exceptionType;
 	Exception(std::string e, Word& w, int t) :str(e), word(w), exceptionType(t) {}
 };
@@ -85,7 +85,7 @@ public:
 	virtual void setWordProperties(EnumWordProperties e) {}
 };
 
-// ÓïÒå·ÖÎö ×ÖÃæÁ¿
+// è¯­ä¹‰åˆ†æ å­—é¢é‡
 class LiteralValue :public Value {
 public:
 	LiteralValue(EnumWordProperties p, std::string v) :wordProperties(p), Value(v) {}
@@ -99,7 +99,7 @@ public:
 	}
 };
 
-// ÓïÒå·ÖÎö ÁÙÊ±±äÁ¿
+// è¯­ä¹‰åˆ†æ ä¸´æ—¶å˜é‡
 class TempVariable :public Value {
 public:
 	TempVariable(EnumWordProperties p, std::string v) :wordProperties(p), Value(v) {}
@@ -113,7 +113,7 @@ public:
 	}
 };
 
-// ÓïÒå·ÖÎö ±êÊ¶·û
+// è¯­ä¹‰åˆ†æ æ ‡è¯†ç¬¦
 class Identifier :public Value {
 public:
 	Identifier(EnumWordProperties t, std::string n) :wordProperties(t), Value(n) {}
@@ -127,7 +127,7 @@ public:
 	}
 };
 
-// ÓïÒå·ÖÎö ±êÊ¶·û±í
+// è¯­ä¹‰åˆ†æ æ ‡è¯†ç¬¦è¡¨
 class IdentifierTable {
 public:
 	IdentifierTable() {
@@ -135,9 +135,9 @@ public:
 	}
 	IdentifierTable(IdentifierTable* f) :fatherTablePointer(f) {}
 
-	// ¸¸±íÖ¸Õë
+	// çˆ¶è¡¨æŒ‡é’ˆ
 	IdentifierTable* fatherTablePointer;
-	// ±í
+	// è¡¨
 	std::vector<Identifier> table;
 	int IdentifierNumber = 0;
 
@@ -148,16 +148,16 @@ public:
 	}
 };
 
-// ÓïÒå·ÖÎö ±êÇ©±í
+// è¯­ä¹‰åˆ†æ æ ‡ç­¾è¡¨
 class LabelIdentifierTable {
 public:
-	// ±êÇ©±í
+	// æ ‡ç­¾è¡¨
 	std::vector<std::string> labelTable;
-	// ¶¨Òå±í
+	// å®šä¹‰è¡¨
 	std::vector<bool> definedLabel;
-	// ´ı»ØÌîĞĞºÅ±í
+	// å¾…å›å¡«è¡Œå·è¡¨
 	std::vector<std::vector<int>> backFillTable;
-	// ¹©»ØÌîĞĞºÅ±í
+	// ä¾›å›å¡«è¡Œå·è¡¨
 	std::vector<int> backFillLines;
 
 	int AddDefinedLabel(int line, std::string label) {
@@ -175,8 +175,8 @@ public:
 		return labelTable.size();
 	}
 
-	// func    Ìí¼Ó±êÇ©»ØÌîĞĞºÅ
-	// param   ĞĞºÅ ±êÇ©Ãû
+	// func    æ·»åŠ æ ‡ç­¾å›å¡«è¡Œå·
+	// param   è¡Œå· æ ‡ç­¾å
 	// return  
 	void AddLabelBackFillLine(int line, std::string label) {
 		for (int i = 0; i < labelTable.size(); i++) {
@@ -186,9 +186,9 @@ public:
 		}
 	}
 
-	// func    ²éÕÒ±êÇ©
-	// param   ±êÇ©Ãû
-	// return  ±êÇ©ÊÇ·ñ¼û¹ı ±êÇ©ÊÇ·ñÒÑ¶¨Òå ±êÇ©ĞòºÅ
+	// func    æŸ¥æ‰¾æ ‡ç­¾
+	// param   æ ‡ç­¾å
+	// return  æ ‡ç­¾æ˜¯å¦è§è¿‡ æ ‡ç­¾æ˜¯å¦å·²å®šä¹‰ æ ‡ç­¾åºå·
 	auto SearchLabelIdentifier(std::string label) {
 		for (int i = 0; i < labelTable.size(); i++) {
 			if (labelTable[i] == label) {
@@ -204,23 +204,23 @@ public:
 	}
 };
 
-// ÓïÒå·ÖÎö º¯Êı·û
+// è¯­ä¹‰åˆ†æ å‡½æ•°ç¬¦
 class FunctionIdentifier : public Identifier {
 public:
-	// eÊÇ·µ»ØÀàĞÍ
+	// eæ˜¯è¿”å›ç±»å‹
 	FunctionIdentifier(EnumWordProperties e, std::string n) :returnType(e),
 		Identifier(EnumWordProperties::Function, n) {}
 
-	// ÒÑ¶¨Òå
+	// å·²å®šä¹‰
 	bool defined = false;
 
-	// ²ÎÊı¸öÊı
+	// å‚æ•°ä¸ªæ•°
 	int parameterNumber = 0;
-	// µ±Ç°²ÎÊı
+	// å½“å‰å‚æ•°
 	int currentParameter = 0;
-	// ¸÷²ÎÊıÀàĞÍ ×Ô×óÏòÓÒ
+	// å„å‚æ•°ç±»å‹ è‡ªå·¦å‘å³
 	std::vector<EnumWordProperties> parameterType;
-	// ·µ»ØÀàĞÍ
+	// è¿”å›ç±»å‹
 	EnumWordProperties returnType;
 
 	int AddParameter(EnumWordProperties type) {
@@ -230,7 +230,7 @@ public:
 	}
 };
 
-// ÓïÒå·ÖÎö º¯Êı±í
+// è¯­ä¹‰åˆ†æ å‡½æ•°è¡¨
 class FunctionIdentifierTable {
 public:
 	std::vector<FunctionIdentifier> functionTable;
@@ -243,7 +243,7 @@ public:
 	}
 };
 
-// ÓïÒå·ÖÎö ÇóÖµÕ» ÊÖ¶¯·µ»ØÖµ
+// è¯­ä¹‰åˆ†æ æ±‚å€¼æ ˆ æ‰‹åŠ¨è¿”å›å€¼
 class ReturnValueStack {
 public:
 	enum class LastReturnWordType {
@@ -256,7 +256,7 @@ public:
 	std::stack<Value*> returnValueStack;
 };
 
-// ÓïÒå·ÖÎö ËÄÔªÊ½
+// è¯­ä¹‰åˆ†æ å››å…ƒå¼
 class Four {
 public:
 	Four(std::string o, std::string o1, std::string o2, std::string d) :op(o), op1(o1), op2(o2), dest(d) {}
@@ -266,40 +266,40 @@ public:
 	std::string dest;
 };
 
-// ÓïÒå·ÖÎö ËÄÔªÊ½±í
+// è¯­ä¹‰åˆ†æ å››å…ƒå¼è¡¨
 class FourTable {
 public:
 	int AddFour(std::string o, std::string o1, std::string o2, std::string dest) {
 		table.push_back(Four(o, o1, o2, dest));
-		// Èç¹û»ØÌîÃ»ÓĞÎÊÌâ ¾Í×Ô¶¯¹ÜÀíĞĞÊı
+		// å¦‚æœå›å¡«æ²¡æœ‰é—®é¢˜ å°±è‡ªåŠ¨ç®¡ç†è¡Œæ•°
 		// nowFourLine++;
 		return nowFourLine;
 	}
 
-	// ËÄÔªÊ½±í
+	// å››å…ƒå¼è¡¨
 	std::vector<Four> table;
 
-	// ´ı»ØÌîµÄĞĞºÅ
+	// å¾…å›å¡«çš„è¡Œå·
 	std::stack<int> writeBack;
 
-	// ËÄÔªÊ½ĞĞºÅ
+	// å››å…ƒå¼è¡Œå·
 	int nowFourLine = 0;
 };
 
-// ´ÊËØ
+// è¯ç´ 
 class Word {
 public:
 	std::string word;
 	EnumWordProperties property;
-	// ¸Ã´ÊËØÎ»ÓÚÔ¤´¦ÀíÖ®ºóµÄ´úÂëµÄÄÄÒ»ĞĞ
-	// ÒòÔ¤´¦Àí½«×ªÒÆ»»ĞĞÉ¾È¥ ÎŞ·¨È·¶¨ÊÇÔ´ÎÄ¼şµÄÄÄÒ»ĞĞ
+	// è¯¥è¯ç´ ä½äºé¢„å¤„ç†ä¹‹åçš„ä»£ç çš„å“ªä¸€è¡Œ
+	// å› é¢„å¤„ç†å°†è½¬ç§»æ¢è¡Œåˆ å» æ— æ³•ç¡®å®šæ˜¯æºæ–‡ä»¶çš„å“ªä¸€è¡Œ
 	int line;
 
 	Word() :property(EnumWordProperties::TimeToStop), line(0) {}
 	Word(std::string w, EnumWordProperties p, int l) :word(w), property(p), line(l) {}
 };
 
-// ¹Ø¼ü×Ö±í
+// å…³é”®å­—è¡¨
 class KeyWordTable {
 public:
 	std::map<std::string, EnumWordProperties> keyWord;
@@ -326,46 +326,46 @@ public:
 	}
 };
 
-// Number×Ô¶¯»ú
+// Numberè‡ªåŠ¨æœº
 enum class EnumNumber {
 	Start, ZeroOrEight, Eight, Ten, TrueTen, Sixteen, TrueSixteen, FloatPoint, FloatNumber, FloatEe, FloatSign, FloatEeNumber
 };
 
-// String×Ô¶¯»ú
+// Stringè‡ªåŠ¨æœº
 enum class EnumString {
 	Start, In, Trope, Eight1, Eight2
 };
 
-// ´ÊËØ±í
+// è¯ç´ è¡¨
 static std::vector<Word> wordTableSource;
 
 class LexicalAnalysis {
 public:
 
-	// ÎÄ¼şÁ÷
+	// æ–‡ä»¶æµ
 	std::ifstream fin;
 
-	// Ô´ÎÄ¼ş×Ö·û´® ×ã¹»´ó
+	// æºæ–‡ä»¶å­—ç¬¦ä¸² è¶³å¤Ÿå¤§
 	char source[MAX_BUFFER];
 
-	// ±êÊ¶Ô´ÎÄ¼şÎ² ´úÂë×Ö·û´®Î²
+	// æ ‡è¯†æºæ–‡ä»¶å°¾ ä»£ç å­—ç¬¦ä¸²å°¾
 	char* end;
 
-	// ´úÂë×Ö·û´®
+	// ä»£ç å­—ç¬¦ä¸²
 	char* code;
 
-	// ×Ö·ûÖ¸Õë
+	// å­—ç¬¦æŒ‡é’ˆ
 	char* p;
 	char* q;
 
-	// ĞĞÊı
+	// è¡Œæ•°
 	int line = 1;
 
-	// ´ÊËØ±íÒıÓÃ
+	// è¯ç´ è¡¨å¼•ç”¨
 	std::vector<Word>& wordTable;
 	int wordTableIndex = 0;
 
-	// ¹Ø¼ü×Ö±í
+	// å…³é”®å­—è¡¨
 	KeyWordTable keyWord;
 
 	LexicalAnalysis(char* codeFileString, std::vector<Word>& wordTableSource);
@@ -393,14 +393,14 @@ class GrammaticalAnalysis {
 public:
 	GrammaticalAnalysis(std::vector<Word>&);
 
-	// ´ÊËØ±íÒıÓÃ
+	// è¯ç´ è¡¨å¼•ç”¨
 	std::vector<Word>& wordTable;
-	// ´ÊËØ±íÖ¸Õë
+	// è¯ç´ è¡¨æŒ‡é’ˆ
 	int p = 0;
 	int q = 0;
 	int r = 0;
 
-	// ±í´ïÊ½Ïà¹Ø·ÖÎöÆ÷
+	// è¡¨è¾¾å¼ç›¸å…³åˆ†æå™¨
 	virtual bool PrimaryExpression();
 	virtual bool PostfixExpression();
 	virtual bool PostfixExpressionEliminateLeft();
@@ -435,7 +435,7 @@ public:
 	virtual bool Expression();
 	virtual bool ExpressionEliminateLeft();
 
-	// ÉùÃ÷Ïà¹Ø·ÖÎöÆ÷
+	// å£°æ˜ç›¸å…³åˆ†æå™¨
 	virtual bool Declaration();
 	virtual bool InitDeclaratorList();
 	virtual bool InitDeclaratorListEliminateLeft();
@@ -448,7 +448,7 @@ public:
 	virtual	bool IdentifierList();
 	virtual	bool IdentifierListEliminateLeft();
 
-	// Óï¾äÏà¹Ø·ÖÎöÆ÷
+	// è¯­å¥ç›¸å…³åˆ†æå™¨
 	virtual bool Statement();
 	virtual bool LabeledStatement();
 	virtual	bool CompoundStatement();
@@ -460,7 +460,7 @@ public:
 	virtual	bool IterationStatement();
 	virtual	bool JumpStatement();
 
-	// Íâ²¿¶¨ÒåÏà¹Ø·ÖÎöÆ÷
+	// å¤–éƒ¨å®šä¹‰ç›¸å…³åˆ†æå™¨
 	virtual bool TranslationUnit();
 	virtual bool TranslationUnitEliminateLeft();
 	virtual bool ExternalDeclaration();
@@ -473,72 +473,72 @@ public:
 	bool IsLiteralValue(Word w);
 };
 
-// ÖØĞ´Óï·¨·ÖÎöÀà
+// é‡å†™è¯­æ³•åˆ†æç±»
 class SemanticAnalysis : public GrammaticalAnalysis {
 public:
 	SemanticAnalysis(std::vector<Word>&);
 
-	// ×ÖÃæÁ¿±í
+	// å­—é¢é‡è¡¨
 	std::vector<LiteralValue> literalValueTable;
 	int literalValueTablePointer = 0;
 
-	// ÁÙÊ±±äÁ¿ºÅ
+	// ä¸´æ—¶å˜é‡å·
 	int tempVariableTablePointer = 0;
 
-	// ±êÊ¶·û±í
+	// æ ‡è¯†ç¬¦è¡¨
 	IdentifierTable* identifierTablePointer;
 
-	// º¯Êı±í
+	// å‡½æ•°è¡¨
 	FunctionIdentifierTable functionTable;
-	// º¯ÊıÍ·×÷ÓÃÓò
+	// å‡½æ•°å¤´ä½œç”¨åŸŸ
 	IdentifierTable* functionHeadIdentifierTablePointer;
-	// ±íÃ÷º¯Êı¿é
+	// è¡¨æ˜å‡½æ•°å—
 	bool functionLeftCompound = false;
-	// ×î½üÒ»´ÎµÄº¯ÊıÃû
+	// æœ€è¿‘ä¸€æ¬¡çš„å‡½æ•°å
 	std::string lastFunctionIdentifier;
 
-	// ±êÇ©±íÕ»
+	// æ ‡ç­¾è¡¨æ ˆ
 	std::stack<LabelIdentifierTable> labelTableStack;
 
-	// µ±Ç°ÉùÃ÷ÀàĞÍ
+	// å½“å‰å£°æ˜ç±»å‹
 	EnumWordProperties declarationTypeName;
 
-	// µ±Ç°ÉùÃ÷±êÊ¶·û
+	// å½“å‰å£°æ˜æ ‡è¯†ç¬¦
 	Identifier declarationIdentifier = Identifier(EnumWordProperties::Unknow, "");
 
-	// ÀàĞÍ×ª»»ÀàĞÍ
+	// ç±»å‹è½¬æ¢ç±»å‹
 	EnumWordProperties castTypeName;
 
-	// ÇóÖµÕ» ÊÖ¶¯·µ»ØÖµ
+	// æ±‚å€¼æ ˆ æ‰‹åŠ¨è¿”å›å€¼
 	ReturnValueStack returnValueStack;
 
-	// ËÄÔªÊ½±í
+	// å››å…ƒå¼è¡¨
 	FourTable fourTable;
 
-	// Âß¼­»ØÌîÕ»
+	// é€»è¾‘å›å¡«æ ˆ
 	std::stack<int> andBackFillStack;
 	std::stack<int> orBackFillStack;
 
-	// Ìõ¼ş»ØÌîÕ»
+	// æ¡ä»¶å›å¡«æ ˆ
 	std::stack<int> conditionBackFillStack;
 
-	// ·ÖÖ§»ØÌîÕ»
+	// åˆ†æ”¯å›å¡«æ ˆ
 	std::stack<int> selectBackFillStack;
 
-	// µü´ú»ØÌîÕ»
+	// è¿­ä»£å›å¡«æ ˆ
 	std::stack<int> iterateBackFillStack;
 
-	// µü´ú²ãÕ»
+	// è¿­ä»£å±‚æ ˆ
 	std::stack<std::vector<int>*> iterateContinueLayerStack;
 	std::stack<std::vector<int>*> iterateBreakLayerStack;
 
-	// ²éÕÒ±êÊ¶·û
+	// æŸ¥æ‰¾æ ‡è¯†ç¬¦
 	auto SearchIdentifier(IdentifierTable* idTablePointer, std::string value);
 
-	// ÔÚµ±Ç°±íÖĞ²éÕÒ±êÊ¶·û
+	// åœ¨å½“å‰è¡¨ä¸­æŸ¥æ‰¾æ ‡è¯†ç¬¦
 	auto SearchIdentifierInCurrentTable(IdentifierTable* idTablePointer, std::string value);
 
-	// ±í´ïÊ½Ïà¹Ø·ÖÎöÆ÷
+	// è¡¨è¾¾å¼ç›¸å…³åˆ†æå™¨
 	bool PrimaryExpression();
 	bool PostfixExpression();
 	bool PostfixExpressionEliminateLeft();
@@ -573,7 +573,7 @@ public:
 	bool Expression();
 	bool ExpressionEliminateLeft();
 
-	// ÉùÃ÷Ïà¹Ø·ÖÎöÆ÷
+	// å£°æ˜ç›¸å…³åˆ†æå™¨
 	bool Declaration();
 	bool InitDeclaratorList();
 	bool InitDeclaratorListEliminateLeft();
@@ -584,7 +584,7 @@ public:
 	bool ParameterListEliminateLeft();
 	bool ParameterDeclaration();
 
-	// Óï¾äÏà¹Ø·ÖÎöÆ÷
+	// è¯­å¥ç›¸å…³åˆ†æå™¨
 	bool Statement();
 	bool LabeledStatement();
 	bool CompoundStatement();
@@ -596,7 +596,7 @@ public:
 	bool IterationStatement();
 	bool JumpStatement();
 
-	// Íâ²¿¶¨ÒåÏà¹Ø·ÖÎöÆ÷
+	// å¤–éƒ¨å®šä¹‰ç›¸å…³åˆ†æå™¨
 	bool TranslationUnit();
 	bool TranslationUnitEliminateLeft();
 	bool ExternalDeclaration();
@@ -604,7 +604,7 @@ public:
 	bool DeclarationList();
 	bool DeclarationListEliminateLeft();
 
-	// ÀàĞÍÅĞ¶Ï
+	// ç±»å‹åˆ¤æ–­
 	bool IsInt(EnumWordProperties e) {
 		if (e == EnumWordProperties::EightIntNumber ||
 			e == EnumWordProperties::TenIntNumber ||
@@ -652,6 +652,6 @@ public:
 		}
 	}
 
-	// ÀàĞÍ×ª»»
+	// ç±»å‹è½¬æ¢
 	bool ToBool();
 };

@@ -1,84 +1,84 @@
 #include"head.h"
 
-// ´Ê·¨·ÖÎö
+// è¯æ³•åˆ†æ
 
-// func    ´Ê·¨·ÖÎö¹¹Ôìº¯Êı
-// param   Ô´ÎÄ¼şÂ·¾¶
+// func    è¯æ³•åˆ†ææ„é€ å‡½æ•°
+// param   æºæ–‡ä»¶è·¯å¾„
 // return  
 LexicalAnalysis::LexicalAnalysis(char* codeFileString, std::vector<Word>& wordTableSource) :wordTable(wordTableSource) {
 
-	// ±ê¼Ç»º³åÇøÎ²
+	// æ ‡è®°ç¼“å†²åŒºå°¾
 	end = source + MAX_BUFFER;
 
-	// ´ò¿ªÔ´ÎÄ¼ş
+	// æ‰“å¼€æºæ–‡ä»¶
 	fin.open(codeFileString, std::ios::in | std::ios::binary);
 
-	// ¶ÁÈ¡Ô´ÎÄ¼ş
+	// è¯»å–æºæ–‡ä»¶
 	fin.read(source, end - source);
 
-	// Ô´´úÂëÔ¤´¦Àí
+	// æºä»£ç é¢„å¤„ç†
 	Preprocess();
 
-	// ´Ê·¨·ÖÎö
+	// è¯æ³•åˆ†æ
 	if (Analyse()) {
-		// Êä³ö´ÊËØ
+		// è¾“å‡ºè¯ç´ 
 		OutPut();
 	}
 }
 
-// func    Ô´´úÂëÔ¤´¦Àí ½«source×ª»»Îªcode °üÀ¨É¾³ı×ªÒÆ»»ĞĞ É¾³ıÔ´ÎÄ¼şÁ¬Ğø¿Õ°××Ö·û
+// func    æºä»£ç é¢„å¤„ç† å°†sourceè½¬æ¢ä¸ºcode åŒ…æ‹¬åˆ é™¤è½¬ç§»æ¢è¡Œ åˆ é™¤æºæ–‡ä»¶è¿ç»­ç©ºç™½å­—ç¬¦
 // param   
 // return  
 void LexicalAnalysis::Preprocess() {
 
-	// ´úÂë×Ö·û´®
+	// ä»£ç å­—ç¬¦ä¸²
 	code = new char[strlen(source) + 1];
 
-	// ±ê¼ÇÔ´ÎÄ¼şÎ²
+	// æ ‡è®°æºæ–‡ä»¶å°¾
 	end = source + strlen(source) + 1;
 
 	// TODO 
-	// Ô´×Ö·ûÓ³Éä ÕâÀï²»×ö
+	// æºå­—ç¬¦æ˜ å°„ è¿™é‡Œä¸åš
 	;
 
-	// ×ªÒÆ»»ĞĞ É¾³ı\ºó½Ó»»ĞĞ·ûµÄÊµÀı
-	// É¾³ı¶àÓàµÄ¿Õ°××Ö·û Éú³Écode×Ö·û´®
+	// è½¬ç§»æ¢è¡Œ åˆ é™¤\åæ¥æ¢è¡Œç¬¦çš„å®ä¾‹
+	// åˆ é™¤å¤šä½™çš„ç©ºç™½å­—ç¬¦ ç”Ÿæˆcodeå­—ç¬¦ä¸²
 	CreateCode();
 
 	// TODO
-	// É¾³ı×¢ÊÍ ÕâÀï²»×ö
+	// åˆ é™¤æ³¨é‡Š è¿™é‡Œä¸åš
 
 	// TODO
-	// Á¬Ğø×Ö·û´®Á¬½Ó ÕâÀï²»×ö
+	// è¿ç»­å­—ç¬¦ä¸²è¿æ¥ è¿™é‡Œä¸åš
 
-	// ±ê¼Ç´úÂë×Ö·û´®Î²
+	// æ ‡è®°ä»£ç å­—ç¬¦ä¸²å°¾
 	end = code + strlen(code) + 1;
 
-	// Ô¤ÖÃÖ¸Õë
+	// é¢„ç½®æŒ‡é’ˆ
 	p = code;
 
 	return;
 }
 
-// func    Éú³É´úÂë×Ö·û´®
+// func    ç”Ÿæˆä»£ç å­—ç¬¦ä¸²
 // param
 // return  
 bool LexicalAnalysis::CreateCode() {
 
-	// ½èÓÃtype alpha²»±íÊ¾Êµ¼Êº¬Òå
+	// å€Ÿç”¨type alphaä¸è¡¨ç¤ºå®é™…å«ä¹‰
 	bool inString = false;
 
 	int i = 0, n = 0;
 	for (; source + i + 2 <= end; i++) {
 
-		// ´úÂë×Ö·û´®ÖĞ\\\r\n±íÊ¾Ò»¸ö×ªÒÆ»»ĞĞÊµÀı
+		// ä»£ç å­—ç¬¦ä¸²ä¸­\\\r\nè¡¨ç¤ºä¸€ä¸ªè½¬ç§»æ¢è¡Œå®ä¾‹
 		if (source[i] == '\\' && source[i + 1] == '\r' && source[i + 2] == '\n') {
 			i += 2;
 			continue;
 		}
 		if (!inString) {
 
-			// ×Ö·û´®ÍâµÄ\tºÍÁ¬Ğø¿Õ¸ñ¾ùÎª¿Õ°×ÊµÀı
+			// å­—ç¬¦ä¸²å¤–çš„\tå’Œè¿ç»­ç©ºæ ¼å‡ä¸ºç©ºç™½å®ä¾‹
 			if (source[i] == '\t') {
 				continue;
 			}
@@ -86,7 +86,7 @@ bool LexicalAnalysis::CreateCode() {
 				continue;
 			}
 
-			// ×Ö·û´®Ê¼
+			// å­—ç¬¦ä¸²å§‹
 			if (source[i] == '"') {
 				inString = true;
 				code[n++] = source[i];
@@ -95,7 +95,7 @@ bool LexicalAnalysis::CreateCode() {
 		}
 		if (inString) {
 
-			// ×Ö·û´®Î²
+			// å­—ç¬¦ä¸²å°¾
 			if (source[i] == '"') {
 				inString = false;
 				code[n++] = source[i];
@@ -104,7 +104,7 @@ bool LexicalAnalysis::CreateCode() {
 			code[n++] = source[i];
 			continue;
 		}
-		// ÆÕÍ¨×Ö·û
+		// æ™®é€šå­—ç¬¦
 		code[n++] = source[i];
 	}
 
@@ -113,17 +113,17 @@ bool LexicalAnalysis::CreateCode() {
 	return true;
 }
 
-// func    ´Ê·¨·ÖÎö
+// func    è¯æ³•åˆ†æ
 // param   
 // return  
 bool LexicalAnalysis::Analyse() {
 
 	while (p + 1 < end) {
 
-		// ±£´æÖ¸Õë
+		// ä¿å­˜æŒ‡é’ˆ
 		q = p;
 
-		// µ÷ÓÃ¸÷ÓĞÇî×´Ì¬×Ô¶¯»ú ÓÉ¶ÌÂ·Ğ§¹û±£Ö¤Ö»ÌáÈ¡Ò»´Î´ÊËØ ĞèÒªÏÈÅĞ¶Ï¹Ø¼ü×ÖºóÅĞ¶Ï±êÊ¶·û
+		// è°ƒç”¨å„æœ‰ç©·çŠ¶æ€è‡ªåŠ¨æœº ç”±çŸ­è·¯æ•ˆæœä¿è¯åªæå–ä¸€æ¬¡è¯ç´  éœ€è¦å…ˆåˆ¤æ–­å…³é”®å­—ååˆ¤æ–­æ ‡è¯†ç¬¦
 		if (Number() || Semicolon() || Operator() || Space() ||
 			KeyWord() || Identifier() || String() || Char()) {
 			wordTable;
@@ -136,7 +136,7 @@ bool LexicalAnalysis::Analyse() {
 	return true;
 }
 
-// func    Êı×Ö×ÖÃæÁ¿Ê¶±ğ ×Ô¶¯»ú
+// func    æ•°å­—å­—é¢é‡è¯†åˆ« è‡ªåŠ¨æœº
 // param   
 // return  
 bool LexicalAnalysis::Number() {
@@ -155,7 +155,7 @@ bool LexicalAnalysis::Number() {
 				state = EnumNumber::FloatPoint;
 			}
 			else {
-				// ÖØÖÃÖ¸Õë
+				// é‡ç½®æŒ‡é’ˆ
 				p = q;
 				return false;
 			}
@@ -180,20 +180,20 @@ bool LexicalAnalysis::Number() {
 				*p == ')' || *p == ']' || *p == '?' || *p == ':' || *p == '^' || *p == ',' ||
 				*p == ';') {
 
-				// Ææ¼¼ÒùÇÉ ±£´æ¸Ã×Ö·û
+				// å¥‡æŠ€æ·«å·§ ä¿å­˜è¯¥å­—ç¬¦
 				char ch = *p;
 				*p = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
 				wordTable[wordTableIndex].property = EnumWordProperties::TenIntNumber;
 				wordTable[wordTableIndex].line = this->line;
-				// »Ö¸´¸Ã×Ö·û
+				// æ¢å¤è¯¥å­—ç¬¦
 				*p = ch;
-				// ÏÂÒ»¸ö´ÊËØ
+				// ä¸‹ä¸€ä¸ªè¯ç´ 
 				wordTableIndex++;
 				return true;
 			}
 			else {
-				// ÖØÖÃÖ¸Õë
+				// é‡ç½®æŒ‡é’ˆ
 				p = q;
 				return false;
 			}
@@ -209,20 +209,20 @@ bool LexicalAnalysis::Number() {
 				*p == ')' || *p == ']' || *p == '?' || *p == ':' || *p == '^' || *p == ',' ||
 				*p == ';') {
 
-				// Ææ¼¼ÒùÇÉ ±£´æ¸Ã×Ö·û
+				// å¥‡æŠ€æ·«å·§ ä¿å­˜è¯¥å­—ç¬¦
 				char ch = *p;
 				*p = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
 				wordTable[wordTableIndex].property = EnumWordProperties::EightIntNumber;
 				wordTable[wordTableIndex].line = this->line;
-				// »Ö¸´¸Ã×Ö·û
+				// æ¢å¤è¯¥å­—ç¬¦
 				*p = ch;
-				// ÏÂÒ»¸ö´ÊËØ
+				// ä¸‹ä¸€ä¸ªè¯ç´ 
 				wordTableIndex++;
 				return true;
 			}
 			else {
-				// ÖØÖÃÖ¸Õë
+				// é‡ç½®æŒ‡é’ˆ
 				p = q;
 				return false;
 			}
@@ -244,20 +244,20 @@ bool LexicalAnalysis::Number() {
 				*p == ')' || *p == ']' || *p == '?' || *p == ':' || *p == '^' || *p == ',' ||
 				*p == ';') {
 
-				// Ææ¼¼ÒùÇÉ ±£´æ¸Ã×Ö·û
+				// å¥‡æŠ€æ·«å·§ ä¿å­˜è¯¥å­—ç¬¦
 				char ch = *p;
 				*p = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
 				wordTable[wordTableIndex].property = EnumWordProperties::TenIntNumber;
 				wordTable[wordTableIndex].line = this->line;
-				// »Ö¸´¸Ã×Ö·û
+				// æ¢å¤è¯¥å­—ç¬¦
 				*p = ch;
-				// ÏÂÒ»¸ö´ÊËØ
+				// ä¸‹ä¸€ä¸ªè¯ç´ 
 				wordTableIndex++;
 				return true;
 			}
 			else {
-				// ÖØÖÃÖ¸Õë
+				// é‡ç½®æŒ‡é’ˆ
 				p = q;
 				return false;
 			}
@@ -269,7 +269,7 @@ bool LexicalAnalysis::Number() {
 				state = EnumNumber::TrueSixteen;
 			}
 			else {
-				// ÖØÖÃÖ¸Õë
+				// é‡ç½®æŒ‡é’ˆ
 				p = q;
 				return false;
 			}
@@ -285,20 +285,20 @@ bool LexicalAnalysis::Number() {
 				*p == ')' || *p == ']' || *p == '?' || *p == ':' || *p == '^' || *p == ',' ||
 				*p == ';') {
 
-				// Ææ¼¼ÒùÇÉ ±£´æ¸Ã×Ö·û
+				// å¥‡æŠ€æ·«å·§ ä¿å­˜è¯¥å­—ç¬¦
 				char ch = *p;
 				*p = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
 				wordTable[wordTableIndex].property = EnumWordProperties::SixteenIntNumber;
 				wordTable[wordTableIndex].line = this->line;
-				// »Ö¸´¸Ã×Ö·û
+				// æ¢å¤è¯¥å­—ç¬¦
 				*p = ch;
-				// ÏÂÒ»¸ö´ÊËØ
+				// ä¸‹ä¸€ä¸ªè¯ç´ 
 				wordTableIndex++;
 				return true;
 			}
 			else {
-				// ÖØÖÃÖ¸Õë
+				// é‡ç½®æŒ‡é’ˆ
 				p = q;
 				return false;
 			}
@@ -314,20 +314,20 @@ bool LexicalAnalysis::Number() {
 				*p == ')' || *p == ']' || *p == '?' || *p == ':' || *p == '^' || *p == ',' ||
 				*p == ';') {
 
-				// Ææ¼¼ÒùÇÉ ±£´æÏÂÒ»¸ö×Ö·û
+				// å¥‡æŠ€æ·«å·§ ä¿å­˜ä¸‹ä¸€ä¸ªå­—ç¬¦
 				char ch = *(p+1);
 				*(p+1) = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
 				wordTable[wordTableIndex].property = EnumWordProperties::SixteenIntNumber;
 				wordTable[wordTableIndex].line = this->line;
-				// »Ö¸´ÏÂÒ»¸ö×Ö·û
+				// æ¢å¤ä¸‹ä¸€ä¸ªå­—ç¬¦
 				*(p+1) = ch;
-				// ÏÂÒ»¸ö´ÊËØ
+				// ä¸‹ä¸€ä¸ªè¯ç´ 
 				wordTableIndex++;
 				return true;
 			}
 			else {
-				// ÖØÖÃÖ¸Õë
+				// é‡ç½®æŒ‡é’ˆ
 				p = q;
 				return false;
 			}
@@ -346,20 +346,20 @@ bool LexicalAnalysis::Number() {
 				*p == ')' || *p == ']' || *p == '?' || *p == ':' || *p == '^' || *p == ',' ||
 				*p == ';') {
 
-				// Ææ¼¼ÒùÇÉ ±£´æ¸Ã×Ö·û
+				// å¥‡æŠ€æ·«å·§ ä¿å­˜è¯¥å­—ç¬¦
 				char ch = *p;
 				*p = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
 				wordTable[wordTableIndex].property = EnumWordProperties::FloatNumber;
 				wordTable[wordTableIndex].line = this->line;
-				// »Ö¸´¸Ã×Ö·û
+				// æ¢å¤è¯¥å­—ç¬¦
 				*p = ch;
-				// ÏÂÒ»¸ö´ÊËØ
+				// ä¸‹ä¸€ä¸ªè¯ç´ 
 				wordTableIndex++;
 				return true;
 			}
 			else {
-				// ÖØÖÃÖ¸Õë
+				// é‡ç½®æŒ‡é’ˆ
 				p = q;
 				return false;
 			}
@@ -374,7 +374,7 @@ bool LexicalAnalysis::Number() {
 				state = EnumNumber::FloatEeNumber;
 			}
 			else {
-				// ÖØÖÃÖ¸Õë
+				// é‡ç½®æŒ‡é’ˆ
 				p = q;
 				return false;
 			}
@@ -386,7 +386,7 @@ bool LexicalAnalysis::Number() {
 				state = EnumNumber::FloatEeNumber;
 			}
 			else {
-				// ÖØÖÃÖ¸Õë
+				// é‡ç½®æŒ‡é’ˆ
 				p = q;
 				return false;
 			}
@@ -402,20 +402,20 @@ bool LexicalAnalysis::Number() {
 				*p == ')' || *p == ']' || *p == '?' || *p == ':' || *p == '^' || *p == ',' ||
 				*p == ';') {
 
-				// Ææ¼¼ÒùÇÉ ±£´æ¸Ã×Ö·û
+				// å¥‡æŠ€æ·«å·§ ä¿å­˜è¯¥å­—ç¬¦
 				char ch = *p;
 				*p = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
 				wordTable[wordTableIndex].property = EnumWordProperties::FloatNumber;
 				wordTable[wordTableIndex].line = this->line;
-				// »Ö¸´¸Ã×Ö·û
+				// æ¢å¤è¯¥å­—ç¬¦
 				*p = ch;
-				// ÏÂÒ»¸ö´ÊËØ
+				// ä¸‹ä¸€ä¸ªè¯ç´ 
 				wordTableIndex++;
 				return true;
 			}
 			else {
-				// ÖØÖÃÖ¸Õë
+				// é‡ç½®æŒ‡é’ˆ
 				p = q;
 				return false;
 			}
@@ -428,91 +428,91 @@ bool LexicalAnalysis::Number() {
 	}
 }
 
-// func    ·ÖºÅÊ¶±ğ ²»ÊÇ×Ô¶¯»ú
+// func    åˆ†å·è¯†åˆ« ä¸æ˜¯è‡ªåŠ¨æœº
 // param   
 // return  
 bool LexicalAnalysis::Semicolon() {
 	if (*p == ';') {
-		// Ææ¼¼ÒùÇÉ ±£´æÏÂÒ»¸ö×Ö·û
+		// å¥‡æŠ€æ·«å·§ ä¿å­˜ä¸‹ä¸€ä¸ªå­—ç¬¦
 		char ch = *(p + 1);
 		*(p + 1) = '\0';
 		wordTable[wordTableIndex].word = std::string(q);
 		wordTable[wordTableIndex].property = EnumWordProperties::Semicolon;
 		wordTable[wordTableIndex].line = this->line;
-		// »Ö¸´ÏÂÒ»¸ö×Ö·û
+		// æ¢å¤ä¸‹ä¸€ä¸ªå­—ç¬¦
 		*(p + 1) = ch;
-		// ÏÂÒ»¸ö´ÊËØ
+		// ä¸‹ä¸€ä¸ªè¯ç´ 
 		p++;
 		wordTableIndex++;
 		return true;
 	}
 	else {
-		// ÖØÖÃÖ¸Õë
+		// é‡ç½®æŒ‡é’ˆ
 		p = q;
 		return false;
 	}
 }
 
-// func    ÔËËã·ûÊ¶±ğ ²»ÊÇ×Ô¶¯»ú
+// func    è¿ç®—ç¬¦è¯†åˆ« ä¸æ˜¯è‡ªåŠ¨æœº
 // param   
 // return  
 bool LexicalAnalysis::Operator() {
-	// ÊÇÔËËã·û
+	// æ˜¯è¿ç®—ç¬¦
 	if (IsOperator(*p)) {
 		EnumWordProperties e = EnumWordProperties::Auto;
 		int length = 3;
-		// Èı¸ö×Ö·û³¤µÄÔËËã·û
-		// ×óÒÆ¸³Öµ
+		// ä¸‰ä¸ªå­—ç¬¦é•¿çš„è¿ç®—ç¬¦
+		// å·¦ç§»èµ‹å€¼
 		if (*p == '<' && *(p + 1) == '<' && *(p + 2) == '=') {
 			e = EnumWordProperties::OperatorLeftShiftAssign;
 		}
-		// ÓÒÒÆ¸³Öµ
+		// å³ç§»èµ‹å€¼
 		else if (*p == '>' && *(p + 1) == '>' && *(p + 2) == '=') {
 			e = EnumWordProperties::OperatorRightShiftAssign;
 		}
 
-		// Á½¸ö×Ö·û³¤µÄÔËËã·û
-		// µİÔöÔËËã·û
+		// ä¸¤ä¸ªå­—ç¬¦é•¿çš„è¿ç®—ç¬¦
+		// é€’å¢è¿ç®—ç¬¦
 		else if (*p == '+' && *(p + 1) == '+') {
 			e = EnumWordProperties::OperatorAddAdd;
 			length = 2;
 		}
-		// µİ¼õÔËËã·û
+		// é€’å‡è¿ç®—ç¬¦
 		else if (*p == '-' && *(p + 1) == '-') {
 			e = EnumWordProperties::OperatorSubSubtract;
 			length = 2;
 		}
-		// ÏàµÈÔËËã·û
+		// ç›¸ç­‰è¿ç®—ç¬¦
 		else if (*p == '=' && *(p + 1) == '=') {
 			e = EnumWordProperties::OperatorEqual;
 			length = 2;
 		}
-		// ´óÓÚµÈÓÚ
+		// å¤§äºç­‰äº
 		else if (*p == '>' && *(p + 1) == '=') {
 			e = EnumWordProperties::OperatorGreaterEqual;
 			length = 2;
 		}
-		// Ğ¡ÓÚµÈÓÚ
+		// å°äºç­‰äº
 		else if (*p == '<' && *(p + 1) == '=') {
 			e = EnumWordProperties::OperatorSmallerEqual;
 			length = 2;
 		}
-		// ²»µÈ
+		// ä¸ç­‰
 		else if (*p == '!' && *(p + 1) == '=') {
 			e = EnumWordProperties::OperatorNotEqual;
 			length = 2;
 		}
-		// ×óÒÆ
+		// å·¦ç§»
 		else if (*p == '<' && *(p + 1) == '<') {
 			e = EnumWordProperties::OperatorLeftShift;
 			length = 2;
 		}
-		// ÓÒÒÆ
+		// å³ç§»
 		else if (*p == '>' && *(p + 1) == '>') {
 			e = EnumWordProperties::OperatorRightShift;
 			length = 2;
 		}
-		// ËãÊõ¸³Öµ
+		// ç®—æœ¯èµ‹å€¼
 		else if (*p == '+' && *(p + 1) == '=') {
 			e = EnumWordProperties::OperatorAddAssign;
 			length = 2;
@@ -533,39 +533,39 @@ bool LexicalAnalysis::Operator() {
 			e = EnumWordProperties::OperatorModAssign;
 			length = 2;
 		}
-		// °´Î»Óë¸³Öµ
+		// æŒ‰ä½ä¸èµ‹å€¼
 		else if (*p == '&' && *(p + 1) == '=') {
 			e = EnumWordProperties::OperatorAndAssign;
 			length = 2;
 		}
-		// °´Î»»ò¸³Öµ
+		// æŒ‰ä½æˆ–èµ‹å€¼
 		else if (*p == '|' && *(p + 1) == '=') {
 			e = EnumWordProperties::OperatorAssign;
 			length = 2;
 		}
-		// °´Î»Òì»ò¸³Öµ
+		// æŒ‰ä½å¼‚æˆ–èµ‹å€¼
 		else if (*p == '^' && *(p + 1) == '=') {
 			e = EnumWordProperties::OperatorXOrAssign;
 			length = 2;
 		}
-		// Âß¼­Óë
+		// é€»è¾‘ä¸
 		else if (*p == '&' && *(p + 1) == '&') {
 			e = EnumWordProperties::OperatorAnd;
 			length = 2;
 		}
-		// Âß¼­»ò
+		// é€»è¾‘æˆ–
 		else if (*p == '|' && *(p + 1) == '|') {
 			e = EnumWordProperties::OperatorOr;
 			length = 2;
 		}
-		// ¼ıÍ·ÔËËã·û
+		// ç®­å¤´è¿ç®—ç¬¦
 		else if (*p == '-' && *(p + 1) == '>') {
 			e = EnumWordProperties::OperatorArrow;
 			length = 2;
 		}
 
-		// Ò»¸ö×Ö·û³¤µÄÔËËã·û
-		// ËãÊõÔËËã·û
+		// ä¸€ä¸ªå­—ç¬¦é•¿çš„è¿ç®—ç¬¦
+		// ç®—æœ¯è¿ç®—ç¬¦
 		else if (*p == '+') {
 			e = EnumWordProperties::OperatorAdd;
 			length = 1;
@@ -586,12 +586,12 @@ bool LexicalAnalysis::Operator() {
 			e = EnumWordProperties::OperatorModulo;
 			length = 1;
 		}
-		// ³ÉÔ±ÔËËã·û
+		// æˆå‘˜è¿ç®—ç¬¦
 		else if (*p == '.') {
 			e = EnumWordProperties::OperatorPoint;
 			length = 1;
 		}
-		// À¨ºÅÔËËã·û
+		// æ‹¬å·è¿ç®—ç¬¦
 		else if (*p == '(') {
 			e = EnumWordProperties::OperatorLeftRound;
 			length = 1;
@@ -616,7 +616,7 @@ bool LexicalAnalysis::Operator() {
 			e = EnumWordProperties::OperatorRightBrace;
 			length = 1;
 		}
-		// Ìõ¼şÔËËã·û
+		// æ¡ä»¶è¿ç®—ç¬¦
 		else if (*p == '?') {
 			e = EnumWordProperties::OperatorQuestion;
 			length = 1;
@@ -625,73 +625,73 @@ bool LexicalAnalysis::Operator() {
 			e = EnumWordProperties::OperatorColon;
 			length = 1;
 		}
-		// Âß¼­·Ç
+		// é€»è¾‘é
 		else if (*p == '!') {
 			e = EnumWordProperties::OperatorNot;
 			length = 1;
 		}
-		// ¶ººÅ
+		// é€—å·
 		else if (*p == ',') {
 			e = EnumWordProperties::OperatorComma;
 			length = 1;
 		}
-		// ´óÓÚ
+		// å¤§äº
 		else if (*p == '>') {
 			e = EnumWordProperties::OperatorGreaterThan;
 			length = 1;
 		}
-		// Ğ¡ÓÚ
+		// å°äº
 		else if (*p == '<') {
 			e = EnumWordProperties::OperatorSmallerThan;
 			length = 1;
 		}
-		// ¸³Öµ
+		// èµ‹å€¼
 		else if (*p == '=') {
 			e = EnumWordProperties::OperatorAssign;
 			length = 1;
 		}
-		// °´Î»È¡·´
+		// æŒ‰ä½å–å
 		else if (*p == '~') {
 			e = EnumWordProperties::OperatorBitNot;
 			length = 1;
 		}
-		// °´Î»Óë
+		// æŒ‰ä½ä¸
 		else if (*p == '&') {
 			e = EnumWordProperties::OperatorBitAnd;
 			length = 1;
 		}
-		// °´Î»»ò
+		// æŒ‰ä½æˆ–
 		else if (*p == '|') {
 			e = EnumWordProperties::OperatorBitOr;
 			length = 1;
 		}
-		// °´Î»Òì»ò
+		// æŒ‰ä½å¼‚æˆ–
 		else if (*p == '^') {
 			e = EnumWordProperties::OperatorXOr;
 			length = 1;
 		}
 
-		// Ææ¼¼ÒùÇÉ ±£´æÏÂÒ»¸ö×Ö·û
+		// å¥‡æŠ€æ·«å·§ ä¿å­˜ä¸‹ä¸€ä¸ªå­—ç¬¦
 		char ch = *(p + length);
 		*(p + length) = '\0';
 		wordTable[wordTableIndex].word = std::string(q);
 		wordTable[wordTableIndex].property = e;
 		wordTable[wordTableIndex].line = this->line;
-		// »Ö¸´ÏÂÒ»¸ö×Ö·û
+		// æ¢å¤ä¸‹ä¸€ä¸ªå­—ç¬¦
 		*(p + length) = ch;
-		// ÏÂÒ»¸ö´ÊËØ
+		// ä¸‹ä¸€ä¸ªè¯ç´ 
 		p += length;
 		wordTableIndex++;
 		return true;
 	}
 	else {
-		// ÖØÖÃÖ¸Õë
+		// é‡ç½®æŒ‡é’ˆ
 		p = q;
 		return false;
 	}
 }
 
-// func    ¿Õ°×Ê¶±ğ ¼ÆËãĞĞÊı ²»ÊÇ×Ô¶¯»ú
+// func    ç©ºç™½è¯†åˆ« è®¡ç®—è¡Œæ•° ä¸æ˜¯è‡ªåŠ¨æœº
 // param   
 // return  
 bool LexicalAnalysis::Space() {
@@ -705,13 +705,13 @@ bool LexicalAnalysis::Space() {
 		return true;
 	}
 	else {
-		// ÖØÖÃÖ¸Õë
+		// é‡ç½®æŒ‡é’ˆ
 		p = q;
 		return false;
 	}
 }
 
-// func    ¹Ø¼ü×ÖÊ¶±ğ ²»ÊÇ×Ô¶¯»ú ÒòÎª¹Ø¼ü×ÖÀïÃ»ÓĞÊı×ÖºÍÏÂ»®Ïß ¼ò»¯
+// func    å…³é”®å­—è¯†åˆ« ä¸æ˜¯è‡ªåŠ¨æœº å› ä¸ºå…³é”®å­—é‡Œæ²¡æœ‰æ•°å­—å’Œä¸‹åˆ’çº¿ ç®€åŒ–
 // param   
 // return  
 bool LexicalAnalysis::KeyWord() {
@@ -719,39 +719,39 @@ bool LexicalAnalysis::KeyWord() {
 		while (isalpha(*p)) {
 			p++;
 		}
-		// ¹Ø¼ü×ÖÖ®ºó±ØÊÇ¿Õ°× ·ÖºÅ ×óÔ²À¨ºÅ ×ó»¨À¨ºÅ
+		// å…³é”®å­—ä¹‹åå¿…æ˜¯ç©ºç™½ åˆ†å· å·¦åœ†æ‹¬å· å·¦èŠ±æ‹¬å·
 		if (!isspace(*p) && *p != ';' && *p != '(' && *p != '{') {
-			// ÖØÖÃÖ¸Õë
+			// é‡ç½®æŒ‡é’ˆ
 			p = q;
 			return false;
 		}
-		// Ææ¼¼ÒùÇÉ ±£´æ¸Ã×Ö·û
+		// å¥‡æŠ€æ·«å·§ ä¿å­˜è¯¥å­—ç¬¦
 		char ch = *p;
 		*p = '\0';
 
 		auto iter = keyWord.keyWord.find(q);
-		// ÊÇ¹Ø¼ü×Ö
+		// æ˜¯å…³é”®å­—
 		if (iter != keyWord.keyWord.end()) {
 			wordTable[wordTableIndex].word = std::string(q);
 			wordTable[wordTableIndex].property = (*iter).second;
 			wordTable[wordTableIndex].line = this->line;
-			// »Ö¸´¸Ã×Ö·û
+			// æ¢å¤è¯¥å­—ç¬¦
 			*p = ch;
-			// ÏÂÒ»¸ö´ÊËØ
+			// ä¸‹ä¸€ä¸ªè¯ç´ 
 			wordTableIndex++;
 			return true;
 		}
 		else {
-			// »Ö¸´¸Ã×Ö·û
+			// æ¢å¤è¯¥å­—ç¬¦
 			*p = ch;
-			// ÖØÖÃÖ¸Õë
+			// é‡ç½®æŒ‡é’ˆ
 			p = q;
 			return false;
 		}
 	}
 }
 
-// func    ±êÊ¶·ûÊ¶±ğ ×Ô¶¯»ú
+// func    æ ‡è¯†ç¬¦è¯†åˆ« è‡ªåŠ¨æœº
 // param   
 // return  
 bool LexicalAnalysis::Identifier() {
@@ -761,33 +761,33 @@ bool LexicalAnalysis::Identifier() {
 			p++;
 		}
 
-		// ÎŞ·¨Ê¶±ğµÄ±ê¼Ç
+		// æ— æ³•è¯†åˆ«çš„æ ‡è®°
 		if (*p == '\\') {
-			// ÖØÖÃÖ¸Õë
+			// é‡ç½®æŒ‡é’ˆ
 			p = q;
 			return false;
 		}
 
-		// Ææ¼¼ÒùÇÉ ±£´æ¸Ã×Ö·û
+		// å¥‡æŠ€æ·«å·§ ä¿å­˜è¯¥å­—ç¬¦
 		char ch = *p;
 		*p = '\0';
 		wordTable[wordTableIndex].word = std::string(q);
 		wordTable[wordTableIndex].property = EnumWordProperties::Identifier;
 		wordTable[wordTableIndex].line = this->line;
-		// »Ö¸´¸Ã×Ö·û
+		// æ¢å¤è¯¥å­—ç¬¦
 		*p = ch;
-		// ÏÂÒ»¸ö´ÊËØ
+		// ä¸‹ä¸€ä¸ªè¯ç´ 
 		wordTableIndex++;
 		return true;
 	}
 	else {
-		// ÖØÖÃÖ¸Õë
+		// é‡ç½®æŒ‡é’ˆ
 		p = q;
 		return false;
 	}
 }
 
-// func    ×Ö·û´®×ÖÃæÁ¿Ê¶±ğ ×Ô¶¯»ú
+// func    å­—ç¬¦ä¸²å­—é¢é‡è¯†åˆ« è‡ªåŠ¨æœº
 // param   
 // return  
 bool LexicalAnalysis::String() {
@@ -800,7 +800,7 @@ bool LexicalAnalysis::String() {
 				state = EnumString::In;
 			}
 			else {
-				// ÖØÖÃÖ¸Õë
+				// é‡ç½®æŒ‡é’ˆ
 				p = q;
 				return false;
 			}
@@ -809,7 +809,7 @@ bool LexicalAnalysis::String() {
 		case EnumString::In:
 		{
 			if (*p == '\0') {
-				// Ææ¼¼ÒùÇÉ ±£´æÏÂÒ»¸ö×Ö·û
+				// å¥‡æŠ€æ·«å·§ ä¿å­˜ä¸‹ä¸€ä¸ªå­—ç¬¦
 				char ch = *(p + 1);
 				*p = '"';
 				*(p + 1) = '\0';
@@ -818,13 +818,13 @@ bool LexicalAnalysis::String() {
 				wordTable[wordTableIndex].property = EnumWordProperties::String;
 				wordTable[wordTableIndex].line = this->line;
 
-				// »Ö¸´ÏÂÒ»¸ö×Ö·û
+				// æ¢å¤ä¸‹ä¸€ä¸ªå­—ç¬¦
 				*p = '\0';
 				*(p + 1) = ch;
 
-				// ÏÂÒ»¸ö´ÊËØ
+				// ä¸‹ä¸€ä¸ªè¯ç´ 
 				wordTableIndex++;
-				// ¶¨Î»ÏÂÒ»¸öÒıºÅ
+				// å®šä½ä¸‹ä¸€ä¸ªå¼•å·
 				while (!(*p == '"' && *(p - 1) != '\\')) {
 					p++;
 				}
@@ -833,16 +833,16 @@ bool LexicalAnalysis::String() {
 				return true;
 			}
 			else if (*p == '"') {
-				// Ææ¼¼ÒùÇÉ ±£´æÏÂÒ»¸ö×Ö·û
+				// å¥‡æŠ€æ·«å·§ ä¿å­˜ä¸‹ä¸€ä¸ªå­—ç¬¦
 				char ch = *(p + 1);
 				*(p + 1) = '\0';
 				wordTable[wordTableIndex].word = std::string(q);
 				wordTable[wordTableIndex].property = EnumWordProperties::String;
 				wordTable[wordTableIndex].line = this->line;
-				// »Ö¸´ÏÂÒ»¸ö×Ö·û
+				// æ¢å¤ä¸‹ä¸€ä¸ªå­—ç¬¦
 				*(p + 1) = ch;
 				p++;
-				// ÏÂÒ»¸ö´ÊËØ
+				// ä¸‹ä¸€ä¸ªè¯ç´ 
 				wordTableIndex++;
 				return true;
 			}
@@ -857,7 +857,7 @@ bool LexicalAnalysis::String() {
 			if (*p == '0') {
 				state = EnumString::Eight1;
 			}
-			// ×ªÒåĞòÁĞ
+			// è½¬ä¹‰åºåˆ—
 			else if (*p == 'r' || *p == 'n' || *p == 't' || *p == 'b' ||
 				*p == '\\' || *p == '"' || *p == '\'') {
 				state = EnumString::In;
@@ -871,7 +871,7 @@ bool LexicalAnalysis::String() {
 				state = EnumString::Eight2;
 			}
 			else {
-				// Ææ¼¼ÒùÇÉ ±£´æÏÂÒ»¸ö×Ö·û
+				// å¥‡æŠ€æ·«å·§ ä¿å­˜ä¸‹ä¸€ä¸ªå­—ç¬¦
 				char ch = *p;
 				char ch1 = *(p + 1);
 				*p = '"';
@@ -881,13 +881,13 @@ bool LexicalAnalysis::String() {
 				wordTable[wordTableIndex].property = EnumWordProperties::String;
 				wordTable[wordTableIndex].line = this->line;
 
-				// »Ö¸´ÏÂÒ»¸ö×Ö·û
+				// æ¢å¤ä¸‹ä¸€ä¸ªå­—ç¬¦
 				*p = ch;
 				*(p + 1) = ch1;
 
-				// ÏÂÒ»¸ö´ÊËØ
+				// ä¸‹ä¸€ä¸ªè¯ç´ 
 				wordTableIndex++;
-				// ¶¨Î»ÏÂÒ»¸öÒıºÅ
+				// å®šä½ä¸‹ä¸€ä¸ªå¼•å·
 				while (!(*p == '"' && *(p - 1) != '\\')) {
 					p++;
 				}
@@ -903,7 +903,7 @@ bool LexicalAnalysis::String() {
 				state = EnumString::In;
 			}
 			else {
-				// ÖØÖÃÖ¸Õë
+				// é‡ç½®æŒ‡é’ˆ
 				p = q;
 				return false;
 			}
@@ -916,12 +916,12 @@ bool LexicalAnalysis::String() {
 	}
 }
 
-// func    ×Ö·û×ÖÃæÁ¿Ê¶±ğ ²»ÊÇ×Ô¶¯»ú
+// func    å­—ç¬¦å­—é¢é‡è¯†åˆ« ä¸æ˜¯è‡ªåŠ¨æœº
 // param   
 // return  
 bool LexicalAnalysis::Char() {
 	if (*p == '\'' && *(p + 1) != '\\') {
-		// ±£´æ×Ö·û
+		// ä¿å­˜å­—ç¬¦
 		char ch2 = *(p + 2);
 		char ch3 = *(p + 3);
 		*(p + 2) = '\'';
@@ -929,13 +929,13 @@ bool LexicalAnalysis::Char() {
 		wordTable[wordTableIndex].word = std::string(q);
 		wordTable[wordTableIndex].property = EnumWordProperties::CharNumber;
 		wordTable[wordTableIndex].line = this->line;
-		// »Ö¸´×Ö·û
+		// æ¢å¤å­—ç¬¦
 		*(p + 2) = ch2;
 		*(p + 3) = ch3;
-		// ÏÂÒ»¸ö´ÊËØ
+		// ä¸‹ä¸€ä¸ªè¯ç´ 
 		p++;
 		wordTableIndex++;
-		// ¶¨Î»ÏÂÒ»¸öµ¥ÒıºÅ
+		// å®šä½ä¸‹ä¸€ä¸ªå•å¼•å·
 		while (*p != '\'') {
 			p++;
 		}
@@ -944,7 +944,7 @@ bool LexicalAnalysis::Char() {
 		return true;
 	}
 	else if (*p == '\'' && *(p + 1) == '\\') {
-		// ±£´æ×Ö·û
+		// ä¿å­˜å­—ç¬¦
 		char ch3 = *(p + 3);
 		char ch4 = *(p + 4);
 		*(p + 3) = '\'';
@@ -952,13 +952,13 @@ bool LexicalAnalysis::Char() {
 		wordTable[wordTableIndex].word = std::string(q);
 		wordTable[wordTableIndex].property = EnumWordProperties::CharNumber;
 		wordTable[wordTableIndex].line = this->line;
-		// »Ö¸´×Ö·û
+		// æ¢å¤å­—ç¬¦
 		*(p + 3) = ch3;
 		*(p + 4) = ch4;
-		// ÏÂÒ»¸ö´ÊËØ
+		// ä¸‹ä¸€ä¸ªè¯ç´ 
 		p++;
 		wordTableIndex++;
-		// ¶¨Î»ÏÂÒ»¸öµ¥ÒıºÅ
+		// å®šä½ä¸‹ä¸€ä¸ªå•å¼•å·
 		while (*p != '\'') {
 			p++;
 		}
@@ -967,13 +967,13 @@ bool LexicalAnalysis::Char() {
 		return true;
 	}
 	else {
-		// ÖØÖÃÖ¸Õë
+		// é‡ç½®æŒ‡é’ˆ
 		p = q;
 		return false;
 	}
 }
 
-// func    Êä³ö´ÊËØ
+// func    è¾“å‡ºè¯ç´ 
 // param   
 // return  
 bool LexicalAnalysis::OutPut() {
@@ -990,8 +990,8 @@ bool LexicalAnalysis::OutPut() {
 	return true;
 }
 
-// func    ÔËËã·û×Ö·ûÅĞ¶Ï
-// param   ×Ö·ûÖ¸Õë
+// func    è¿ç®—ç¬¦å­—ç¬¦åˆ¤æ–­
+// param   å­—ç¬¦æŒ‡é’ˆ
 // return  
 bool LexicalAnalysis::IsOperator(char ch) {
 	if (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '%' || ch == '&' || ch == '|' ||

@@ -9,16 +9,16 @@ GrammaticalAnalysis::GrammaticalAnalysis(std::vector<Word>& w) :wordTable(w) {
 	//}
 }
 
-// func    ³õÊ¼±í´ïÊ½Ê¶±ğ
+// func    åˆå§‹è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::PrimaryExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Identifier
 	if (wordTable[p].property == EnumWordProperties::Identifier ||
-		// Êı×Ö×ÖÃæÁ¿
+		// æ•°å­—å­—é¢é‡
 		wordTable[p].property == EnumWordProperties::TenIntNumber ||
 		wordTable[p].property == EnumWordProperties::EightIntNumber ||
 		wordTable[p].property == EnumWordProperties::SixteenIntNumber ||
@@ -47,11 +47,11 @@ bool GrammaticalAnalysis::PrimaryExpression() {
 	}
 }
 
-// func    ºó×º±í´ïÊ½Ê¶±ğ
+// func    åç¼€è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::PostfixExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// PrimaryExpression PostfixExpressionEliminateLeft
@@ -70,11 +70,11 @@ bool GrammaticalAnalysis::PostfixExpression() {
 	}
 }
 
-// func    ºó×º±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    åç¼€è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::PostfixExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// [Expression] PostfixExpressionEliminateLeft
@@ -144,18 +144,18 @@ bool GrammaticalAnalysis::PostfixExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a -- Postfix Expression because Expect a Postfix Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ²ÎÊı±í´ïÊ½ÁĞ±íÊ¶±ğ
+// func    å‚æ•°è¡¨è¾¾å¼åˆ—è¡¨è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::ArgumentExpressionList() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// AssignmentExpression ArgumentExpressionListEliminateLeft
@@ -174,11 +174,11 @@ bool GrammaticalAnalysis::ArgumentExpressionList() {
 	}
 }
 
-// func    ²ÎÊı±í´ïÊ½ÁĞ±íÏû³ı×óµİ¹éÊ¶±ğ
+// func    å‚æ•°è¡¨è¾¾å¼åˆ—è¡¨æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::ArgumentExpressionListEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ,AssignmentExpression ArgumentExpressionListEliminateLeft
@@ -193,18 +193,18 @@ bool GrammaticalAnalysis::ArgumentExpressionListEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    µ¥Ä¿±í´ïÊ½Ê¶±ğ
+// func    å•ç›®è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::UnaryExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// PostfixExpression
@@ -268,11 +268,11 @@ bool GrammaticalAnalysis::UnaryExpression() {
 	}
 }
 
-// func    µ¥Ä¿ÔËËã·ûÊ¶±ğ
+// func    å•ç›®è¿ç®—ç¬¦è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::UnaryOperator() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	if (wordTable[p].property == EnumWordProperties::OperatorMultiply ||
@@ -290,11 +290,11 @@ bool GrammaticalAnalysis::UnaryOperator() {
 	}
 }
 
-// func    ÀàĞÍ×ª»»±í´ïÊ½Ê¶±ğ
+// func    ç±»å‹è½¬æ¢è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::CastExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// UnaryExpression
@@ -323,11 +323,11 @@ bool GrammaticalAnalysis::CastExpression() {
 	}
 }
 
-// func    ³Ë³ı±í´ïÊ½Ê¶±ğ
+// func    ä¹˜é™¤è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::MultiplicativeExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// CastExpression MultiplicativeExpressionEliminateLeft
@@ -344,11 +344,11 @@ bool GrammaticalAnalysis::MultiplicativeExpression() {
 	}
 }
 
-// func    ³Ë³ı±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    ä¹˜é™¤è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::MultiplicativeExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// *CastExpression MultiplicativeExpressionEliminateLeft
@@ -381,18 +381,18 @@ bool GrammaticalAnalysis::MultiplicativeExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a % Multiplicative Expression because Expect a Cast Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ¼Ó¼õ±í´ïÊ½Ê¶±ğ
+// func    åŠ å‡è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::AdditiveExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// MultiplicativeExpression AdditiveExpressionEliminateLeft
@@ -409,11 +409,11 @@ bool GrammaticalAnalysis::AdditiveExpression() {
 	}
 }
 
-// func    ¼Ó¼õ±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    åŠ å‡è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::AdditiveExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// +MultiplicativeExpression AdditiveExpressionEliminateLeft
@@ -436,18 +436,18 @@ bool GrammaticalAnalysis::AdditiveExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a - Additive Expression because Expect a Multiplicative Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ÒÆÎ»±í´ïÊ½Ê¶±ğ
+// func    ç§»ä½è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::ShiftExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// AdditiveExpression ShiftExpressionEliminateLeft
@@ -464,11 +464,11 @@ bool GrammaticalAnalysis::ShiftExpression() {
 	}
 }
 
-// func    ÒÆÎ»±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    ç§»ä½è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::ShiftExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// << AdditiveExpression ShiftExpressionEliminateLeft
@@ -491,18 +491,18 @@ bool GrammaticalAnalysis::ShiftExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a >> Expression because Expect a Additive Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ¹ØÏµ±í´ïÊ½Ê¶±ğ
+// func    å…³ç³»è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::RelationalExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ShiftExpression RelationalExpressionEliminateLeft
@@ -519,11 +519,11 @@ bool GrammaticalAnalysis::RelationalExpression() {
 	}
 }
 
-// func    ¹ØÏµ±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    å…³ç³»è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::RelationalExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// < ShiftExpression RelationalExpressionEliminateLeft
@@ -566,18 +566,18 @@ bool GrammaticalAnalysis::RelationalExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a >= Relational Expression because Expect a Shift Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ÏàµÈ±í´ïÊ½Ê¶±ğ
+// func    ç›¸ç­‰è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::EqualityExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// RelationalExpression EqualityExpressionEliminateLeft
@@ -594,11 +594,11 @@ bool GrammaticalAnalysis::EqualityExpression() {
 	}
 }
 
-// func    ÏàµÈ±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    ç›¸ç­‰è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::EqualityExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// == RelationalExpression EqualityExpressionEliminateLeft
@@ -621,18 +621,18 @@ bool GrammaticalAnalysis::EqualityExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a != Equality Expression because Expect a Relational Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    °´Î»Óë±í´ïÊ½Ê¶±ğ
+// func    æŒ‰ä½ä¸è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::BitAndExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// EqualityExpression BitAndExpressionEliminateLeft
@@ -649,11 +649,11 @@ bool GrammaticalAnalysis::BitAndExpression() {
 	}
 }
 
-// func    °´Î»Óë±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    æŒ‰ä½ä¸è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::BitAndExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// & EqualityExpression BitAndExpressionEliminateLeft
@@ -666,18 +666,18 @@ bool GrammaticalAnalysis::BitAndExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a & Expression because Expect a Equality Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    °´Î»Òì»ò±í´ïÊ½Ê¶±ğ
+// func    æŒ‰ä½å¼‚æˆ–è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::BitXOrExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// BitAndExpression BitXOrExpressionEliminateLeft
@@ -694,11 +694,11 @@ bool GrammaticalAnalysis::BitXOrExpression() {
 	}
 }
 
-// func    °´Î»Òì»ò±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    æŒ‰ä½å¼‚æˆ–è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::BitXOrExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ^ BitAndExpression BitXOrExpressionEliminateLeft
@@ -711,18 +711,18 @@ bool GrammaticalAnalysis::BitXOrExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a ^ Expression because Expect a & Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    °´Î»»ò±í´ïÊ½Ê¶±ğ
+// func    æŒ‰ä½æˆ–è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::BitOrExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// BitXOrExpression BitOrExpressionEliminateLeft
@@ -739,11 +739,11 @@ bool GrammaticalAnalysis::BitOrExpression() {
 	}
 }
 
-// func    °´Î»»ò±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    æŒ‰ä½æˆ–è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::BitOrExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// | BitXOrExpression BitOrExpressionEliminateLeft
@@ -756,18 +756,18 @@ bool GrammaticalAnalysis::BitOrExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a | Expression because Expect a ^ Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    Âß¼­Óë±í´ïÊ½Ê¶±ğ
+// func    é€»è¾‘ä¸è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::AndExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// BitOrExpression AndExpressionEliminateLeft
@@ -784,11 +784,11 @@ bool GrammaticalAnalysis::AndExpression() {
 	}
 }
 
-// func    Âß¼­Óë±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    é€»è¾‘ä¸è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::AndExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// && BitOrExpression AndExpressionEliminateLeft
@@ -801,18 +801,18 @@ bool GrammaticalAnalysis::AndExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a && Expression because Expect a | Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    Âß¼­»ò±í´ïÊ½Ê¶±ğ
+// func    é€»è¾‘æˆ–è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::OrExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// AndExpression OrExpressionEliminateLeft
@@ -829,11 +829,11 @@ bool GrammaticalAnalysis::OrExpression() {
 	}
 }
 
-// func    Âß¼­»ò±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    é€»è¾‘æˆ–è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::OrExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// || AndExpression OrExpressionEliminateLeft
@@ -846,18 +846,18 @@ bool GrammaticalAnalysis::OrExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a || Expression because Expect a && Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    Ìõ¼ş±í´ïÊ½Ê¶±ğ
+// func    æ¡ä»¶è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::ConditionalExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// OrExpression
@@ -887,11 +887,11 @@ bool GrammaticalAnalysis::ConditionalExpression() {
 	}
 }
 
-// func    ¸³Öµ±í´ïÊ½Ê¶±ğ
+// func    èµ‹å€¼è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::AssignmentExpression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	if (UnaryExpression()) {
@@ -912,11 +912,11 @@ bool GrammaticalAnalysis::AssignmentExpression() {
 	}
 }
 
-// func    ¸³ÖµÔËËã·ûÊ¶±ğ
+// func    èµ‹å€¼è¿ç®—ç¬¦è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::AssignmentOperator() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	if (wordTable[p].property == EnumWordProperties::OperatorAssign ||
@@ -939,11 +939,11 @@ bool GrammaticalAnalysis::AssignmentOperator() {
 	}
 }
 
-// func    ±í´ïÊ½Ê¶±ğ
+// func    è¡¨è¾¾å¼è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::Expression() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// AssignmentExpression ExpressionEliminateLeft
@@ -960,11 +960,11 @@ bool GrammaticalAnalysis::Expression() {
 	}
 }
 
-// func    ±í´ïÊ½Ïû³ı×óµİ¹éÊ¶±ğ
+// func    è¡¨è¾¾å¼æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::ExpressionEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ,AssignmentExpression ExpressionEliminateLeft
@@ -977,18 +977,18 @@ bool GrammaticalAnalysis::ExpressionEliminateLeft() {
 		}
 		throw(Exception("Not a Expression because Expect a Assignment Expression", wordTable[p], 0));
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ÉùÃ÷Ê¶±ğ
+// func    å£°æ˜è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::Declaration() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// TypeName InitDeclaratorList;
@@ -1010,11 +1010,11 @@ bool GrammaticalAnalysis::Declaration() {
 	}
 }
 
-// func    ³õÊ¼»¯ÉùÃ÷ÁĞ±íÊ¶±ğ
+// func    åˆå§‹åŒ–å£°æ˜åˆ—è¡¨è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::InitDeclaratorList() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// InitDeclarator InitDeclaratorListEliminateLeft
@@ -1031,11 +1031,11 @@ bool GrammaticalAnalysis::InitDeclaratorList() {
 	}
 }
 
-// func    ³õÊ¼»¯ÉùÃ÷ÁĞ±íÏû³ı×óµİ¹éÊ¶±ğ
+// func    åˆå§‹åŒ–å£°æ˜åˆ—è¡¨æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::InitDeclaratorListEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ,InitDeclarator InitDeclaratorListEliminateLeft
@@ -1049,18 +1049,18 @@ bool GrammaticalAnalysis::InitDeclaratorListEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ³õÊ¼»¯ÉùÃ÷·ûÊ¶±ğ
+// func    åˆå§‹åŒ–å£°æ˜ç¬¦è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::InitDeclarator() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// DirectDeclarator
@@ -1083,11 +1083,11 @@ bool GrammaticalAnalysis::InitDeclarator() {
 	}
 }
 
-// func    Ö±½ÓÉùÃ÷·ûÊ¶±ğ
+// func    ç›´æ¥å£°æ˜ç¬¦è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::DirectDeclarator() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Identifier DirectDeclaratorEliminateLeft
@@ -1107,11 +1107,11 @@ bool GrammaticalAnalysis::DirectDeclarator() {
 	}
 }
 
-// func    Ö±½ÓÉùÃ÷·ûÏû³ı×óµİ¹éÊ¶±ğ
+// func    ç›´æ¥å£°æ˜ç¬¦æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::DirectDeclaratorEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// (ParameterList) DirectDeclaratorEliminateLeft
@@ -1128,18 +1128,18 @@ bool GrammaticalAnalysis::DirectDeclaratorEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ²ÎÊıÁĞ±íÊ¶±ğ
+// func    å‚æ•°åˆ—è¡¨è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::ParameterList() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ParameterDeclaration ParameterListEliminateLeft
@@ -1158,11 +1158,11 @@ bool GrammaticalAnalysis::ParameterList() {
 	}
 }
 
-// func    ²ÎÊıÁĞ±íÏû³ı×óµİ¹éÊ¶±ğ
+// func    å‚æ•°åˆ—è¡¨æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::ParameterListEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ,ParameterDeclaration ParameterListEliminateLeft
@@ -1176,18 +1176,18 @@ bool GrammaticalAnalysis::ParameterListEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ²ÎÊıÉùÃ÷Ê¶±ğ
+// func    å‚æ•°å£°æ˜è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::ParameterDeclaration() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// TypeName DirectDeclarator
@@ -1205,11 +1205,11 @@ bool GrammaticalAnalysis::ParameterDeclaration() {
 	}
 }
 
-// func    ±êÊ¶·ûÁĞ±íÊ¶±ğ
+// func    æ ‡è¯†ç¬¦åˆ—è¡¨è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::IdentifierList() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Identifier IdentifierListEliminateLeft
@@ -1229,11 +1229,11 @@ bool GrammaticalAnalysis::IdentifierList() {
 	}
 }
 
-// func    ±êÊ¶·ûÁĞ±íÏû³ı×óµİ¹éÊ¶±ğ
+// func    æ ‡è¯†ç¬¦åˆ—è¡¨æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::IdentifierListEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ,Identifier IdentifierListEliminateLeft
@@ -1248,21 +1248,21 @@ bool GrammaticalAnalysis::IdentifierListEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    Óï¾äÊ¶±ğ
+// func    è¯­å¥è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::Statement() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
-	// Goto Continue Break Return ÊÇÌø×ªÓï¾ä
+	// Goto Continue Break Return æ˜¯è·³è½¬è¯­å¥
 	if (wordTable[p].property == EnumWordProperties::Goto ||
 		wordTable[p].property == EnumWordProperties::Continue ||
 		wordTable[p].property == EnumWordProperties::Break ||
@@ -1270,47 +1270,47 @@ bool GrammaticalAnalysis::Statement() {
 		JumpStatement();
 		return true;
 	}
-	// If ÊÇÑ¡ÔñÓï¾ä
+	// If æ˜¯é€‰æ‹©è¯­å¥
 	else if (wordTable[p].property == EnumWordProperties::If) {
 		SelectionStatement();
 		return true;
 	}
-	// { ÊÇ¸´ºÏÓï¾ä
+	// { æ˜¯å¤åˆè¯­å¥
 	else if (wordTable[p].property == EnumWordProperties::OperatorLeftBrace) {
 		CompoundStatement();
 		return true;
 	}
-	// While Do ÊÇµü´úÓï¾ä
+	// While Do æ˜¯è¿­ä»£è¯­å¥
 	else if (wordTable[p].property == EnumWordProperties::While ||
 		wordTable[p].property == EnumWordProperties::Do) {
 		IterationStatement();
 		return true;
 	}
-	// ¿ÕÓï¾ä ÊÇ±í´ïÊ½Óï¾ä
+	// ç©ºè¯­å¥ æ˜¯è¡¨è¾¾å¼è¯­å¥
 	else if (wordTable[p].property == EnumWordProperties::Semicolon) {
 		ExpressionStatement();
 		return true;
 	}
-	// ±êÇ©Óï¾äºÍ±í´ïÊ½Óï¾äĞèÒª»ØËİ
-	// Òò´Ë±êÇ©Óï¾äµÄÈë¿Ú´¦²»ÄÜthrow
+	// æ ‡ç­¾è¯­å¥å’Œè¡¨è¾¾å¼è¯­å¥éœ€è¦å›æº¯
+	// å› æ­¤æ ‡ç­¾è¯­å¥çš„å…¥å£å¤„ä¸èƒ½throw
 	if (LabeledStatement()) {
 		return true;
 	}
 	if (ExpressionStatement()) {
 		return true;
 	}
-	// ¶¼²»ÊÇ ²»ÊÇÓï¾ä
+	// éƒ½ä¸æ˜¯ ä¸æ˜¯è¯­å¥
 	else {
 		p = nowP;
 		return false;
 	}
 }
 
-// func    ±êÇ©Óï¾äÊ¶±ğ
+// func    æ ‡ç­¾è¯­å¥è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::LabeledStatement() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Identifier : Statement
@@ -1332,11 +1332,11 @@ bool GrammaticalAnalysis::LabeledStatement() {
 	}
 }
 
-// func    ¸´ºÏÓï¾äÊ¶±ğ
+// func    å¤åˆè¯­å¥è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::CompoundStatement() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// { BlockItemList }
@@ -1354,11 +1354,11 @@ bool GrammaticalAnalysis::CompoundStatement() {
 	throw(Exception("Not a Compound Statement because Expect a {", wordTable[p], 0));
 }
 
-// func    ¿éÏîÄ¿ÁĞ±íÊ¶±ğ
+// func    å—é¡¹ç›®åˆ—è¡¨è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::BlockItemList() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// BlockItem BlockItemListEliminateLeft
@@ -1377,11 +1377,11 @@ bool GrammaticalAnalysis::BlockItemList() {
 	}
 }
 
-// func    ¿éÏîÄ¿ÁĞ±íÏû³ı×óµİ¹éÊ¶±ğ
+// func    å—é¡¹ç›®åˆ—è¡¨æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::BlockItemListEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// BlockItem BlockItemListEliminateLeft
@@ -1392,18 +1392,18 @@ bool GrammaticalAnalysis::BlockItemListEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    ¿éÏîÄ¿Ê¶±ğ
+// func    å—é¡¹ç›®è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::BlockItem() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Declaration
@@ -1418,11 +1418,11 @@ bool GrammaticalAnalysis::BlockItem() {
 	return false;
 }
 
-// func    ±í´ïÊ½Óï¾äÊ¶±ğ
+// func    è¡¨è¾¾å¼è¯­å¥è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::ExpressionStatement() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ;
@@ -1444,11 +1444,11 @@ bool GrammaticalAnalysis::ExpressionStatement() {
 	}
 }
 
-// func    Ñ¡ÔñÓï¾äÊ¶±ğ
+// func    é€‰æ‹©è¯­å¥è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::SelectionStatement() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// If (Expression) Statement
@@ -1483,11 +1483,11 @@ bool GrammaticalAnalysis::SelectionStatement() {
 	throw(Exception("Not a if Statement", wordTable[p], 0));
 }
 
-// func    µü´úÓï¾äÊ¶±ğ
+// func    è¿­ä»£è¯­å¥è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::IterationStatement() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// While(Expression) Statement
@@ -1534,11 +1534,11 @@ bool GrammaticalAnalysis::IterationStatement() {
 	throw(Exception("Not a IterationStatement Statement", wordTable[p], 0));
 }
 
-// func    Ìø×ªÓï¾äÊ¶±ğ
+// func    è·³è½¬è¯­å¥è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::JumpStatement() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Goto Identifier;
@@ -1592,11 +1592,11 @@ bool GrammaticalAnalysis::JumpStatement() {
 	throw(Exception("Not a Jump Statement", wordTable[p], 0));
 }
 
-// func    ·­Òëµ¥ÔªÊ¶±ğ
+// func    ç¿»è¯‘å•å…ƒè¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::TranslationUnit() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ExternalDeclaration TranslationUnitEliminateLeft
@@ -1609,11 +1609,11 @@ bool GrammaticalAnalysis::TranslationUnit() {
 	throw(Exception("Not a Translation Unit", wordTable[p], 0));
 }
 
-// func    ·­Òëµ¥ÔªÏû³ı×óµİ¹éÊ¶±ğ
+// func    ç¿»è¯‘å•å…ƒæ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::TranslationUnitEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// ExternalDeclaration TranslationUnitEliminateLeft
@@ -1624,18 +1624,18 @@ bool GrammaticalAnalysis::TranslationUnitEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
 	}
 }
 
-// func    Íâ²¿ÉùÃ÷Ê¶±ğ
+// func    å¤–éƒ¨å£°æ˜è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::ExternalDeclaration() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 	int firstSemicolon = p;
 	int firstLeftBrace = p;
@@ -1663,22 +1663,22 @@ bool GrammaticalAnalysis::ExternalDeclaration() {
 		p = nowP;
 		return false;
 	}
-	// º¯Êı¶¨ÒåÊÇ TypeName DirectDeclarator /* DeclarationList */ CompoundStatement
-	// DeclarationList ÒÔ TypeName ¿ªÍ·
-	// CompoundStatement ÒÔ { ¿ªÍ·
-	// DirectDeclarator ÒÔ Identifier ¿ªÍ· ºó½Ó (ParameterList) DirectDeclaratorEliminateLeft
-	// Òò´Ë º¯Êı¶¨Òå±ØÈ»ÊÇ TypeName Identifier ( ¿ªÍ·
-	// ÇÒº¯Êı¶¨Òå±ØÈ»ÓĞ { ÔÚ ; µÄÇ°Ãæ
+	// å‡½æ•°å®šä¹‰æ˜¯ TypeName DirectDeclarator /* DeclarationList */ CompoundStatement
+	// DeclarationList ä»¥ TypeName å¼€å¤´
+	// CompoundStatement ä»¥ { å¼€å¤´
+	// DirectDeclarator ä»¥ Identifier å¼€å¤´ åæ¥ (ParameterList) DirectDeclaratorEliminateLeft
+	// å› æ­¤ å‡½æ•°å®šä¹‰å¿…ç„¶æ˜¯ TypeName Identifier ( å¼€å¤´
+	// ä¸”å‡½æ•°å®šä¹‰å¿…ç„¶æœ‰ { åœ¨ ; çš„å‰é¢
 	// FunctionDefinition
 	if (firstSemicolon < 0 || firstLeftBrace < firstSemicolon) {
 		if (FunctionDefinition()) {
 			return true;
 		}
 	}
-	// ÉùÃ÷ÊÇ TypeName InitDeclaratorList;
-	// InitDeclaratorList ÒÔ InitDeclarator ¿ªÍ·
-	// InitDeclarator ÒÔ Identifier ¿ªÍ·
-	// Òò´Ë ÉùÃ÷±ØÈ»ÓĞ ; ÔÚ { µÄÇ°Ãæ
+	// å£°æ˜æ˜¯ TypeName InitDeclaratorList;
+	// InitDeclaratorList ä»¥ InitDeclarator å¼€å¤´
+	// InitDeclarator ä»¥ Identifier å¼€å¤´
+	// å› æ­¤ å£°æ˜å¿…ç„¶æœ‰ ; åœ¨ { çš„å‰é¢
 	// Declaration
 	else if (firstLeftBrace < 0 || firstSemicolon < firstLeftBrace) {
 		if (Declaration()) {
@@ -1688,18 +1688,18 @@ bool GrammaticalAnalysis::ExternalDeclaration() {
 	throw(Exception("Not a Function Definition or a Declaration", wordTable[p], 0));
 }
 
-// func    º¯Êı¶¨ÒåÊ¶±ğ
+// func    å‡½æ•°å®šä¹‰è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::FunctionDefinition() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// TypeName DirectDeclarator /* DeclarationList */ CompoundStatement
 	if (IsTypeName(wordTable[p])) {
 		p++;
 		if (DirectDeclarator()) {
-			// ±ØÈ»ÒÔ { ¿ªÍ·
+			// å¿…ç„¶ä»¥ { å¼€å¤´
 			// TypeName DirectDeclarator CompoundStatement
 			if (wordTable[p].property == EnumWordProperties::OperatorLeftBrace) {
 				if (CompoundStatement()) {
@@ -1718,11 +1718,11 @@ bool GrammaticalAnalysis::FunctionDefinition() {
 	throw(Exception("Not a Function Definition because Expect a Type Name", wordTable[p], 0));
 }
 
-// func    ÉùÃ÷ÁĞ±íÊ¶±ğ
+// func    å£°æ˜åˆ—è¡¨è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::DeclarationList() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Declaration DeclarationListEliminateLeft
@@ -1734,11 +1734,11 @@ bool GrammaticalAnalysis::DeclarationList() {
 	throw(Exception("Not a Declaration", wordTable[p], 0));
 }
 
-// func    ÉùÃ÷ÁĞ±íÏû³ı×óµİ¹éÊ¶±ğ
+// func    å£°æ˜åˆ—è¡¨æ¶ˆé™¤å·¦é€’å½’è¯†åˆ«
 // param   
 // return  
 bool GrammaticalAnalysis::DeclarationListEliminateLeft() {
-	// ±£´æµ±Ç°Ö¸Õë
+	// ä¿å­˜å½“å‰æŒ‡é’ˆ
 	int nowP = p;
 
 	// Declaration DeclarationListEliminateLeft
@@ -1749,7 +1749,7 @@ bool GrammaticalAnalysis::DeclarationListEliminateLeft() {
 		p = nowP;
 		return false;
 	}
-	// ¿Õ
+	// ç©º
 	else {
 		p = nowP;
 		return true;
@@ -1760,7 +1760,7 @@ bool GrammaticalAnalysis::DeclarationListEliminateLeft() {
 
 
 
-// func    ´ÊËØÊÇ·ñÊÇÀàĞÍ
+// func    è¯ç´ æ˜¯å¦æ˜¯ç±»å‹
 // param   
 // return  
 bool GrammaticalAnalysis::IsTypeName(Word w) {
@@ -1779,7 +1779,7 @@ bool GrammaticalAnalysis::IsTypeName(Word w) {
 	}
 }
 
-// func    ´ÊËØÊÇ·ñÊÇÊı×Ö×ÖÃæÁ¿
+// func    è¯ç´ æ˜¯å¦æ˜¯æ•°å­—å­—é¢é‡
 // param   
 // return  
 bool GrammaticalAnalysis::IsNumberLiteralValue(Word w) {
@@ -1796,7 +1796,7 @@ bool GrammaticalAnalysis::IsNumberLiteralValue(Word w) {
 	}
 }
 
-// func    ´ÊËØÊÇ·ñÊÇ×ÖÃæÁ¿
+// func    è¯ç´ æ˜¯å¦æ˜¯å­—é¢é‡
 // param   
 // return  
 bool GrammaticalAnalysis::IsLiteralValue(Word w) {
